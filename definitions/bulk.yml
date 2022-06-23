@@ -25,8 +25,6 @@ tags:
   - name: runs
   - name: webhooks
 servers:
-  - url: https://api-eu.dev.v1.vonagenetworks.net/v0.1/bulk
-    description: dev env in EU geo
   - url: https://api-eu.vonage.com/v0.1/bulk
     description: prod env in EU geo
 security:
@@ -37,7 +35,7 @@ paths:
       operationId: findAllLists
       summary: Find all lists
       parameters:
-        - example: 2
+        - example: 1
           required: false
           name: page
           in: query
