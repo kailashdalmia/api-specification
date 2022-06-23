@@ -1,0 +1,25 @@
+{
+  "name": "api-specification",
+  "version": "1.0.0",
+  "description": "Vonage APIs definitions",
+  "main": "index.js",
+  "scripts": {
+    "validate": "bin/validate-specs.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nexmo/api-specification.git"
+  },
+  "keywords": [
+    "openapi"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Nexmo/api-specification/issues"
+  },
+  "homepage": "https://github.com/Nexmo/api-specification#readme",
+  "devDependencies": {
+    "@stoplight/spectral": "^5.9.2"
+  }
+}

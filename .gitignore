@@ -14,3 +14,4 @@
 *.iws
 
 
+/node_modules/
