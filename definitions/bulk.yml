@@ -188,7 +188,7 @@ paths:
           in: path
           schema:
             type: string
-        - example: 2
+        - example: 1
           required: false
           name: page
           in: query
@@ -363,7 +363,7 @@ paths:
       operationId: findAllActions
       summary: Find all actions
       parameters:
-        - example: 2
+        - example: 1
           required: false
           name: page
           in: query
@@ -419,12 +419,12 @@ paths:
                 $ref: '#/components/schemas/ActionDto'
       tags:
         - actions
-  /actions/{id}:
+  /actions/{action_id}:
     get:
       operationId: getAction
       summary: Get action by id
       parameters:
-        - name: id
+        - name: action_id
           required: true
           in: path
           schema:
@@ -442,7 +442,7 @@ paths:
       operationId: updateAction
       summary: Update action_call
       parameters:
-        - name: id
+        - name: action_id
           required: true
           in: path
           schema:
@@ -466,7 +466,7 @@ paths:
       operationId: deleteAction
       summary: Delete action_call
       parameters:
-        - name: id
+        - name: action_id
           required: true
           in: path
           schema:
@@ -485,7 +485,7 @@ paths:
       operationId: findAllJobs
       summary: Find all jobs
       parameters:
-        - example: 2
+        - example: 1
           required: false
           name: page
           in: query
@@ -541,12 +541,12 @@ paths:
                 $ref: '#/components/schemas/JobDto'
       tags:
         - jobs
-  /jobs/{id}:
+  /jobs/{job_id}:
     get:
       operationId: getJob
       summary: Get job by id
       parameters:
-        - name: id
+        - name: job_id
           required: true
           in: path
           schema:
@@ -564,7 +564,7 @@ paths:
       operationId: updateJob
       summary: Update job
       parameters:
-        - name: id
+        - name: job_id
           required: true
           in: path
           schema:
@@ -588,7 +588,7 @@ paths:
       operationId: deleteJob
       summary: Delete job
       parameters:
-        - name: id
+        - name: job_id
           required: true
           in: path
           schema:
@@ -603,7 +603,7 @@ paths:
       operationId: findEventsAll
       summary: Get events
       parameters:
-        - example: 2
+        - example: 1
           required: false
           name: page
           in: query
@@ -649,7 +649,7 @@ paths:
       operationId: findAllRuns
       summary: Find all runs
       parameters:
-        - example: 2
+        - example: 1
           required: false
           name: page
           in: query
@@ -701,12 +701,12 @@ paths:
           description: ''
       tags:
         - runs
-  /runs/{id}:
+  /runs/{run_id}:
     get:
       operationId: getJobRun
       summary: Get job run by id
       parameters:
-        - name: id
+        - name: run_id
           required: true
           in: path
           schema:
@@ -720,12 +720,12 @@ paths:
                 $ref: '#/components/schemas/JobRunDto'
       tags:
         - runs
-  /runs/{id}/events:
+  /runs/{run_id}/events:
     get:
       operationId: findEventsAllRun
       summary: Get job run events
       parameters:
-        - example: 2
+        - example: 1
           required: false
           name: page
           in: query
@@ -742,7 +742,7 @@ paths:
             maximum: 1000
             default: 100
             type: number
-        - name: id
+        - name: run_id
           required: true
           in: path
           schema: {}
@@ -770,12 +770,12 @@ paths:
                                 - $ref: '#/components/schemas/RecipientResponseEvent'
       tags:
         - runs
-  /runs/{id}/summary:
+  /runs/{run_id}/summary:
     get:
       operationId: getTotalStats
       summary: Get action runs and recipient responses statistics overview
       parameters:
-        - name: id
+        - name: run_id
           required: true
           in: path
           schema: {}
@@ -788,12 +788,12 @@ paths:
                 $ref: '#/components/schemas/StatsRunSummaryDto'
       tags:
         - runs
-  /runs/{id}/stop:
+  /runs/{run_id}/stop:
     post:
       operationId: stopJobRun
       summary: Initiate run stop
       parameters:
-        - name: id
+        - name: run_id
           required: true
           in: path
           schema:
@@ -841,7 +841,7 @@ components:
           type: number
           minimum: 1
           default: 1
-          example: 2
+          example: 1
         page_size:
           type: number
           minimum: 1
@@ -888,7 +888,7 @@ components:
           type: number
           readOnly: true
           minimum: 1
-          example: 2
+          example: 1
         page_size:
           type: number
           readOnly: true
@@ -1781,7 +1781,7 @@ components:
           example: ce7b9294-0325-4a7a-b4c7-0b9ba531e27e
         recipient_id:
           type: object
-          example: 29192c4a-4058-49da-86c2-3e349d1065b7
+          example: '12025550135'
         action_id:
           type: string
           readOnly: true
@@ -1837,7 +1837,7 @@ components:
           example: ce7b9294-0325-4a7a-b4c7-0b9ba531e27e
         recipient_id:
           type: object
-          example: 29192c4a-4058-49da-86c2-3e349d1065b7
+          example: '12025550135'
       required:
         - id
         - event_type
@@ -1915,7 +1915,7 @@ components:
           example: ce7b9294-0325-4a7a-b4c7-0b9ba531e27e
         recipient_id:
           type: object
-          example: 29192c4a-4058-49da-86c2-3e349d1065b7
+          example: '12025550135'
         action_id:
           type: string
           readOnly: true
@@ -1982,7 +1982,7 @@ components:
           example: ce7b9294-0325-4a7a-b4c7-0b9ba531e27e
         recipient_id:
           type: object
-          example: 29192c4a-4058-49da-86c2-3e349d1065b7
+          example: '12025550135'
         action_id:
           type: string
           readOnly: true
