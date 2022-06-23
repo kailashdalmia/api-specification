@@ -35,8 +35,8 @@ paths:
       operationId: findAllLists
       summary: Find all lists
       parameters:
-        - $ref: '#/components/parameters/page'
-        - $ref: '#/components/parameters/page_size'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
       responses:
         '200':
           description: ''
@@ -81,11 +81,7 @@ paths:
       operationId: getList
       summary: Get list by id
       parameters:
-        - name: list_id
-          required: true
-          in: path
-          schema:
-            type: string
+        - $ref: '#/components/parameters/ListId'
       responses:
         '200':
           description: ''
@@ -99,11 +95,7 @@ paths:
       operationId: updateList
       summary: Update list
       parameters:
-        - name: list_id
-          required: true
-          in: path
-          schema:
-            type: string
+        - $ref: '#/components/parameters/ListId'
       requestBody:
         required: true
         content:
@@ -123,11 +115,7 @@ paths:
       operationId: deleteList
       summary: Delete list
       parameters:
-        - name: list_id
-          required: true
-          in: path
-          schema:
-            type: string
+        - $ref: '#/components/parameters/ListId'
       responses:
         '200':
           description: ''
@@ -138,11 +126,7 @@ paths:
       operationId: resetList
       summary: Reset list - delete all items
       parameters:
-        - name: list_id
-          required: true
-          in: path
-          schema:
-            type: string
+        - $ref: '#/components/parameters/ListId'
       responses:
         '200':
           description: ''
@@ -153,11 +137,7 @@ paths:
       operationId: refreshList
       summary: Refresh list - delete all items and sync from the datasource. Refresh is invalid for manual list
       parameters:
-        - name: list_id
-          required: true
-          in: path
-          schema:
-            type: string
+        - $ref: '#/components/parameters/ListId'
       responses:
         '200':
           description: ''
@@ -168,13 +148,9 @@ paths:
       operationId: listItems
       summary: Iterate over list items
       parameters:
-        - name: list_id
-          required: true
-          in: path
-          schema:
-            type: string
-        - $ref: '#/components/parameters/page'
-        - $ref: '#/components/parameters/page_size'
+        - $ref: '#/components/parameters/ListId'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
       responses:
         '200':
           description: ''
@@ -200,11 +176,7 @@ paths:
       operationId: createListItem
       summary: Create list item
       parameters:
-        - name: list_id
-          required: true
-          in: path
-          schema:
-            type: string
+        - $ref: '#/components/parameters/ListId'
       requestBody:
         required: true
         content:
@@ -226,11 +198,7 @@ paths:
       operationId: downloadItems
       summary: Download list items
       parameters:
-        - name: list_id
-          required: true
-          in: path
-          schema:
-            type: string
+        - $ref: '#/components/parameters/ListId'
       responses:
         '200':
           description: ''
@@ -242,11 +210,7 @@ paths:
       operationId: getListItem
       summary: Get list item by id
       parameters:
-        - name: list_id
-          required: true
-          in: path
-          schema:
-            type: string
+        - $ref: '#/components/parameters/ListId'
         - name: item_id
           required: true
           in: path
@@ -266,11 +230,7 @@ paths:
       operationId: updateListItem
       summary: Update list item
       parameters:
-        - name: list_id
-          required: true
-          in: path
-          schema:
-            type: string
+        - $ref: '#/components/parameters/ListId'
         - name: item_id
           required: true
           in: path
@@ -296,11 +256,7 @@ paths:
       operationId: deleteListItem
       summary: Delete list item
       parameters:
-        - name: list_id
-          required: true
-          in: path
-          schema:
-            type: string
+        - $ref: '#/components/parameters/ListId'
         - name: item_id
           required: true
           in: path
@@ -317,11 +273,7 @@ paths:
       operationId: importItems
       summary: Import list items
       parameters:
-        - name: list_id
-          required: true
-          in: path
-          schema:
-            type: string
+        - $ref: '#/components/parameters/ListId'
       responses:
         '200':
           description: ''
@@ -333,8 +285,8 @@ paths:
       operationId: findAllActions
       summary: Find all actions
       parameters:
-        - $ref: '#/components/parameters/page'
-        - $ref: '#/components/parameters/page_size'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
       responses:
         '200':
           description: ''
@@ -440,8 +392,8 @@ paths:
       operationId: findAllJobs
       summary: Find all jobs
       parameters:
-        - $ref: '#/components/parameters/page'
-        - $ref: '#/components/parameters/page_size'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
       responses:
         '200':
           description: ''
@@ -543,8 +495,8 @@ paths:
       operationId: findEventsAll
       summary: Get events
       parameters:
-        - $ref: '#/components/parameters/page'
-        - $ref: '#/components/parameters/page_size'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
       responses:
         '200':
           description: ''
@@ -574,8 +526,8 @@ paths:
       operationId: findAllRuns
       summary: Find all runs
       parameters:
-        - $ref: '#/components/parameters/page'
-        - $ref: '#/components/parameters/page_size'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
       responses:
         '200':
           description: ''
@@ -635,8 +587,8 @@ paths:
       operationId: findEventsAllRun
       summary: Get job run events
       parameters:
-        - $ref: '#/components/parameters/page'
-        - $ref: '#/components/parameters/page_size'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
         - name: run_id
           required: true
           in: path
@@ -729,7 +681,7 @@ components:
       bearerFormat: JWT
       type: http
   parameters:
-    page:
+    Page:
       name: page
       description: Page of results to jump to
       in: query
@@ -739,7 +691,8 @@ components:
         type: number
       required: false
       example: 1
-    page_size:
+
+    PageSize:
       name: page_size
       description: Number of results per page
       in: query
@@ -750,7 +703,22 @@ components:
         type: number
       required: false
       example: 100
+
+    ListId:
+      name: list_id
+      in: path
+      description: Unique identifier for a list
+      required: true
+      schema:
+        $ref: "#/components/schemas/ListId"
+
   schemas:
+    ListId:
+      type: string
+      format: uuid
+      example:
+        $ref: "#/components/examples/ManualList/value/id"
+
     PageQueryDto:
       type: object
       properties:
@@ -1035,10 +1003,7 @@ components:
           readOnly: true
           example: '2022-06-19T17:59:28.085Z'
         list_id:
-          type: string
-          readOnly: true
-          format: uuid
-          example: 92cc64e5-f62b-464f-ab9c-4376bd05adfc
+          $ref: "#/components/schemas/ListId"
         data:
           type: object
           additionalProperties: true
@@ -1357,9 +1322,7 @@ components:
       type: object
       properties:
         id:
-          type: string
-          format: uuid
-          example: c4fd1c9e-80e7-4db1-94cb-8ec0edc154a4
+          $ref: "#/components/schemas/ListId"
         type:
           type: string
           enum:
@@ -2020,3 +1983,24 @@ components:
       required:
         - job_run_id
         - summary
+
+  examples:
+    ManualList:
+      value:
+        id: af8a84b6-c712-4252-ac8d-6e28ac9317ce
+        name: Recipients for demo
+        description: List of recipients for demo
+        type: manual
+        tags:
+          - vip
+        labels:
+          - name: firstName
+          - name: lastName
+            key: false
+          - name: number
+            alias: phoneNumber
+            key: true
+        items_count: 1000
+        sync_status: configured
+        created_at: '2022-06-23T13:13:16.491Z'
+        updated_at: '2022-06-23T13:13:16.491Z'
