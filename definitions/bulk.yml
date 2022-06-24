@@ -77,11 +77,11 @@ paths:
       tags:
         - lists
   /lists/{list_id}:
+    parameters:
+      - $ref: '#/components/parameters/ListId'
     get:
       operationId: getList
       summary: Get list by id
-      parameters:
-        - $ref: '#/components/parameters/ListId'
       responses:
         '200':
           description: ''
@@ -94,8 +94,6 @@ paths:
     put:
       operationId: updateList
       summary: Update list
-      parameters:
-        - $ref: '#/components/parameters/ListId'
       requestBody:
         required: true
         content:
@@ -114,41 +112,40 @@ paths:
     delete:
       operationId: deleteList
       summary: Delete list
-      parameters:
-        - $ref: '#/components/parameters/ListId'
       responses:
         '200':
           description: ''
       tags:
         - lists
   /lists/{list_id}/reset:
+    parameters:
+      - $ref: '#/components/parameters/ListId'
     post:
       operationId: resetList
       summary: Reset list - delete all items
-      parameters:
-        - $ref: '#/components/parameters/ListId'
       responses:
         '200':
           description: ''
       tags:
         - lists
   /lists/{list_id}/refresh:
+    parameters:
+      - $ref: '#/components/parameters/ListId'
     post:
       operationId: refreshList
       summary: Refresh list - delete all items and sync from the datasource. Refresh is invalid for manual list
-      parameters:
-        - $ref: '#/components/parameters/ListId'
       responses:
         '200':
           description: ''
       tags:
         - lists
   /lists/{list_id}/items:
+    parameters:
+      - $ref: '#/components/parameters/ListId'
     get:
       operationId: listItems
       summary: Iterate over list items
       parameters:
-        - $ref: '#/components/parameters/ListId'
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PageSize'
       responses:
@@ -170,13 +167,10 @@ paths:
                             items:
                               $ref: '#/components/schemas/ListItemDto'
       tags:
-        - lists
         - items
     post:
       operationId: createListItem
       summary: Create list item
-      parameters:
-        - $ref: '#/components/parameters/ListId'
       requestBody:
         required: true
         content:
@@ -191,31 +185,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListItemDto'
       tags:
-        - lists
         - items
   /lists/{list_id}/items/download:
+    parameters:
+      - $ref: '#/components/parameters/ListId'
     get:
       operationId: downloadItems
       summary: Download list items
-      parameters:
-        - $ref: '#/components/parameters/ListId'
       responses:
         '200':
           description: ''
       tags:
-        - lists
         - items
   /lists/{list_id}/items/{item_id}:
+    parameters:
+      - $ref: '#/components/parameters/ListId'
+      - name: item_id
+        required: true
+        in: path
+        schema:
+          type: string
     get:
       operationId: getListItem
       summary: Get list item by id
-      parameters:
-        - $ref: '#/components/parameters/ListId'
-        - name: item_id
-          required: true
-          in: path
-          schema:
-            type: string
       responses:
         '200':
           description: ''
@@ -224,18 +216,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListItemDto'
       tags:
-        - lists
         - items
     put:
       operationId: updateListItem
       summary: Update list item
-      parameters:
-        - $ref: '#/components/parameters/ListId'
-        - name: item_id
-          required: true
-          in: path
-          schema:
-            type: string
       requestBody:
         required: true
         content:
@@ -250,35 +234,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/ListItemDto'
       tags:
-        - lists
         - items
     delete:
       operationId: deleteListItem
       summary: Delete list item
-      parameters:
-        - $ref: '#/components/parameters/ListId'
-        - name: item_id
-          required: true
-          in: path
-          schema:
-            type: string
       responses:
         '200':
           description: ''
       tags:
-        - lists
         - items
   /lists/{list_id}/items/import:
+    parameters:
+      - $ref: '#/components/parameters/ListId'
     post:
       operationId: importItems
       summary: Import list items
-      parameters:
-        - $ref: '#/components/parameters/ListId'
       responses:
         '200':
           description: ''
       tags:
-        - lists
         - items
   /actions:
     get:
@@ -310,7 +284,6 @@ paths:
     post:
       operationId: createAction
       summary: Create action_call
-      parameters: []
       requestBody:
         required: true
         content:
@@ -327,15 +300,11 @@ paths:
       tags:
         - actions
   /actions/{action_id}:
+    parameters:
+      - $ref: '#/components/parameters/ActionId'
     get:
       operationId: getAction
       summary: Get action by id
-      parameters:
-        - name: action_id
-          required: true
-          in: path
-          schema:
-            type: string
       responses:
         '200':
           description: ''
@@ -348,12 +317,6 @@ paths:
     put:
       operationId: updateAction
       summary: Update action_call
-      parameters:
-        - name: action_id
-          required: true
-          in: path
-          schema:
-            type: string
       requestBody:
         required: true
         content:
@@ -372,12 +335,6 @@ paths:
     delete:
       operationId: deleteAction
       summary: Delete action_call
-      parameters:
-        - name: action_id
-          required: true
-          in: path
-          schema:
-            type: string
       responses:
         '200':
           description: ''
@@ -417,7 +374,6 @@ paths:
     post:
       operationId: createJob
       summary: Create job
-      parameters: []
       requestBody:
         required: true
         content:
@@ -434,15 +390,15 @@ paths:
       tags:
         - jobs
   /jobs/{job_id}:
+    parameters:
+      - name: job_id
+        required: true
+        in: path
+        schema:
+          type: string
     get:
       operationId: getJob
       summary: Get job by id
-      parameters:
-        - name: job_id
-          required: true
-          in: path
-          schema:
-            type: string
       responses:
         '200':
           description: ''
@@ -455,12 +411,6 @@ paths:
     put:
       operationId: updateJob
       summary: Update job
-      parameters:
-        - name: job_id
-          required: true
-          in: path
-          schema:
-            type: string
       requestBody:
         required: true
         content:
@@ -479,12 +429,6 @@ paths:
     delete:
       operationId: deleteJob
       summary: Delete job
-      parameters:
-        - name: job_id
-          required: true
-          in: path
-          schema:
-            type: string
       responses:
         '200':
           description: ''
@@ -551,7 +495,6 @@ paths:
     post:
       operationId: scheduleAtRun
       summary: Start job
-      parameters: []
       requestBody:
         required: true
         content:
@@ -564,15 +507,15 @@ paths:
       tags:
         - runs
   /runs/{run_id}:
+    parameters:
+      - name: run_id
+        required: true
+        in: path
+        schema:
+          type: string
     get:
       operationId: getJobRun
       summary: Get job run by id
-      parameters:
-        - name: run_id
-          required: true
-          in: path
-          schema:
-            type: string
       responses:
         '200':
           description: ''
@@ -583,16 +526,18 @@ paths:
       tags:
         - runs
   /runs/{run_id}/events:
+    parameters:
+      - name: run_id
+        required: true
+        in: path
+        schema:
+          type: string
     get:
       operationId: findEventsAllRun
       summary: Get job run events
       parameters:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PageSize'
-        - name: run_id
-          required: true
-          in: path
-          schema: {}
       responses:
         '200':
           description: ''
@@ -618,14 +563,14 @@ paths:
       tags:
         - runs
   /runs/{run_id}/summary:
+    parameters:
+      - name: run_id
+        required: true
+        in: path
+        schema: {}
     get:
       operationId: getTotalStats
       summary: Get action runs and recipient responses statistics overview
-      parameters:
-        - name: run_id
-          required: true
-          in: path
-          schema: {}
       responses:
         '200':
           description: ''
@@ -636,15 +581,15 @@ paths:
       tags:
         - runs
   /runs/{run_id}/stop:
+    parameters:
+      - name: run_id
+        required: true
+        in: path
+        schema:
+          type: string
     post:
       operationId: stopJobRun
       summary: Initiate run stop
-      parameters:
-        - name: run_id
-          required: true
-          in: path
-          schema:
-            type: string
       responses:
         '202':
           description: ''
@@ -654,7 +599,6 @@ paths:
     post:
       operationId: actionStatus
       summary: Webhook endpoint to handle action call status for async actions
-      parameters: []
       responses:
         '200':
           description: ''
@@ -666,7 +610,6 @@ paths:
     post:
       operationId: recipientResponse
       summary: Webhook endpoint to handle recipient responses
-      parameters: []
       responses:
         '200':
           description: ''
@@ -712,12 +655,26 @@ components:
       schema:
         $ref: "#/components/schemas/ListId"
 
+    ActionId:
+      name: action_id
+      in: path
+      description: Unique identifier for an action
+      required: true
+      schema:
+        $ref: "#/components/schemas/ActionId"
+
   schemas:
     ListId:
       type: string
       format: uuid
       example:
         $ref: "#/components/examples/ManualList/value/id"
+
+    ActionId:
+      type: string
+      format: uuid
+      example:
+        $ref: "#/components/examples/SendSMS/value/id"
 
     PageQueryDto:
       type: object
@@ -1379,11 +1336,7 @@ components:
       type: object
       properties:
         action_ref:
-          example:
-            type: action
-            id: 20990a7c-db17-4e20-b485-ef9e1fd02f23
-          allOf:
-            - $ref: '#/components/schemas/ActionRefDto'
+          $ref: '#/components/schemas/ActionRefDto'
         parameters:
           maxItems: 20
           type: array
@@ -2004,3 +1957,64 @@ components:
         sync_status: configured
         created_at: '2022-06-23T13:13:16.491Z'
         updated_at: '2022-06-23T13:13:16.491Z'
+
+    SendSMS:
+      value:
+        id: 99ea10e0-1f14-4f55-b976-3c88ea8ec4cd
+        name: vg-send-sms
+        description: Send text message using Vonage messaging APIs
+        parameters:
+          - type: string
+            required: true
+            name: fromNumber
+          - type: string
+            required: true
+            name: toNumber
+          - type: string
+            required: true
+            name: message
+          - type: secret
+            required: true
+            name: vonage-jwt-token
+            default: vng-prd-messaging-api
+        command:
+          type: http-api-invoke
+          url: https://api.nexmo.com/v1/messages
+          method: post
+          headers:
+            - name: Content-Type
+              value: application/json
+            - name: Authorization
+              value: Bearer {{ parameters.vonage-jwt-token }}
+          payload:
+            to: "{{ parameters.toNumber }}"
+            message_type: text
+            from: "{{ parameters.fromNumber }}"
+            channel: sms
+            text: "{{ parameters.message }}"
+          response:
+            success:
+              codes:
+                - '202'
+            invocation_id: "{{response.payload.message_uuid}}"
+            error:
+              code: "{{response.payload.statusCode}}"
+              details: "{{response.payload.error.details}}"
+          async:
+            invocation_id: "{{ event.message_uuid }}"
+            status:
+              value: "{{event.status}}"
+              success:
+                values:
+                  - delivered
+              error:
+                values:
+                  - rejected
+                  - undeliverable
+                details: "{{event.error.details}}"
+              info:
+                values:
+                  - submitted
+        timeout_seconds: 5
+        created_at: '2022-06-23T17:45:31.782Z'
+        updated_at: '2022-06-23T17:45:31.782Z'
