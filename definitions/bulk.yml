@@ -200,11 +200,7 @@ paths:
   /lists/{list_id}/items/{item_id}:
     parameters:
       - $ref: '#/components/parameters/ListId'
-      - name: item_id
-        required: true
-        in: path
-        schema:
-          type: string
+      - $ref: '#/components/parameters/ItemId'
     get:
       operationId: getListItem
       summary: Get list item by id
@@ -655,6 +651,14 @@ components:
       schema:
         $ref: "#/components/schemas/ListId"
 
+    ItemId:
+      name: item_id
+      in: path
+      description: Unique identifier for a list item
+      required: true
+      schema:
+        $ref: "#/components/schemas/ItemId"
+
     ActionId:
       name: action_id
       in: path
@@ -669,6 +673,12 @@ components:
       format: uuid
       example:
         $ref: "#/components/examples/ManualList/value/id"
+
+    ItemId:
+      type: string
+      format: uuid
+      example:
+        $ref: "#/components/examples/ListItem/value/id"
 
     ActionId:
       type: string
@@ -1957,6 +1967,25 @@ components:
         sync_status: configured
         created_at: '2022-06-23T13:13:16.491Z'
         updated_at: '2022-06-23T13:13:16.491Z'
+
+    ListItem:
+      value:
+        id: 945f6ca9-b6fa-4bd0-95c3-c4e1ecb15e2f
+        list_id: af8a84b6-c712-4252-ac8d-6e28ac9317ce
+        data:
+          firstName: Jailyn
+          lastName: Pacocha
+          companyName: Kshlerin - Kiehn
+          address: 376 Gutmann Ridges
+          city: North Assunta
+          country: Iceland
+          state: PH
+          zip: '89261'
+          number: 950-707-5847
+          email: Anya.West6@yahoo.com
+          salary: 1000
+        created_at: '2022-06-20T05:46:00.936Z'
+        updated_at: '2022-06-20T05:46:00.936Z'
 
     SendSMS:
       value:
