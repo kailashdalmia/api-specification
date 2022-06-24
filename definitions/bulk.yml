@@ -387,11 +387,7 @@ paths:
         - jobs
   /jobs/{job_id}:
     parameters:
-      - name: job_id
-        required: true
-        in: path
-        schema:
-          type: string
+      - $ref: '#/components/parameters/JobId'
     get:
       operationId: getJob
       summary: Get job by id
@@ -504,11 +500,7 @@ paths:
         - runs
   /runs/{run_id}:
     parameters:
-      - name: run_id
-        required: true
-        in: path
-        schema:
-          type: string
+      - $ref: '#/components/parameters/RunId'
     get:
       operationId: getJobRun
       summary: Get job run by id
@@ -523,11 +515,7 @@ paths:
         - runs
   /runs/{run_id}/events:
     parameters:
-      - name: run_id
-        required: true
-        in: path
-        schema:
-          type: string
+      - $ref: '#/components/parameters/RunId'
     get:
       operationId: findEventsAllRun
       summary: Get job run events
@@ -560,10 +548,7 @@ paths:
         - runs
   /runs/{run_id}/summary:
     parameters:
-      - name: run_id
-        required: true
-        in: path
-        schema: {}
+      - $ref: '#/components/parameters/RunId'
     get:
       operationId: getTotalStats
       summary: Get action runs and recipient responses statistics overview
@@ -578,11 +563,7 @@ paths:
         - runs
   /runs/{run_id}/stop:
     parameters:
-      - name: run_id
-        required: true
-        in: path
-        schema:
-          type: string
+      - $ref: '#/components/parameters/RunId'
     post:
       operationId: stopJobRun
       summary: Initiate run stop
@@ -667,6 +648,22 @@ components:
       schema:
         $ref: "#/components/schemas/ActionId"
 
+    JobId:
+      name: job_id
+      in: path
+      description: Unique identifier for a job
+      required: true
+      schema:
+        $ref: "#/components/schemas/JobId"
+
+    RunId:
+      name: run_id
+      in: path
+      description: Unique identifier for a run
+      required: true
+      schema:
+        $ref: "#/components/schemas/RunId"
+
   schemas:
     ListId:
       type: string
@@ -685,6 +682,18 @@ components:
       format: uuid
       example:
         $ref: "#/components/examples/SendSMS/value/id"
+
+    JobId:
+      type: string
+      format: uuid
+      example:
+        $ref: "#/components/examples/SegmentationJob/value/id"
+
+    RunId:
+      type: string
+      format: uuid
+      example:
+        $ref: "#/components/examples/SegmentationRun/value/id"
 
     PageQueryDto:
       type: object
@@ -1617,11 +1626,9 @@ components:
             country: Iceland
             state: PH
         job_id:
-          type: string
-          example: 1e46e0c5-709a-42ea-8e65-98b4bc604269
+          $ref: '#/components/schemas/JobId'
         job_run_id:
-          type: string
-          example: ce7b9294-0325-4a7a-b4c7-0b9ba531e27e
+          $ref: '#/components/schemas/RunId'
         recipient_id:
           type: object
           example: '12025550135'
@@ -1673,11 +1680,9 @@ components:
             country: Iceland
             state: PH
         job_id:
-          type: string
-          example: 1e46e0c5-709a-42ea-8e65-98b4bc604269
+          $ref: '#/components/schemas/JobId'
         job_run_id:
-          type: string
-          example: ce7b9294-0325-4a7a-b4c7-0b9ba531e27e
+          $ref: '#/components/schemas/RunId'
         recipient_id:
           type: object
           example: '12025550135'
@@ -1751,11 +1756,9 @@ components:
             country: Iceland
             state: PH
         job_id:
-          type: string
-          example: 1e46e0c5-709a-42ea-8e65-98b4bc604269
+          $ref: '#/components/schemas/JobId'
         job_run_id:
-          type: string
-          example: ce7b9294-0325-4a7a-b4c7-0b9ba531e27e
+          $ref: '#/components/schemas/RunId'
         recipient_id:
           type: object
           example: '12025550135'
@@ -1818,11 +1821,9 @@ components:
             country: Iceland
             state: PH
         job_id:
-          type: string
-          example: 1e46e0c5-709a-42ea-8e65-98b4bc604269
+          $ref: '#/components/schemas/JobId'
         job_run_id:
-          type: string
-          example: ce7b9294-0325-4a7a-b4c7-0b9ba531e27e
+          $ref: '#/components/schemas/RunId'
         recipient_id:
           type: object
           example: '12025550135'
@@ -1860,9 +1861,7 @@ components:
           type: string
           example: '2022-06-20T05:46:00.936Z'
         job_id:
-          type: string
-          format: uuid
-          example: 06d5a6ed-cf02-4dbc-8694-164456f3f1c8
+          $ref: '#/components/schemas/JobId'
       required:
         - name
         - start_at
@@ -1898,9 +1897,7 @@ components:
           type: string
           example: '2022-06-20T05:46:00.936Z'
         job_id:
-          type: string
-          format: uuid
-          example: 06d5a6ed-cf02-4dbc-8694-164456f3f1c8
+          $ref: '#/components/schemas/JobId'
         status:
           type: string
           readOnly: true
@@ -1926,9 +1923,7 @@ components:
       type: object
       properties:
         job_run_id:
-          type: string
-          readOnly: true
-          example: 42a5313b-ea90-4166-a950-00eb6f95dfef
+          $ref: '#/components/schemas/RunId'
         summary:
           readOnly: true
           example:
@@ -2047,3 +2042,76 @@ components:
         timeout_seconds: 5
         created_at: '2022-06-23T17:45:31.782Z'
         updated_at: '2022-06-23T17:45:31.782Z'
+
+    SegmentationJob:
+      value:
+        id: e721113d-0948-4edb-b4af-e3f0578d708c
+        name: send sms with optional end-user response
+        tags:
+          - marketing
+          - uk
+        definition:
+          type: segmentation-job
+          recipients:
+            include:
+              - id: c6a4704e-2ddd-47b7-b79c-7df38feafb3f
+                type: list
+            exclude:
+              - id: fba7c209-ebb9-4b14-8acb-09a803d4f0a0
+                type: list
+          segmentations:
+            - condition:
+                expression: item.salary == 1000 || ['UK', 'USA'].includes(item.country)
+              action_call:
+                action_ref:
+                  id: 466ce4a4-9cec-40c0-83ab-c3fa64e48b6f
+                  type: action
+                parameters:
+                  - name: fromNumber
+                    value: '447418365541'
+                  - name: toNumber
+                    value: "{{ item.number }}"
+                  - name: message
+                    value: "{{ template.message }}"
+              name: text vip customers
+              description: text UK and USA vip customers
+              template:
+                type: text
+                message: Dear {{ item.firstName }}, {{ item.lastName }} :)\n This's our 1st
+                  SMS communication from Vonage campaign.\nReply back with STOP if you want
+                  to stop receiving our messages
+                encoding: utf8
+              recipient:
+                correlation_id: "{{item.number}}"
+          events_handler:
+            matching_strategy: match-first
+            matchers:
+              - condition:
+                  expression: event.text?.toLowerCase().includes('stop')
+                action_call:
+                  action_ref:
+                    type: action
+                    id: bd795581-9a93-48b0-a4bc-3b7509bf6e4d
+                  parameters:
+                    - name: listId
+                      value: fba7c209-ebb9-4b14-8acb-09a803d4f0a0
+                    - name: number
+                      value: "{{event.from}}"
+                name: opt-out
+                description: unsubscribe
+                recipient:
+                  correlation_id: "{{event.from}}"
+        created_at: '2022-06-24T07:49:33.748Z'
+        updated_at: '2022-06-24T07:49:33.748Z'
+
+    SegmentationRun:
+      value:
+        id: 51aca838-2cf6-4100-b0d2-e74ac0e95c88
+        name: E2E Demo run
+        job_id: e721113d-0948-4edb-b4af-e3f0578d708c
+        status: scheduled
+        # todo: should we group the schedule part into a dedicated object?
+        start_at: '2022-06-24T04:06:36.000Z'
+        end_at: '2022-06-24T08:57:55.917Z'
+        created_at: '2022-06-24T07:57:56.301Z'
+        updated_at: '2022-06-24T07:57:56.301Z'
