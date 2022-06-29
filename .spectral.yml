@@ -101,7 +101,5 @@ except:
   "definitions/vonage-business-cloud/vgis.yml#/components/schemas/CallTransfer":
     - required-property-example
 # VCP Bulk
-  "definitions/bulk.yml#/components/schemas/CreateListItemDto":
-    - required-object-params
-  "definitions/bulk.yml#/components/schemas/CreateJobDto/properties/definition/oneOf/0":
+  "definitions/bulk.yml#/components/schemas/CreateJobDto/allOf/0":
     - required-object-params

@@ -816,36 +816,16 @@ components:
     ListDto:
       allOf:
         - $ref: "#/components/schemas/BulkBase"
+        - $ref: "#/components/schemas/CreateListDto"
         - type: object
           properties:
-            name:
+            type:
               type: string
-              maxLength: 50
-              example: Recipients for demo
-            description:
-              type: string
-              maxLength: 1024
-            tags:
-              minItems: 0
-              maxItems: 10
-              type: array
-              items:
-                type: string
-            labels:
-              minItems: 0
-              maxItems: 50
-              type: array
-              items:
-                $ref: "#/components/schemas/ListLabelDto"
-            items_count:
-              type: number
               readOnly: true
-              example: 10000
-            datasource:
-              discriminator:
-                propertyName: type
-              oneOf:
-                - $ref: "#/components/schemas/SalesforceDatasource"
+              enum:
+                - salesforce
+                - manual
+              example: salesforce
             sync_status:
               type: string
               readOnly: true
@@ -859,56 +839,16 @@ components:
                 - completed
                 - failed
               example: configured
-            type:
-              type: string
+            items_count:
+              type: number
               readOnly: true
-              enum:
-                - salesforce
-                - manual
-              example: salesforce
-          required:
-            - name
-            # - items_count todo: why readonly attributes are required?
-            # - sync_status
-            # - type
+              example: 10000
 
     CreateListDto:
-      type: object
-      properties:
-        name:
-          type: string
-          maxLength: 50
-          example: Recipients for demo
-        description:
-          type: string
-          maxLength: 1024
-        tags:
-          minItems: 0
-          maxItems: 10
-          type: array
-          items:
-            type: string
-        labels:
-          minItems: 0
-          maxItems: 50
-          type: array
-          items:
-            $ref: "#/components/schemas/ListLabelDto"
-        datasource:
-          discriminator:
-            propertyName: type
-          oneOf:
-            - $ref: "#/components/schemas/SalesforceDatasource"
-        type:
-          type: string
-          readOnly: true
-          enum:
-            - salesforce
-            - manual
-          example: salesforce
+      allOf:
+        - $ref: "#/components/schemas/UpdateListDto"
       required:
         - name
-        - type
 
     UpdateListDto:
       type: object
@@ -937,13 +877,6 @@ components:
             propertyName: type
           oneOf:
             - $ref: "#/components/schemas/SalesforceDatasource"
-        type:
-          type: string
-          readOnly: true
-          enum:
-            - salesforce
-            - manual
-          example: salesforce
 
     ListDatasourceBaseDto:
       type: object
@@ -980,6 +913,7 @@ components:
     ListItemDto:
       allOf:
         - $ref: "#/components/schemas/BulkBase"
+        - $ref: "#/components/schemas/CreateListItemDto"
         - type: object
           properties:
             list_id:
@@ -1008,17 +942,8 @@ components:
           type: number
 
     CreateListItemDto:
-      type: object
-      properties:
-        data:
-          type: object
-          additionalProperties: true
-          minProperties: 1
-          maxProperties: 20
-          example:
-            firstName: Adrianna
-            lastName: Renner
-            number: 715-268-2905
+      allOf:
+        - $ref: "#/components/schemas/UpdateListItemDto"
       required:
         - data
 
@@ -1055,37 +980,9 @@ components:
         default:
           type: string
       required:
-        - type
+        - type # todo if attribute has a default, it shouldn't be required
         - name
-        - required
-
-    CreateActionDto:
-      type: object
-      properties:
-        name:
-          type: string
-          example: send-sms
-        parameters:
-          type: array
-          items:
-            $ref: "#/components/schemas/ActionParameterDefinitionDto"
-        command:
-          discriminator:
-            propertyName: type
-          oneOf:
-            - $ref: "#/components/schemas/HttpApiInvokeDto"
-          example:
-            type: http-api-invoke
-            url: https://api.nexmo.com/v1/messages
-            method: post
-        timeout_seconds:
-          type: number
-          default: 5
-          minimum: 0
-          maximum: 60
-      required:
-        - name
-        - command
+        - required # has default
 
     ActionParameterValueDto:
       type: object
@@ -1244,32 +1141,14 @@ components:
     ActionDto:
       allOf:
         - $ref: "#/components/schemas/BulkBase"
-        - type: object
-          properties:
-            name:
-              type: string
-              example: send-sms
-            parameters:
-              type: array
-              items:
-                $ref: "#/components/schemas/ActionParameterDefinitionDto"
-            command:
-              discriminator:
-                propertyName: type
-              oneOf:
-                - $ref: "#/components/schemas/HttpApiInvokeDto"
-              example:
-                type: http-api-invoke
-                url: https://api.nexmo.com/v1/messages
-                method: post
-            timeout_seconds:
-              type: number
-              default: 5
-              minimum: 0
-              maximum: 60
-          required:
-            - name
-            - command
+        - $ref: "#/components/schemas/CreateActionDto"
+
+    CreateActionDto:
+      allOf:
+        - $ref: "#/components/schemas/UpdateActionDto"
+      required:
+        - name
+        - command
 
     UpdateActionDto:
       type: object
@@ -1449,6 +1328,7 @@ components:
           enum:
             - match-first
             - match-all
+          example: match-first
         matchers:
           type: array
           items:
@@ -1481,6 +1361,7 @@ components:
     JobDto:
       allOf:
         - $ref: "#/components/schemas/BulkBase"
+        - $ref: "#/components/schemas/CreateJobDto"
         - type: object
           properties:
             name:
@@ -1520,40 +1401,8 @@ components:
             - definition
 
     CreateJobDto:
-      type: object
-      properties:
-        name:
-          type: string
-          example: Greeting all
-        tags:
-          minItems: 0
-          maxItems: 30
-          type: array
-          items:
-            type: string
-        definition:
-          discriminator:
-            propertyName: type
-          oneOf:
-            - $ref: "#/components/schemas/SegmentationJobDefinitionDto"
-          example:
-            name: text vip customers
-            description: text UK and USA vip customers
-            recipient:
-              correlation_id: "{{item.number}}"
-            condition:
-              expression: item.salary == 1000 || ['UK', 'USA'].includes(item.country)
-            action_call:
-              action_ref:
-                id: "{{sendSmsActionId}}"
-                type: action
-              parameters:
-                - name: fromNumber
-                  value: "{{my_campaign_number}}"
-                - name: toNumber
-                  value: "{{ item.number }}"
-                - name: message
-                  value: "{{ template.message }}"
+      allOf:
+        - $ref: "#/components/schemas/UpdateJobDto"
       required:
         - name
         - definition
@@ -1852,6 +1701,25 @@ components:
         - recipient_id
         - action_id
 
+    JobRunDto:
+      allOf:
+        - $ref: "#/components/schemas/BulkBase"
+        - $ref: "#/components/schemas/CreateJobRunDto"
+        - type: object
+          properties:
+            status:
+              type: string
+              readOnly: true
+              enum:
+                - scheduled
+                - running
+                - paused
+                - stopped
+                - failed
+                - completed
+                - draft
+              example: running
+
     CreateJobRunDto:
       type: object
       properties:
@@ -1873,43 +1741,6 @@ components:
         - start_at
         - end_at
         - job_id
-
-    JobRunDto:
-      allOf:
-        - $ref: "#/components/schemas/BulkBase"
-        - type: object
-          properties:
-            name:
-              type: string
-              example: holiday run
-            start_at:
-              format: date-time
-              type: string
-              example: "2022-06-06T05:46:00.936Z"
-            end_at:
-              format: date-time
-              type: string
-              example: "2022-06-20T05:46:00.936Z"
-            job_id:
-              $ref: "#/components/schemas/JobId"
-            status:
-              type: string
-              readOnly: true
-              enum:
-                - scheduled
-                - running
-                - paused
-                - stopped
-                - failed
-                - completed
-                - draft
-              example: running
-          required:
-            - name
-            - start_at
-            - end_at
-            - job_id
-            # - status
 
     StatsRunSummaryDto:
       type: object
