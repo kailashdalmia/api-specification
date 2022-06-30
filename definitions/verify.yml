@@ -3,7 +3,7 @@ servers:
   - url: "https://api.nexmo.com/verify"
 info:
   title: Verify API
-  version: 1.1.7
+  version: 1.2.0
   description: >-
     The Verify API helps you to implement 2FA (two-factor authentication) in your applications.
     This is useful for:
@@ -27,10 +27,17 @@ info:
 externalDocs:
   description: "More information on the Verify product on our Developer Portal"
   url: "https://developer.nexmo.com/verify"
+tags:
+  - name: Requests
+    description: Verify Requests
+  - name: Fraud Management
+    description: Fraud Management
 paths:
   "/{format}":
     post:
       operationId: verifyRequest
+      tags:
+        - Requests
       summary: Request a Verification
       description: >-
         Use Verify request to generate and send a PIN to your user:
@@ -509,6 +516,55 @@ paths:
                 oneOf:
                   - $ref: "#/components/schemas/requestResponse"
                   - $ref: "#/components/schemas/requestErrorResponse"
+  
+  /network-unblock:
+    post:
+      operationId: networkUnblock
+      summary: Request a network unblock
+      description: Request to unblock a network that has been blocked due to potential fraud detection
+      tags:
+        - Fraud Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/networkUnblock"
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/networkUnblockResponseOk'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/networkUnblockResponseNotFound'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/networkUnblockResponseForbidden'
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/networkUnblockResponseUnprocessableNetwork'
+                  - $ref: '#/components/schemas/networkUnblockResponseInvalidDuration'
+
+        "429":
+          description: "Rate Limited"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorThrottled"
+
 components:
   parameters:
     format:
@@ -562,6 +618,20 @@ components:
         overlap with message/call events. When this field is present, the total
         cost of the verification is the sum of this field and the `price` field.
       example: "0.03330000"
+
+    networkUnblock:
+      type: object
+      properties:
+        network:
+          type: string
+          description: The Network code
+          example: 32526
+        unblock_duration:
+          type: integer
+          required:
+            - "false"
+          description: Duration the unblock will be applied in seconds
+          example: '3600'
 
     verifyRequest:
       type: object
@@ -723,6 +793,126 @@ components:
           description: "Indicates the outcome of the request; zero is success"
           example: "0"
 
+    networkUnblockResponseOk:
+      type: object
+      description: Success
+      xml:
+        name: networkUnblockResponse
+      properties:
+        network:
+          type: string
+          description: >-
+            The unique network ID
+          example: "23410"
+        unblocked_until:
+          type: string
+          description: "Gives the DateTime when the unblock will expire."
+          example: '2024-04-22T08:34:58Z'
+
+    networkUnblockResponseNotFound:
+      type: object
+      description: Not Found
+      xml:
+        name: networkUnblockResponseNotFound
+      properties:
+        type:
+          type: string
+          description: A URL link to the API documentation for this type of error.
+          example: 'https://developer.vonage.com/api-errors#bad-request'
+        title:
+          type: string
+          description: Full string text of the HTTP error code.
+          example: 'Not Found'
+        detail:
+          type: string
+          description: Verbose description of the server error.
+          example: 'The network you provided does not have an active block.'
+        instance:
+          type: string
+          description: InstanceID
+          example: 'bf0ca0bf927b3b52e3cb03217e1a1ddf'
+    
+    networkUnblockResponseForbidden:
+      type: object
+      description: Forbidden
+      xml:
+        name: networkUnblockResponseForbidden
+      properties:
+        type:
+          type: string
+          description: A URL link to the API documentation for this type of error.
+          example: 'https://developer.vonage.com/api-errors#forbidden'
+        title:
+          type: string
+          description: Full string text of the HTTP error code.
+          example: 'Forbidden'
+        detail:
+          type: string
+          description: Verbose description of the server error.
+          example: 'Your account does not have permission to perform this action.'
+        instance:
+          type: string
+          description: The Instance ID
+          example: 'bf0ca0bf927b3b52e3cb03217e1a1ddf'
+        
+    networkUnblockResponseUnprocessableNetwork:
+      type: object
+      description: Invalid Network
+      xml:
+        name: networkUnblockResponseUnprocessableNetwork
+      properties:
+        type:
+          type: string
+          description: A URL link to the API documentation for this type of error.
+          example: 'https://developer.vonage.com/api-errors#invalid-paramater'
+        title:
+          type: string
+          description: Full string text of the HTTP error code.
+          example: 'Network not found.'
+        detail:
+          type: string
+          description: Verbose description of the server error.
+          example: 'Network is not in the request.'
+        instance:
+          type: string
+          description: The Instance ID
+          example: 'bf0ca0bf927b3b52e3cb03217e1a1ddf'
+        invalid_parameters:
+          type: array
+          description: Detailed payload of errors.
+          example:
+            name: network
+            reason: Network not found
+    
+    networkUnblockResponseInvalidDuration:
+      type: object
+      description: Invalid Duration
+      xml:
+        name: networkUnblockResponseInvalidDuration
+      properties:
+        type:
+          type: string
+          description: A URL link to the API documentation for this type of error.
+          example: 'https://developer.vonage.com/api-errors#invalid-paramater'
+        title:
+          type: string
+          description: Full string text of the HTTP error code.
+          example: 'Invalid unblock_duration parameter'
+        detail:
+          type: string
+          description: Verbose description of the server error.
+          example: 'Unblock duration is invalid.'
+        instance:
+          type: string
+          description: The Instance ID
+          example: 'bf0ca0bf927b3b52e3cb03217e1a1ddf'
+        invalid_parameters:
+          type: array
+          description: Detailed payload of errors.
+          example:
+            name: unblock_duration
+            reason: Must be an integer in minutes
+    
     requestErrorResponse:
       type: object
       description: Error
@@ -1250,3 +1440,27 @@ components:
             - 7
           example: 4
 
+    ErrorThrottled:
+      type: object
+      required:
+        - type
+        - title
+        - detail
+        - instance
+      properties:
+        type:
+          type: string
+          description: Link to error / remediation options
+          example: https://developer.vonage.com/api-errors/verify#rate-limit
+        title:
+          type: string
+          description: Generic error message
+          example: Rate Limit Hit
+        detail:
+          type: string
+          description: Additional information about the error
+          example: Please wait, then retry your request
+        instance:
+          type: string
+          description: Internal Trace ID
+          example: bf0ca0bf927b3b52e3cb03217e1a1ddf

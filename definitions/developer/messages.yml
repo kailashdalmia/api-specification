@@ -7,7 +7,7 @@ info:
     <div class="Vlt-callout Vlt-callout--critical">
     <i></i>
     <div class="Vlt-callout__content">
-      <h4>The Message Search API is deprecated</h4>
+      <h4>The Message Search API has been RETIRED as of June 1st 2022.</h4>
       Please use the <a href="/reports/overview">Reports API</a> instead. See the <a href="/reports/guides/migrate-from-sms-message-search">Migrating from the SMS Message Search API guide</a> to get started.
     </div>
     </div>
