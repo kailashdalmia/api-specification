@@ -117,23 +117,23 @@ paths:
           description: ""
       tags:
         - lists
-  /lists/{list_id}/reset:
+  /lists/{list_id}/clear:
     parameters:
       - $ref: "#/components/parameters/ListId"
     post:
-      operationId: resetList
-      summary: Reset list - delete all items
+      operationId: clearList
+      summary: Clear list - delete all the list items
       responses:
         "200":
           description: ""
       tags:
         - lists
-  /lists/{list_id}/refresh:
+  /lists/{list_id}/fetch:
     parameters:
       - $ref: "#/components/parameters/ListId"
     post:
-      operationId: refreshList
-      summary: Refresh list - delete all items and sync from the datasource. Refresh is invalid for manual list
+      operationId: fetchList
+      summary: Fetch list - delete all items and sync from the datasource. Fetch is invalid for manual list
       responses:
         "200":
           description: ""
@@ -832,8 +832,8 @@ components:
               enum:
                 - configured
                 - syncing
-                - resetting
-                - refreshing
+                - clearing
+                - fetching
                 - paused
                 - stopped
                 - completed
