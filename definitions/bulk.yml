@@ -561,12 +561,12 @@ paths:
                 $ref: "#/components/schemas/StatsRunSummaryDto"
       tags:
         - runs
-  /runs/{run_id}/stop:
+  /runs/{run_id}/cancel:
     parameters:
       - $ref: "#/components/parameters/RunId"
     post:
       operationId: stopJobRun
-      summary: Initiate run stop
+      summary: Initiate run cancellation
       responses:
         "202":
           description: ""
