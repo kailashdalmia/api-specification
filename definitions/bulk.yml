@@ -32,7 +32,7 @@ security:
 paths:
   /lists:
     get:
-      operationId: findAllLists
+      operationId: listFindAll
       summary: Find all lists
       parameters:
         - $ref: "#/components/parameters/Page"
@@ -58,7 +58,7 @@ paths:
       tags:
         - lists
     post:
-      operationId: createList
+      operationId: listCreate
       summary: Create list
       parameters: []
       requestBody:
@@ -80,7 +80,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/ListId"
     get:
-      operationId: getList
+      operationId: listGet
       summary: Get list by id
       responses:
         "200":
@@ -92,7 +92,7 @@ paths:
       tags:
         - lists
     put:
-      operationId: updateList
+      operationId: listUpdate
       summary: Update list
       requestBody:
         required: true
@@ -110,7 +110,7 @@ paths:
       tags:
         - lists
     delete:
-      operationId: deleteList
+      operationId: listDelete
       summary: Delete list
       responses:
         "200":
@@ -121,7 +121,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/ListId"
     post:
-      operationId: clearList
+      operationId: listClear
       summary: Clear list - delete all the list items
       responses:
         "200":
@@ -132,7 +132,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/ListId"
     post:
-      operationId: fetchList
+      operationId: listFetch
       summary: Fetch list - delete all items and sync from the datasource. Fetch is invalid for manual list
       responses:
         "200":
@@ -143,7 +143,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/ListId"
     get:
-      operationId: listItems
+      operationId: listItemFindAll
       summary: Iterate over list items
       parameters:
         - $ref: "#/components/parameters/Page"
@@ -169,7 +169,7 @@ paths:
       tags:
         - items
     post:
-      operationId: createListItem
+      operationId: listItemCreate
       summary: Create list item
       requestBody:
         required: true
@@ -190,7 +190,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/ListId"
     get:
-      operationId: downloadItems
+      operationId: listItemDownload
       summary: Download list items
       responses:
         "200":
@@ -202,7 +202,7 @@ paths:
       - $ref: "#/components/parameters/ListId"
       - $ref: "#/components/parameters/ItemId"
     get:
-      operationId: getListItem
+      operationId: listItemGet
       summary: Get list item by id
       responses:
         "200":
@@ -214,7 +214,7 @@ paths:
       tags:
         - items
     put:
-      operationId: updateListItem
+      operationId: listItemUpdate
       summary: Update list item
       requestBody:
         required: true
@@ -232,7 +232,7 @@ paths:
       tags:
         - items
     delete:
-      operationId: deleteListItem
+      operationId: listItemDelete
       summary: Delete list item
       responses:
         "200":
@@ -243,7 +243,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/ListId"
     post:
-      operationId: importItems
+      operationId: listItemImport
       summary: Import list items
       responses:
         "200":
@@ -252,7 +252,7 @@ paths:
         - items
   /actions:
     get:
-      operationId: findAllActions
+      operationId: actionFindAll
       summary: Find all actions
       parameters:
         - $ref: "#/components/parameters/Page"
@@ -278,7 +278,7 @@ paths:
       tags:
         - actions
     post:
-      operationId: createAction
+      operationId: actionCreate
       summary: Create action_call
       requestBody:
         required: true
@@ -299,7 +299,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/ActionId"
     get:
-      operationId: getAction
+      operationId: actionGet
       summary: Get action by id
       responses:
         "200":
@@ -311,7 +311,7 @@ paths:
       tags:
         - actions
     put:
-      operationId: updateAction
+      operationId: actionUpdate
       summary: Update action_call
       requestBody:
         required: true
@@ -329,7 +329,7 @@ paths:
       tags:
         - actions
     delete:
-      operationId: deleteAction
+      operationId: actionDelete
       summary: Delete action_call
       responses:
         "200":
@@ -342,7 +342,7 @@ paths:
         - actions
   /jobs:
     get:
-      operationId: findAllJobs
+      operationId: jobFindAll
       summary: Find all jobs
       parameters:
         - $ref: "#/components/parameters/Page"
@@ -368,7 +368,7 @@ paths:
       tags:
         - jobs
     post:
-      operationId: createJob
+      operationId: jobCreate
       summary: Create job
       requestBody:
         required: true
@@ -389,7 +389,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/JobId"
     get:
-      operationId: getJob
+      operationId: jobGet
       summary: Get job by id
       responses:
         "200":
@@ -401,7 +401,7 @@ paths:
       tags:
         - jobs
     put:
-      operationId: updateJob
+      operationId: jobUpdate
       summary: Update job
       requestBody:
         required: true
@@ -419,7 +419,7 @@ paths:
       tags:
         - jobs
     delete:
-      operationId: deleteJob
+      operationId: jobDelete
       summary: Delete job
       responses:
         "200":
@@ -428,7 +428,7 @@ paths:
         - jobs
   /events:
     get:
-      operationId: findEventsAll
+      operationId: eventFindAll
       summary: Get events
       parameters:
         - $ref: "#/components/parameters/Page"
@@ -459,7 +459,7 @@ paths:
         - events
   /runs:
     get:
-      operationId: findAllRuns
+      operationId: runFindAll
       summary: Find all runs
       parameters:
         - $ref: "#/components/parameters/Page"
@@ -485,7 +485,7 @@ paths:
       tags:
         - runs
     post:
-      operationId: scheduleAtRun
+      operationId: runSchedule
       summary: Start job
       requestBody:
         required: true
@@ -502,8 +502,8 @@ paths:
     parameters:
       - $ref: "#/components/parameters/RunId"
     get:
-      operationId: getJobRun
-      summary: Get job run by id
+      operationId: runGet
+      summary: Get run by id
       responses:
         "200":
           description: ""
@@ -517,7 +517,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/RunId"
     get:
-      operationId: findEventsAllRun
+      operationId: runEvents
       summary: Get job run events
       parameters:
         - $ref: "#/components/parameters/Page"
@@ -550,7 +550,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/RunId"
     get:
-      operationId: getTotalStats
+      operationId: runSummary
       summary: Get action runs and recipient responses statistics overview
       responses:
         "200":
@@ -565,7 +565,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/RunId"
     post:
-      operationId: stopJobRun
+      operationId: runCancel
       summary: Initiate run cancellation
       responses:
         "202":
@@ -574,7 +574,7 @@ paths:
         - runs
   /webhooks/actions/status:
     post:
-      operationId: actionStatus
+      operationId: webhookActionStatus
       summary: Webhook endpoint to handle action call status for async actions
       responses:
         "200":
@@ -585,7 +585,7 @@ paths:
         - {}
   /webhooks/recipients/responses:
     post:
-      operationId: recipientResponse
+      operationId: webhookRecipientResponse
       summary: Webhook endpoint to handle recipient responses
       responses:
         "200":
@@ -600,6 +600,7 @@ components:
       scheme: bearer
       bearerFormat: JWT
       type: http
+
   parameters:
     Page:
       name: page
@@ -669,7 +670,7 @@ components:
       type: string
       format: uuid
       example:
-        $ref: "#/components/examples/ManualList/value/id"
+        $ref: "#/components/examples/ListManual/value/id"
 
     ItemId:
       type: string
@@ -681,7 +682,7 @@ components:
       type: string
       format: uuid
       example:
-        $ref: "#/components/examples/SendSMS/value/id"
+        $ref: "#/components/examples/ActionSendSMS/value/id"
 
     JobId:
       type: string
@@ -694,6 +695,18 @@ components:
       format: uuid
       example:
         $ref: "#/components/examples/SegmentationRun/value/id"
+
+    InvocationId:
+      type: string
+      format: uuid
+      example:
+        $ref: "#/components/examples/ActionCallEventMessaging/value/invocation_id"
+
+    RecipientId:
+      type: string
+      format: uuid
+      example:
+        $ref: "#/components/examples/ActionCallEventMessaging/value/recipient_id"
 
     PageQueryDto:
       type: object
@@ -731,6 +744,7 @@ components:
           $ref: "#/components/schemas/Href"
         next:
           $ref: "#/components/schemas/Href"
+      # todo: is all attributes of links required?
       required:
         - first
         - prev
@@ -1443,7 +1457,7 @@ components:
                 - name: message
                   value: "{{ template.message }}"
 
-    ActionCallSucceededEvent:
+    StatisticsEvent:
       type: object
       properties:
         id:
@@ -1474,30 +1488,64 @@ components:
             city: North Assunta
             country: Iceland
             state: PH
-        job_id:
-          $ref: "#/components/schemas/JobId"
-        job_run_id:
-          $ref: "#/components/schemas/RunId"
-        recipient_id:
-          type: object
-          example: "12025550135"
-        action_id:
-          type: string
-          readOnly: true
-          example: 125478b5-ef63-46e3-85d9-fdbee42c9242
-        invocation_id:
-          type: string
-          example: 907cbc63-08de-4238-8fc9-8f9d67815d1b
       required:
         - id
         - event_type
         - src_ctx
         - occurred_at
         - event_data
+
+    ExecutionStatisticsEvent:
+      allOf:
+        - $ref: "#/components/schemas/StatisticsEvent"
+        - type: object
+          properties:
+            job_id:
+              $ref: "#/components/schemas/JobId"
+            job_run_id:
+              $ref: "#/components/schemas/RunId"
+            recipient_id:
+              $ref: "#/components/schemas/RecipientId"
+      required:
         - job_id
         - job_run_id
         - recipient_id
+
+    ActionStatisticsEvent:
+      allOf:
+        - $ref: "#/components/schemas/ExecutionStatisticsEvent"
+        - type: object
+          properties:
+            action_id:
+              $ref: "#/components/schemas/ActionId"
+            invocation_id:
+              $ref: "#/components/schemas/InvocationId"
+      required:
         - action_id
+
+    ActionCallFailedEvent:
+      allOf:
+        - $ref: "#/components/schemas/ActionStatisticsEvent"
+        - type: object
+          properties:
+            event_type:
+              type: string
+              example: action-call-failed
+
+    ActionCallInfoEvent:
+      allOf:
+        - $ref: "#/components/schemas/ActionStatisticsEvent"
+        - type: object
+          properties:
+            event_type:
+              type: string
+              example: action-call-info
+            error:
+              $ref: "#/components/schemas/EventErrorDto"
+
+    ActionCallSucceededEvent:
+      allOf:
+        - $ref: "#/components/schemas/ActionStatisticsEvent"
 
     RecipientResponseEvent:
       type: object
@@ -1534,8 +1582,7 @@ components:
         job_run_id:
           $ref: "#/components/schemas/RunId"
         recipient_id:
-          type: object
-          example: "12025550135"
+          $ref: "#/components/schemas/RecipientId"
       required:
         - id
         - event_type
@@ -1576,62 +1623,6 @@ components:
         - statistics
         - value
 
-    ActionCallInfoEvent:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          example: 92cc64e5-f62b-464f-ab9c-4376bd05adfc
-        event_type:
-          type: string
-          enum:
-            - action-call-succeeded
-            - action-call-failed
-            - action-call-info
-            - recipient-response
-            - run-item-skipped
-            - run-item-failed
-          example: action-call-succeeded
-          readOnly: true
-        src_ctx:
-          type: string
-          example: uk recipient
-        occurred_at:
-          format: date-time
-          type: string
-          example: "2022-06-19T20:41:59.085Z"
-        event_data:
-          type: object
-          example:
-            city: North Assunta
-            country: Iceland
-            state: PH
-        job_id:
-          $ref: "#/components/schemas/JobId"
-        job_run_id:
-          $ref: "#/components/schemas/RunId"
-        recipient_id:
-          type: object
-          example: "12025550135"
-        action_id:
-          type: string
-          readOnly: true
-          example: a133c9e7-8cb8-4df9-a27f-b8e9065490da
-        invocation_id:
-          type: string
-          example: a54c7944-ba11-45af-a146-3f0c9887d5f9
-      required:
-        - id
-        - event_type
-        - src_ctx
-        - occurred_at
-        - event_data
-        - job_id
-        - job_run_id
-        - recipient_id
-        - action_id
-
     EventErrorDto:
       type: object
       properties:
@@ -1642,64 +1633,6 @@ components:
           example: Not found
       required:
         - details
-
-    ActionCallFailedEvent:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          example: 92cc64e5-f62b-464f-ab9c-4376bd05adfc
-        event_type:
-          type: string
-          enum:
-            - action-call-succeeded
-            - action-call-failed
-            - action-call-info
-            - recipient-response
-            - run-item-skipped
-            - run-item-failed
-          example: action-call-failed
-          readOnly: true
-        src_ctx:
-          type: string
-          example: uk recipient
-        occurred_at:
-          format: date-time
-          type: string
-          example: "2022-06-19T20:41:59.085Z"
-        event_data:
-          type: object
-          example:
-            city: North Assunta
-            country: Iceland
-            state: PH
-        job_id:
-          $ref: "#/components/schemas/JobId"
-        job_run_id:
-          $ref: "#/components/schemas/RunId"
-        recipient_id:
-          type: object
-          example: "12025550135"
-        action_id:
-          type: string
-          readOnly: true
-          example: a133c9e7-8cb8-4df9-a27f-b8e9065490da
-        invocation_id:
-          type: string
-          example: a54c7944-ba11-45af-a146-3f0c9887d5f9
-        error:
-          $ref: "#/components/schemas/EventErrorDto"
-      required:
-        - id
-        - event_type
-        - src_ctx
-        - occurred_at
-        - event_data
-        - job_id
-        - job_run_id
-        - recipient_id
-        - action_id
 
     JobRunDto:
       allOf:
@@ -1766,7 +1699,7 @@ components:
         - summary
 
   examples:
-    ManualList:
+    ListManual:
       value:
         id: af8a84b6-c712-4252-ac8d-6e28ac9317ce
         name: Recipients for demo
@@ -1785,6 +1718,31 @@ components:
         sync_status: configured
         created_at: "2022-06-23T13:13:16.491Z"
         updated_at: "2022-06-23T13:13:16.491Z"
+
+    ListSalesforce:
+      value:
+        id: 4cb98f71-a879-49f7-b5cf-2314353eb52c
+        name: Salesforce contact
+        description: Salesforce contacts for campaign
+        tags:
+          - salesforce
+        labels:
+          - key: false
+            name: Id
+          - key: false
+            name: Phone
+          - key: false
+            name: Email
+        datasource:
+          type: salesforce
+          integration_id: salesforce
+          soql: SELECT Id, LastName, FirstName, Phone, Email, OtherCountry FROM Contact
+        type: salesforce
+        items_count: 0
+        sync_status: configured
+        content_synced: false
+        created_at: '2022-08-02T13:22:04.267Z'
+        updated_at: '2022-08-02T13:22:04.267Z'
 
     ListItem:
       value:
@@ -1805,7 +1763,7 @@ components:
         created_at: "2022-06-20T05:46:00.936Z"
         updated_at: "2022-06-20T05:46:00.936Z"
 
-    SendSMS:
+    ActionSendSMS:
       value:
         id: 99ea10e0-1f14-4f55-b976-3c88ea8ec4cd
         name: vg-send-sms
@@ -1939,3 +1897,10 @@ components:
         end_at: "2022-06-24T08:57:55.917Z"
         created_at: "2022-06-24T07:57:56.301Z"
         updated_at: "2022-06-24T07:57:56.301Z"
+
+    # todo: complete events example
+    ActionCallEventMessaging:
+      value:
+        id: 9a8afd25-b6cc-4067-982f-5ff87b01973f
+        recipient_id: 9a8afd25-b6cc-4067-982f-5ff87b01973f
+        invocation_id: 9a8afd25-b6cc-4067-982f-5ff87b01973f
