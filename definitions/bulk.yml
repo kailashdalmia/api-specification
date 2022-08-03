@@ -39,22 +39,7 @@ paths:
         - $ref: "#/components/parameters/PageSize"
       responses:
         "200":
-          description: List of lists associated with an application
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/PageResponseDto"
-                  - properties:
-                      _embedded:
-                        type: object
-                        readOnly: true
-                        properties:
-                          lists:
-                            type: array
-                            readOnly: true
-                            items:
-                              $ref: "#/components/schemas/ListDto"
+          $ref: "#/components/responses/ListPageResponse"
       tags:
         - lists
     post:
@@ -69,11 +54,7 @@ paths:
               $ref: "#/components/schemas/UpdateListDto"
       responses:
         "201":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ListDto"
+          $ref: "#/components/responses/ListResponse"
       tags:
         - lists
   /lists/{list_id}:
@@ -84,11 +65,7 @@ paths:
       summary: Get list by id
       responses:
         "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ListDto"
+          $ref: "#/components/responses/ListResponse"
       tags:
         - lists
     put:
@@ -102,11 +79,7 @@ paths:
               $ref: "#/components/schemas/UpdateListDto"
       responses:
         "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ListDto"
+          $ref: "#/components/responses/ListResponse"
       tags:
         - lists
     delete:
@@ -114,7 +87,7 @@ paths:
       summary: Delete list
       responses:
         "200":
-          description: ""
+          $ref: "#/components/responses/ListResponse"
       tags:
         - lists
   /lists/{list_id}/clear:
@@ -124,8 +97,8 @@ paths:
       operationId: listClear
       summary: Clear list - delete all the list items
       responses:
-        "200":
-          description: ""
+        "204":
+          description: No content
       tags:
         - lists
   /lists/{list_id}/fetch:
@@ -135,8 +108,8 @@ paths:
       operationId: listFetch
       summary: Fetch list - delete all items and sync from the datasource. Fetch is invalid for manual list
       responses:
-        "200":
-          description: ""
+        "204":
+          description: No content
       tags:
         - lists
   /lists/{list_id}/items:
@@ -150,22 +123,7 @@ paths:
         - $ref: "#/components/parameters/PageSize"
       responses:
         "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/PageResponseDto"
-                  - properties:
-                      _embedded:
-                        type: object
-                        readOnly: true
-                        properties:
-                          items:
-                            type: array
-                            readOnly: true
-                            items:
-                              $ref: "#/components/schemas/ListItemDto"
+          $ref: "#/components/responses/ListItemPageResponse"
       tags:
         - items
     post:
@@ -179,11 +137,7 @@ paths:
               $ref: "#/components/schemas/CreateListItemDto"
       responses:
         "201":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ListItemDto"
+          $ref: "#/components/responses/ListItemResponse"
       tags:
         - items
   /lists/{list_id}/items/download:
@@ -194,7 +148,7 @@ paths:
       summary: Download list items
       responses:
         "200":
-          description: ""
+          description: "Stream response"
       tags:
         - items
   /lists/{list_id}/items/{item_id}:
@@ -206,11 +160,7 @@ paths:
       summary: Get list item by id
       responses:
         "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ListItemDto"
+          $ref: "#/components/responses/ListItemResponse"
       tags:
         - items
     put:
@@ -224,11 +174,7 @@ paths:
               $ref: "#/components/schemas/UpdateListItemDto"
       responses:
         "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ListItemDto"
+          $ref: "#/components/responses/ListItemResponse"
       tags:
         - items
     delete:
@@ -236,7 +182,7 @@ paths:
       summary: Delete list item
       responses:
         "200":
-          description: ""
+          $ref: "#/components/responses/ListItemResponse"
       tags:
         - items
   /lists/{list_id}/items/import:
@@ -247,7 +193,7 @@ paths:
       summary: Import list items
       responses:
         "200":
-          description: ""
+          $ref: "#/components/responses/ListItemImportResponse"
       tags:
         - items
   /actions:
@@ -669,44 +615,37 @@ components:
     ListId:
       type: string
       format: uuid
-      example:
-        $ref: "#/components/examples/ListManual/value/id"
+      example: af8a84b6-c712-4252-ac8d-6e28ac9317ce
 
     ItemId:
       type: string
       format: uuid
-      example:
-        $ref: "#/components/examples/ListItem/value/id"
+      example: 945f6ca9-b6fa-4bd0-95c3-c4e1ecb15e2f
 
     ActionId:
       type: string
       format: uuid
-      example:
-        $ref: "#/components/examples/ActionSendSMS/value/id"
+      example: 99ea10e0-1f14-4f55-b976-3c88ea8ec4cd
 
     JobId:
       type: string
       format: uuid
-      example:
-        $ref: "#/components/examples/SegmentationJob/value/id"
+      example: e721113d-0948-4edb-b4af-e3f0578d708c
 
     RunId:
       type: string
       format: uuid
-      example:
-        $ref: "#/components/examples/SegmentationRun/value/id"
+      example: 51aca838-2cf6-4100-b0d2-e74ac0e95c88
 
     InvocationId:
       type: string
       format: uuid
-      example:
-        $ref: "#/components/examples/ActionCallEventMessaging/value/invocation_id"
+      example: 9a8afd25-b6cc-4067-982f-5ff87b01973f
 
     RecipientId:
       type: string
       format: uuid
-      example:
-        $ref: "#/components/examples/ActionCallEventMessaging/value/recipient_id"
+      example: 12025550135
 
     PageQueryDto:
       type: object
@@ -1738,11 +1677,51 @@ components:
           integration_id: salesforce
           soql: SELECT Id, LastName, FirstName, Phone, Email, OtherCountry FROM Contact
         type: salesforce
-        items_count: 0
-        sync_status: configured
-        content_synced: false
+        items_count: 25000
+        sync_status: completed
+        content_synced: true
         created_at: '2022-08-02T13:22:04.267Z'
         updated_at: '2022-08-02T13:22:04.267Z'
+
+    ListPageResponse:
+      value:
+        total_items: 2
+        page: 1
+        page_size: 100
+        _embedded:
+          lists:
+            - $ref: "#/components/examples/ListManual/value"
+            - $ref: "#/components/examples/ListSalesforce/value"
+        total_pages: 1
+        _links:
+          self:
+            href: https://api-eu.vonage.com/v0.1/bulk/lists?page_size=100&page=1
+          prev:
+            href: https://api-eu.vonage.com/v0.1/bulk/lists?page_size=100&page=1
+          next:
+            href: https://api-eu.vonage.com/v0.1/bulk/lists?page_size=100&page=1
+          first:
+            href: https://api-eu.vonage.com/v0.1/bulk/lists?page_size=100&page=1
+
+    ListItemPageResponse:
+      value:
+        total_items: 2
+        page: 1
+        page_size: 100
+        _embedded:
+          items:
+            - $ref: "#/components/examples/ListItemSF1/value"
+            - $ref: "#/components/examples/ListItemSF2/value"
+        total_pages: 1
+        _links:
+          self:
+            href: https://api-eu.vonage.com/v0.1/bulk/lists/060b9c33-6c81-4fe4-9621-b10c0a4c06f3/items/?page_size=100&page=1
+          prev:
+            href: https://api-eu.vonage.com/v0.1/bulk/lists/060b9c33-6c81-4fe4-9621-b10c0a4c06f3/items/?page_size=100&page=1
+          next:
+            href: https://api-eu.vonage.com/v0.1/bulk/lists/060b9c33-6c81-4fe4-9621-b10c0a4c06f3/items/?page_size=100&page=1
+          first:
+            href: https://api-eu.vonage.com/v0.1/bulk/lists/060b9c33-6c81-4fe4-9621-b10c0a4c06f3/items/?page_size=100&page=1
 
     ListItem:
       value:
@@ -1762,6 +1741,44 @@ components:
           salary: 1000
         created_at: "2022-06-20T05:46:00.936Z"
         updated_at: "2022-06-20T05:46:00.936Z"
+
+    ListItemSF1:
+      value:
+        id: 6e26d247-e074-4f68-b72b-dd92aa02c7e0
+        created_at: '2022-08-03T08:54:21.122Z'
+        updated_at: '2022-08-03T08:54:21.122Z'
+        list_id: 060b9c33-6c81-4fe4-9621-b10c0a4c06f3
+        data:
+          Id: '0038d00000B22zbAAB'
+          Email: info@salesforce.com
+          Phone: "(415) 555-1212"
+          LastName: Minor
+          FirstName: Geoff
+          attributes:
+            url: "/services/data/v42.0/sobjects/Contact/0038d00000B22zbAAB"
+            type: Contact
+          OtherCountry: Canada
+
+    ListItemSF2:
+      value:
+        id: f7c029ad-93c3-469c-9267-73c3c6864161
+        created_at: '2022-08-03T08:54:21.122Z'
+        updated_at: '2022-08-03T08:54:21.122Z'
+        list_id: 060b9c33-6c81-4fe4-9621-b10c0a4c06f3
+        data:
+          Id: '0038d00000B22zcAAB'
+          Email: info@salesforce.com
+          Phone: "(415) 555-1212"
+          LastName: White
+          FirstName: Carole
+          attributes:
+            url: "/services/data/v42.0/sobjects/Contact/0038d00000B22zcAAB"
+            type: Contact
+          OtherCountry:
+
+    ListItemImport:
+      value:
+        inserted: 10000
 
     ActionSendSMS:
       value:
@@ -1902,5 +1919,78 @@ components:
     ActionCallEventMessaging:
       value:
         id: 9a8afd25-b6cc-4067-982f-5ff87b01973f
-        recipient_id: 9a8afd25-b6cc-4067-982f-5ff87b01973f
+        recipient_id: 12025550135
         invocation_id: 9a8afd25-b6cc-4067-982f-5ff87b01973f
+
+  responses:
+    ListPageResponse:
+      description: List of lists associated with an application
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/PageResponseDto"
+              - properties:
+                  _embedded:
+                    type: object
+                    readOnly: true
+                    properties:
+                      lists:
+                        type: array
+                        readOnly: true
+                        items:
+                          $ref: "#/components/schemas/ListDto"
+          examples:
+            simple:
+              $ref: "#/components/examples/ListPageResponse/value"
+
+    ListResponse:
+      description: "Return a single list"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ListDto"
+          examples:
+            simple:
+              $ref: "#/components/examples/ListSalesforce/value"
+
+    ListItemPageResponse:
+      description: "Get list items"
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/PageResponseDto"
+              - properties:
+                  _embedded:
+                    type: object
+                    readOnly: true
+                    properties:
+                      items:
+                        type: array
+                        readOnly: true
+                        items:
+                          $ref: "#/components/schemas/ListItemDto"
+          examples:
+            simple:
+              $ref: "#/components/examples/ListItemPageResponse/value"
+
+    ListItemResponse:
+      description: "Get list item"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ListItemDto"
+          examples:
+            simple:
+              $ref: "#/components/examples/ListItemSF1/value"
+
+    ListItemImportResponse:
+      description: "Response for importing list item from file"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiChangedDto"
+          examples:
+            simple:
+              $ref: "#/components/examples/ListItemImport/value"
