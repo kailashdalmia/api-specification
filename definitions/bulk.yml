@@ -205,22 +205,7 @@ paths:
         - $ref: "#/components/parameters/PageSize"
       responses:
         "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/PageResponseDto"
-                  - properties:
-                      _embedded:
-                        type: object
-                        readOnly: true
-                        properties:
-                          actions:
-                            type: array
-                            readOnly: true
-                            items:
-                              $ref: "#/components/schemas/ActionDto"
+          $ref: "#/components/responses/ActionPageResponse"
       tags:
         - actions
     post:
@@ -234,11 +219,7 @@ paths:
               $ref: "#/components/schemas/CreateActionDto"
       responses:
         "201":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ActionDto"
+          $ref: "#/components/responses/ActionResponse"
       tags:
         - actions
   /actions/{action_id}:
@@ -249,11 +230,7 @@ paths:
       summary: Get action by id
       responses:
         "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ActionDto"
+          $ref: "#/components/responses/ActionResponse"
       tags:
         - actions
     put:
@@ -267,11 +244,7 @@ paths:
               $ref: "#/components/schemas/UpdateActionDto"
       responses:
         "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ActionDto"
+          $ref: "#/components/responses/ActionResponse"
       tags:
         - actions
     delete:
@@ -279,11 +252,7 @@ paths:
       summary: Delete action_call
       responses:
         "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ActionDto"
+          $ref: "#/components/responses/ActionResponse"
       tags:
         - actions
   /jobs:
@@ -295,22 +264,7 @@ paths:
         - $ref: "#/components/parameters/PageSize"
       responses:
         "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/PageResponseDto"
-                  - properties:
-                      _embedded:
-                        type: object
-                        readOnly: true
-                        properties:
-                          jobs:
-                            type: array
-                            readOnly: true
-                            items:
-                              $ref: "#/components/schemas/JobDto"
+          $ref: "#/components/responses/JobPageResponse"
       tags:
         - jobs
     post:
@@ -324,11 +278,7 @@ paths:
               $ref: "#/components/schemas/CreateJobDto"
       responses:
         "201":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/JobDto"
+          $ref: "#/components/responses/JobResponse"
       tags:
         - jobs
   /jobs/{job_id}:
@@ -339,11 +289,7 @@ paths:
       summary: Get job by id
       responses:
         "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/JobDto"
+          $ref: "#/components/responses/JobResponse"
       tags:
         - jobs
     put:
@@ -357,11 +303,7 @@ paths:
               $ref: "#/components/schemas/UpdateJobDto"
       responses:
         "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/JobDto"
+          $ref: "#/components/responses/JobResponse"
       tags:
         - jobs
     delete:
@@ -369,7 +311,7 @@ paths:
       summary: Delete job
       responses:
         "200":
-          description: ""
+          $ref: "#/components/responses/JobResponse"
       tags:
         - jobs
   /events:
@@ -381,26 +323,7 @@ paths:
         - $ref: "#/components/parameters/PageSize"
       responses:
         "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/PageResponseDto"
-                  - properties:
-                      _embedded:
-                        type: object
-                        readOnly: true
-                        properties:
-                          events:
-                            type: array
-                            readOnly: true
-                            items:
-                              oneOf:
-                                - $ref: "#/components/schemas/ActionCallSucceededEvent"
-                                - $ref: "#/components/schemas/ActionCallFailedEvent"
-                                - $ref: "#/components/schemas/ActionCallInfoEvent"
-                                - $ref: "#/components/schemas/RecipientResponseEvent"
+          $ref: "#/components/responses/EventPageResponse"
       tags:
         - events
   /runs:
@@ -412,22 +335,7 @@ paths:
         - $ref: "#/components/parameters/PageSize"
       responses:
         "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/PageResponseDto"
-                  - properties:
-                      _embedded:
-                        type: object
-                        readOnly: true
-                        properties:
-                          runs:
-                            type: array
-                            readOnly: true
-                            items:
-                              $ref: "#/components/schemas/ActionDto"
+          $ref: "#/components/responses/RunPageResponse"
       tags:
         - runs
     post:
@@ -452,11 +360,7 @@ paths:
       summary: Get run by id
       responses:
         "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/JobRunDto"
+          $ref: "#/components/responses/RunResponse"
       tags:
         - runs
   /runs/{run_id}/events:
@@ -470,26 +374,7 @@ paths:
         - $ref: "#/components/parameters/PageSize"
       responses:
         "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/PageResponseDto"
-                  - properties:
-                      _embedded:
-                        type: object
-                        readOnly: true
-                        properties:
-                          events:
-                            type: array
-                            readOnly: true
-                            items:
-                              oneOf:
-                                - $ref: "#/components/schemas/ActionCallSucceededEvent"
-                                - $ref: "#/components/schemas/ActionCallFailedEvent"
-                                - $ref: "#/components/schemas/ActionCallInfoEvent"
-                                - $ref: "#/components/schemas/RecipientResponseEvent"
+          $ref: "#/components/responses/EventPageResponse"
       tags:
         - runs
   /runs/{run_id}/summary:
@@ -1942,7 +1827,7 @@ components:
                           $ref: "#/components/schemas/ListDto"
           examples:
             simple:
-              $ref: "#/components/examples/ListPageResponse/value"
+              $ref: "#/components/examples/ListPageResponse"
 
     ListResponse:
       description: "Return a single list"
@@ -1952,7 +1837,7 @@ components:
             $ref: "#/components/schemas/ListDto"
           examples:
             simple:
-              $ref: "#/components/examples/ListSalesforce/value"
+              $ref: "#/components/examples/ListSalesforce"
 
     ListItemPageResponse:
       description: "Get list items"
@@ -1973,7 +1858,7 @@ components:
                           $ref: "#/components/schemas/ListItemDto"
           examples:
             simple:
-              $ref: "#/components/examples/ListItemPageResponse/value"
+              $ref: "#/components/examples/ListItemPageResponse"
 
     ListItemResponse:
       description: "Get list item"
@@ -1983,7 +1868,7 @@ components:
             $ref: "#/components/schemas/ListItemDto"
           examples:
             simple:
-              $ref: "#/components/examples/ListItemSF1/value"
+              $ref: "#/components/examples/ListItemSF1"
 
     ListItemImportResponse:
       description: "Response for importing list item from file"
@@ -1993,4 +1878,101 @@ components:
             $ref: "#/components/schemas/ApiChangedDto"
           examples:
             simple:
-              $ref: "#/components/examples/ListItemImport/value"
+              $ref: "#/components/examples/ListItemImport"
+
+    ActionPageResponse:
+      description: ""
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/PageResponseDto"
+              - properties:
+                  _embedded:
+                    type: object
+                    readOnly: true
+                    properties:
+                      actions:
+                        type: array
+                        readOnly: true
+                        items:
+                          $ref: "#/components/schemas/ActionDto"
+
+    ActionResponse:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ActionDto"
+
+    JobPageResponse:
+      description: ""
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/PageResponseDto"
+              - properties:
+                  _embedded:
+                    type: object
+                    readOnly: true
+                    properties:
+                      jobs:
+                        type: array
+                        readOnly: true
+                        items:
+                          $ref: "#/components/schemas/JobDto"
+
+    JobResponse:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/JobDto"
+
+    EventPageResponse:
+      description: ""
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/PageResponseDto"
+              - properties:
+                  _embedded:
+                    type: object
+                    readOnly: true
+                    properties:
+                      events:
+                        type: array
+                        readOnly: true
+                        items:
+                          oneOf:
+                            - $ref: "#/components/schemas/ActionCallSucceededEvent"
+                            - $ref: "#/components/schemas/ActionCallFailedEvent"
+                            - $ref: "#/components/schemas/ActionCallInfoEvent"
+                            - $ref: "#/components/schemas/RecipientResponseEvent"
+
+    RunPageResponse:
+      description: ""
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/PageResponseDto"
+              - properties:
+                  _embedded:
+                    type: object
+                    readOnly: true
+                    properties:
+                      runs:
+                        type: array
+                        readOnly: true
+                        items:
+                          $ref: "#/components/schemas/ActionDto"
+
+    RunResponse:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/JobRunDto"
