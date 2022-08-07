@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
   title: Vonage Bulk API
   description: REST APIs for VCP Bulk Jobs & Lists
@@ -28,7 +28,7 @@ servers:
   - url: https://api-eu.vonage.com/v0.1/bulk
     description: prod env in EU geo
 security:
-  - bearerAuth: []
+  - bearerAuth: [ ]
 paths:
   /lists:
     get:
@@ -45,13 +45,9 @@ paths:
     post:
       operationId: listCreate
       summary: Create list
-      parameters: []
+      parameters: [ ]
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UpdateListDto"
+        $ref: "#/components/requestBodies/ListRequest"
       responses:
         "201":
           $ref: "#/components/responses/ListResponse"
@@ -72,11 +68,7 @@ paths:
       operationId: listUpdate
       summary: Update list
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UpdateListDto"
+        $ref: "#/components/requestBodies/ListRequest"
       responses:
         "200":
           $ref: "#/components/responses/ListResponse"
@@ -98,7 +90,7 @@ paths:
       summary: Clear list - delete all the list items
       responses:
         "204":
-          description: No content
+          $ref: "#/components/responses/NoContent"
       tags:
         - lists
   /lists/{list_id}/fetch:
@@ -109,7 +101,7 @@ paths:
       summary: Fetch list - delete all items and sync from the datasource. Fetch is invalid for manual list
       responses:
         "204":
-          description: No content
+          $ref: "#/components/responses/NoContent"
       tags:
         - lists
   /lists/{list_id}/items:
@@ -130,11 +122,7 @@ paths:
       operationId: listItemCreate
       summary: Create list item
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateListItemDto"
+        $ref: "#/components/requestBodies/ListItemRequest"
       responses:
         "201":
           $ref: "#/components/responses/ListItemResponse"
@@ -148,6 +136,7 @@ paths:
       summary: Download list items
       responses:
         "200":
+          # todo: how to set stream response
           description: "Stream response"
       tags:
         - items
@@ -167,11 +156,7 @@ paths:
       operationId: listItemUpdate
       summary: Update list item
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UpdateListItemDto"
+        $ref: "#/components/requestBodies/ListItemRequest"
       responses:
         "200":
           $ref: "#/components/responses/ListItemResponse"
@@ -212,11 +197,7 @@ paths:
       operationId: actionCreate
       summary: Create action_call
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateActionDto"
+        $ref: "#/components/requestBodies/ActionRequest"
       responses:
         "201":
           $ref: "#/components/responses/ActionResponse"
@@ -237,11 +218,7 @@ paths:
       operationId: actionUpdate
       summary: Update action_call
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UpdateActionDto"
+        $ref: "#/components/requestBodies/ActionRequest"
       responses:
         "200":
           $ref: "#/components/responses/ActionResponse"
@@ -271,11 +248,7 @@ paths:
       operationId: jobCreate
       summary: Create job
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateJobDto"
+        $ref: "#/components/requestBodies/JobRequest"
       responses:
         "201":
           $ref: "#/components/responses/JobResponse"
@@ -296,11 +269,7 @@ paths:
       operationId: jobUpdate
       summary: Update job
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UpdateJobDto"
+        $ref: "#/components/requestBodies/JobRequest"
       responses:
         "200":
           $ref: "#/components/responses/JobResponse"
@@ -342,11 +311,7 @@ paths:
       operationId: runSchedule
       summary: Start job
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateJobRunDto"
+        $ref: "#/components/requestBodies/RunRequest"
       responses:
         "202":
           description: ""
@@ -413,7 +378,7 @@ paths:
       tags:
         - webhooks
       security:
-        - {}
+        - { }
   /webhooks/recipients/responses:
     post:
       operationId: webhookRecipientResponse
@@ -424,7 +389,7 @@ paths:
       tags:
         - webhooks
       security:
-        - {}
+        - { }
 components:
   securitySchemes:
     bearerAuth:
@@ -496,16 +461,588 @@ components:
       schema:
         $ref: "#/components/schemas/RunId"
 
+  requestBodies:
+    ListRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateListDto"
+          examples:
+            manual:
+              $ref: "#/components/examples/ListManual"
+            salesforce:
+              $ref: "#/components/examples/ListSalesforce"
+
+    ListItemRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateListItemDto"
+          examples:
+            simple:
+              $ref: "#/components/examples/ListItemRequest"
+
+    ActionRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateActionDto"
+          examples:
+            simple:
+              $ref: "#/components/examples/ActionSendSMSRequest"
+
+    JobRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateJobDto"
+          examples:
+            simple:
+              $ref: "#/components/examples/SegmentationJobRequest"
+
+    RunRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateJobRunDto"
+          examples:
+            simple:
+              $ref: "#/components/examples/SegmentationRunRequest"
+
+  responses:
+    NoContent:
+      description: No content
+
+    ListResponse:
+      description: "List response"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ListDto"
+          examples:
+            manual:
+              $ref: "#/components/examples/ListManualResponse"
+            salesforce:
+              $ref: "#/components/examples/ListSalesforceResponse"
+
+    ListPageResponse:
+      description: Paged list response
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/PageResponseDto"
+              - properties:
+                  _embedded:
+                    type: object
+                    readOnly: true
+                    properties:
+                      lists:
+                        type: array
+                        readOnly: true
+                        items:
+                          $ref: "#/components/schemas/ListDto"
+          example:
+            page: 1
+            page_size: 100
+            total_items: 2
+            total_pages: 1
+            _links:
+              self:
+                href: https://api-eu.vonage.com/v0.1/bulk/lists?page_size=100&page=1
+              prev:
+                href: https://api-eu.vonage.com/v0.1/bulk/lists?page_size=100&page=1
+              next:
+                href: https://api-eu.vonage.com/v0.1/bulk/lists?page_size=100&page=1
+              first:
+                href: https://api-eu.vonage.com/v0.1/bulk/lists?page_size=100&page=1
+            _embedded:
+              lists:
+                # todo - can we reuse examples? Based on doc and tickets no
+                # - $ref: "#/components/examples/ListManualResponse/value"
+                - id: af8a84b6-c712-4252-ac8d-6e28ac9317ce
+                  name: Recipients for demo
+                  description: List of recipients for demo
+                  type: manual
+                  tags:
+                    - vip
+                  labels:
+                    - name: firstName
+                    - name: lastName
+                      key: false
+                    - name: number
+                      alias: phoneNumber
+                      key: true
+                  items_count: 1000
+                  sync_status: configured
+                  created_at: "2022-06-23T13:13:16.491Z"
+                  updated_at: "2022-06-23T13:13:16.491Z"
+                #                - $ref: "#/components/examples/ListSalesforceResponse/value"
+                - id: 4cb98f71-a879-49f7-b5cf-2314353eb52c
+                  name: Salesforce contact
+                  description: Salesforce contacts for campaign
+                  tags:
+                    - salesforce
+                  labels:
+                    - key: false
+                      name: Id
+                    - key: false
+                      name: Phone
+                    - key: false
+                      name: Email
+                  datasource:
+                    type: salesforce
+                    integration_id: salesforce
+                    soql: SELECT Id, LastName, FirstName, Phone, Email, OtherCountry FROM Contact
+                  type: salesforce
+                  items_count: 25000
+                  sync_status: completed
+                  content_synced: true
+                  created_at: '2022-08-02T13:22:04.267Z'
+                  updated_at: '2022-08-02T13:22:04.267Z'
+
+    ListItemResponse:
+      description: "List item"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ListItemDto"
+          examples:
+            simple:
+              $ref: "#/components/examples/ListItemResponse"
+
+    ListItemPageResponse:
+      description: "Get list items"
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/PageResponseDto"
+              - properties:
+                  _embedded:
+                    type: object
+                    readOnly: true
+                    properties:
+                      items:
+                        type: array
+                        readOnly: true
+                        items:
+                          $ref: "#/components/schemas/ListItemDto"
+          examples:
+            simple:
+              value:
+                total_items: 2
+                page: 1
+                page_size: 100
+                total_pages: 1
+                _links:
+                  self:
+                    href: https://api-eu.vonage.com/v0.1/bulk/lists/060b9c33-6c81-4fe4-9621-b10c0a4c06f3/items/?page_size=100&page=1
+                  prev:
+                    href: https://api-eu.vonage.com/v0.1/bulk/lists/060b9c33-6c81-4fe4-9621-b10c0a4c06f3/items/?page_size=100&page=1
+                  next:
+                    href: https://api-eu.vonage.com/v0.1/bulk/lists/060b9c33-6c81-4fe4-9621-b10c0a4c06f3/items/?page_size=100&page=1
+                  first:
+                    href: https://api-eu.vonage.com/v0.1/bulk/lists/060b9c33-6c81-4fe4-9621-b10c0a4c06f3/items/?page_size=100&page=1
+                _embedded:
+                  items:
+                    # - $ref: "#/components/examples/ListItemResponse"
+                    - id: 6e26d247-e074-4f68-b72b-dd92aa02c7e0
+                      created_at: '2022-08-03T08:54:21.122Z'
+                      updated_at: '2022-08-03T08:54:21.122Z'
+                      list_id: 060b9c33-6c81-4fe4-9621-b10c0a4c06f3
+                      data:
+                        Id: '0038d00000B22zbAAB'
+                        Email: info@salesforce.com
+                        Phone: "(415) 555-1212"
+                        LastName: Minor
+                        FirstName: Geoff
+                        attributes:
+                          url: "/services/data/v42.0/sobjects/Contact/0038d00000B22zbAAB"
+                          type: Contact
+                        OtherCountry: Canada
+                    - id: f7c029ad-93c3-469c-9267-73c3c6864161
+                      created_at: '2022-08-03T08:54:21.122Z'
+                      updated_at: '2022-08-03T08:54:21.122Z'
+                      list_id: 060b9c33-6c81-4fe4-9621-b10c0a4c06f3
+                      data:
+                        Id: '0038d00000B22zcAAB'
+                        Email: info@salesforce.com
+                        Phone: "(415) 555-1212"
+                        LastName: White
+                        FirstName: Carole
+                        attributes:
+                          url: "/services/data/v42.0/sobjects/Contact/0038d00000B22zcAAB"
+                          type: Contact
+                        OtherCountry:
+
+    ListItemImportResponse:
+      description: "Response for importing list item from file"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiChangedDto"
+          examples:
+            simple:
+              $ref: "#/components/examples/ListItemImport"
+
+    ActionResponse:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ActionDto"
+          examples:
+            simple:
+              $ref: "#/components/examples/ActionSendSMSResponse"
+
+    ActionPageResponse:
+      description: ""
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/PageResponseDto"
+              - properties:
+                  _embedded:
+                    type: object
+                    readOnly: true
+                    properties:
+                      actions:
+                        type: array
+                        readOnly: true
+                        items:
+                          $ref: "#/components/schemas/ActionDto"
+          examples:
+            simple:
+              value:
+                total_items: 1
+                page: 1
+                page_size: 100
+                total_pages: 1
+                _links:
+                  self:
+                    href: https://api-eu.vonage.com/v0.1/bulk/actions?page_size=100&page=1
+                  prev:
+                    href: https://api-eu.vonage.com/v0.1/bulk/actions?page_size=100&page=1
+                  next:
+                    href: https://api-eu.vonage.com/v0.1/bulk/actions?page_size=100&page=1
+                  first:
+                    href: https://api-eu.vonage.com/v0.1/bulk/actions?page_size=100&page=1
+                _embedded:
+                  actions:
+                    # - $ref: "#/components/examples/ActionSendSMSResponse"
+                    - name: vg-send-sms
+                      description: Send text message using Vonage messaging APIs
+                      parameters:
+                        - type: string
+                          required: true
+                          name: fromNumber
+                        - type: string
+                          required: true
+                          name: toNumber
+                        - type: string
+                          required: true
+                          name: message
+                        - type: secret
+                          required: true
+                          name: vonage-jwt-token
+                          default: vng-prd-messaging-api
+                      command:
+                        type: http-api-invoke
+                        url: https://api.nexmo.com/v1/messages
+                        method: post
+                        headers:
+                          - name: Content-Type
+                            value: application/json
+                          - name: Authorization
+                            value: Bearer {{ parameters.vonage-jwt-token }}
+                        payload:
+                          to: "{{ parameters.toNumber }}"
+                          message_type: text
+                          from: "{{ parameters.fromNumber }}"
+                          channel: sms
+                          text: "{{ parameters.message }}"
+                        response:
+                          success:
+                            codes:
+                              - "202"
+                          invocation_id: "{{response.payload.message_uuid}}"
+                          error:
+                            code: "{{response.payload.statusCode}}"
+                            details: "{{response.payload.error.details}}"
+                        async:
+                          invocation_id: "{{ event.message_uuid }}"
+                          status:
+                            value: "{{event.status}}"
+                            success:
+                              values:
+                                - delivered
+                            error:
+                              values:
+                                - rejected
+                                - undeliverable
+                              details: "{{event.error.details}}"
+                            info:
+                              values:
+                                - submitted
+                      timeout_seconds: 5
+                      id: 99ea10e0-1f14-4f55-b976-3c88ea8ec4cd
+                      created_at: "2022-06-23T17:45:31.782Z"
+                      updated_at: "2022-06-23T17:45:31.782Z"
+
+    JobResponse:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/JobDto"
+          examples:
+            simple:
+              $ref: "#/components/examples/SegmentationJobResponse"
+
+    JobPageResponse:
+      description: ""
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/PageResponseDto"
+              - properties:
+                  _embedded:
+                    type: object
+                    readOnly: true
+                    properties:
+                      jobs:
+                        type: array
+                        readOnly: true
+                        items:
+                          $ref: "#/components/schemas/JobDto"
+          examples:
+            simple:
+              value:
+                total_items: 1
+                page: 1
+                page_size: 100
+                total_pages: 1
+                _links:
+                  self:
+                    href: https://api-eu.vonage.com/v0.1/bulk/jobs?page_size=2&page=2
+                  prev:
+                    href: https://api-eu.vonage.com/v0.1/bulk/jobs?page_size=2&page=1
+                  next:
+                    href: https://api-eu.vonage.com/v0.1/bulk/jobs?page_size=2&page=3
+                  first:
+                    href: https://api-eu.vonage.com/v0.1/bulk/jobs?page_size=2&page=1
+                _embedded:
+                  jobs:
+                    - name: send sms with optional end-user response
+                      tags:
+                        - marketing
+                        - uk
+                      definition:
+                        type: segmentation-job
+                        recipients:
+                          include:
+                            - id: c6a4704e-2ddd-47b7-b79c-7df38feafb3f
+                              type: list
+                          exclude:
+                            - id: fba7c209-ebb9-4b14-8acb-09a803d4f0a0
+                              type: list
+                        segmentations:
+                          - condition:
+                              expression: item.salary == 1000 || ['UK', 'USA'].includes(item.country)
+                            action_call:
+                              action_ref:
+                                id: 466ce4a4-9cec-40c0-83ab-c3fa64e48b6f
+                                type: action
+                              parameters:
+                                - name: fromNumber
+                                  value: "447418365541"
+                                - name: toNumber
+                                  value: "{{ item.number }}"
+                                - name: message
+                                  value: "{{ template.message }}"
+                            name: text vip customers
+                            description: text UK and USA vip customers
+                            template:
+                              type: text
+                              message:
+                                Dear {{ item.firstName }}, {{ item.lastName }} :)\n This's our 1st
+                                SMS communication from Vonage campaign.\nReply back with STOP if you want
+                                to stop receiving our messages
+                              encoding: utf8
+                            recipient:
+                              correlation_id: "{{item.number}}"
+                        events_handler:
+                          matching_strategy: match-first
+                          matchers:
+                            - condition:
+                                expression: event.text?.toLowerCase().includes('stop')
+                              action_call:
+                                action_ref:
+                                  type: action
+                                  id: bd795581-9a93-48b0-a4bc-3b7509bf6e4d
+                                parameters:
+                                  - name: listId
+                                    value: fba7c209-ebb9-4b14-8acb-09a803d4f0a0
+                                  - name: number
+                                    value: "{{event.from}}"
+                              name: opt-out
+                              description: unsubscribe
+                              recipient:
+                                correlation_id: "{{event.from}}"
+                      id: e721113d-0948-4edb-b4af-e3f0578d708c
+                      created_at: "2022-06-24T07:49:33.748Z"
+                      updated_at: "2022-06-24T07:49:33.748Z"
+
+    RunResponse:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/JobRunDto"
+          examples:
+            simple:
+              $ref: "#/components/examples/SegmentationRunResponse"
+
+    RunPageResponse:
+      description: ""
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/PageResponseDto"
+              - properties:
+                  _embedded:
+                    type: object
+                    readOnly: true
+                    properties:
+                      runs:
+                        type: array
+                        readOnly: true
+                        items:
+                          $ref: "#/components/schemas/JobRunDto"
+          examples:
+            simple:
+              value:
+                total_items: 1
+                page: 1
+                page_size: 100
+                total_pages: 1
+                _links:
+                  self:
+                    href: https://api-eu.vonage.com/v0.1/bulk/runs?page_size=100&page=1
+                  prev:
+                    href: https://api-eu.vonage.com/v0.1/bulk/runs?page_size=100&page=1
+                  next:
+                    href: https://api-eu.vonage.com/v0.1/bulk/runs?page_size=100&page=1
+                  first:
+                    href: https://api-eu.vonage.com/v0.1/bulk/runs?page_size=100&page=1
+                _embedded:
+                  runs:
+                    # - $ref: "#/components/examples/SegmentationRunResponse"
+                    - name: E2E Demo run
+                      job_id: e721113d-0948-4edb-b4af-e3f0578d708c
+                      status: scheduled
+                      start_at: "2022-06-24T04:06:36.000Z"
+                      end_at: "2022-06-24T08:57:55.917Z"
+                      id: 51aca838-2cf6-4100-b0d2-e74ac0e95c88
+                      created_at: "2022-06-24T07:57:56.301Z"
+                      updated_at: "2022-06-24T07:57:56.301Z"
+
+    EventPageResponse:
+      description: ""
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/PageResponseDto"
+              - properties:
+                  _embedded:
+                    type: object
+                    readOnly: true
+                    properties:
+                      events:
+                        type: array
+                        readOnly: true
+                        items:
+                          oneOf:
+                            - $ref: "#/components/schemas/ActionCallSucceededEvent"
+                            - $ref: "#/components/schemas/ActionCallFailedEvent"
+                            - $ref: "#/components/schemas/ActionCallInfoEvent"
+                            - $ref: "#/components/schemas/RecipientResponseEvent"
+          examples:
+            simple:
+              value:
+                total_items: 10
+                page: 1
+                page_size: 100
+                total_pages: 1
+                _links:
+                  self:
+                    href: https://api-eu.vonage.com/v0.1/bulk/runs/7d0d4e5f-6453-4c63-87cf-f95b04377324/events?page_size=100&page=1
+                  prev:
+                    href: https://api-eu.vonage.com/v0.1/bulk/runs/7d0d4e5f-6453-4c63-87cf-f95b04377324/events?page_size=100&page=1
+                  next:
+                    href: https://api-eu.vonage.com/v0.1/bulk/runs/7d0d4e5f-6453-4c63-87cf-f95b04377324/events?page_size=100&page=1
+                  first:
+                    href: https://api-eu.vonage.com/v0.1/bulk/runs/7d0d4e5f-6453-4c63-87cf-f95b04377324/events?page_size=100&page=1
+                _embedded:
+                  events:
+                    - occurred_at: '2022-08-07T13:18:21.970Z'
+                      event_type: action-call-succeeded
+                      id: e8e1eb4d-61e0-4099-8fa7-c96f1c0764ba
+                      job_id: c68e871a-c239-474d-a905-7b95f4563b7e
+                      src_ctx: et-e4ab4b75-9e7c-4f26-9328-394a5b842648
+                      action_id: 26c5bbe2-113e-4201-bd93-f69e0a03d17f
+                      event_data:
+                        url: https://postman-echo.com/post
+                        args: {}
+                        data:
+                          from: ''
+                        form: {}
+                        json:
+                          from: ''
+                        files: {}
+                        headers:
+                          host: postman-echo.com
+                          user-agent: got (https://github.com/sindresorhus/got)
+                          content-type: application/json
+                          content-length: '11'
+                          accept-encoding: gzip, deflate, br
+                          x-amzn-trace-id: Root=1-62efbb9e-53636b7b794accb87a3d662f
+                          x-forwarded-port: '443'
+                          x-nexmo-trace-id: 8a6fed94-7296-4a39-9c52-348f12b4d61a
+                          x-forwarded-proto: https
+                      job_run_id: 7d0d4e5f-6453-4c63-87cf-f95b04377324
+                      recipient_id: '14806904549'
+                    - occurred_at: '2022-08-07T13:18:20.289Z'
+                      event_type: recipient-response
+                      id: 8c8e9894-81be-4f6e-88d4-046b6c70ff8c
+                      job_id: c68e871a-c239-474d-a905-7b95f4563b7e
+                      src_ctx: et-e4ab4b75-9e7c-4f26-9328-394a5b842648
+                      event_data:
+                        from: '15053939008'
+                        text: Dima
+                      job_run_id: 7d0d4e5f-6453-4c63-87cf-f95b04377324
+                      recipient_id: '15053939008'
+
   schemas:
     ListId:
       type: string
       format: uuid
-      example: af8a84b6-c712-4252-ac8d-6e28ac9317ce
+      example: 4cb98f71-a879-49f7-b5cf-2314353eb52c
 
     ItemId:
       type: string
       format: uuid
-      example: 945f6ca9-b6fa-4bd0-95c3-c4e1ecb15e2f
+      example: 6e26d247-e074-4f68-b72b-dd92aa02c7e0
 
     ActionId:
       type: string
@@ -1525,10 +2062,8 @@ components:
   examples:
     ListManual:
       value:
-        id: af8a84b6-c712-4252-ac8d-6e28ac9317ce
         name: Recipients for demo
         description: List of recipients for demo
-        type: manual
         tags:
           - vip
         labels:
@@ -1538,6 +2073,22 @@ components:
           - name: number
             alias: phoneNumber
             key: true
+
+    ListManualResponse:
+      value:
+        name: Recipients for demo
+        description: List of recipients for demo
+        tags:
+          - vip
+        labels:
+          - name: firstName
+          - name: lastName
+            key: false
+          - name: number
+            alias: phoneNumber
+            key: true
+        id: af8a84b6-c712-4252-ac8d-6e28ac9317ce
+        type: manual
         items_count: 1000
         sync_status: configured
         created_at: "2022-06-23T13:13:16.491Z"
@@ -1545,7 +2096,6 @@ components:
 
     ListSalesforce:
       value:
-        id: 4cb98f71-a879-49f7-b5cf-2314353eb52c
         name: Salesforce contact
         description: Salesforce contacts for campaign
         tags:
@@ -1561,6 +2111,25 @@ components:
           type: salesforce
           integration_id: salesforce
           soql: SELECT Id, LastName, FirstName, Phone, Email, OtherCountry FROM Contact
+
+    ListSalesforceResponse:
+      value:
+        name: Salesforce contact
+        description: Salesforce contacts for campaign
+        tags:
+          - salesforce
+        labels:
+          - key: false
+            name: Id
+          - key: false
+            name: Phone
+          - key: false
+            name: Email
+        datasource:
+          type: salesforce
+          integration_id: salesforce
+          soql: SELECT Id, LastName, FirstName, Phone, Email, OtherCountry FROM Contact
+        id: 4cb98f71-a879-49f7-b5cf-2314353eb52c
         type: salesforce
         items_count: 25000
         sync_status: completed
@@ -1568,66 +2137,20 @@ components:
         created_at: '2022-08-02T13:22:04.267Z'
         updated_at: '2022-08-02T13:22:04.267Z'
 
-    ListPageResponse:
+    ListItemRequest:
       value:
-        total_items: 2
-        page: 1
-        page_size: 100
-        _embedded:
-          lists:
-            - $ref: "#/components/examples/ListManual/value"
-            - $ref: "#/components/examples/ListSalesforce/value"
-        total_pages: 1
-        _links:
-          self:
-            href: https://api-eu.vonage.com/v0.1/bulk/lists?page_size=100&page=1
-          prev:
-            href: https://api-eu.vonage.com/v0.1/bulk/lists?page_size=100&page=1
-          next:
-            href: https://api-eu.vonage.com/v0.1/bulk/lists?page_size=100&page=1
-          first:
-            href: https://api-eu.vonage.com/v0.1/bulk/lists?page_size=100&page=1
-
-    ListItemPageResponse:
-      value:
-        total_items: 2
-        page: 1
-        page_size: 100
-        _embedded:
-          items:
-            - $ref: "#/components/examples/ListItemSF1/value"
-            - $ref: "#/components/examples/ListItemSF2/value"
-        total_pages: 1
-        _links:
-          self:
-            href: https://api-eu.vonage.com/v0.1/bulk/lists/060b9c33-6c81-4fe4-9621-b10c0a4c06f3/items/?page_size=100&page=1
-          prev:
-            href: https://api-eu.vonage.com/v0.1/bulk/lists/060b9c33-6c81-4fe4-9621-b10c0a4c06f3/items/?page_size=100&page=1
-          next:
-            href: https://api-eu.vonage.com/v0.1/bulk/lists/060b9c33-6c81-4fe4-9621-b10c0a4c06f3/items/?page_size=100&page=1
-          first:
-            href: https://api-eu.vonage.com/v0.1/bulk/lists/060b9c33-6c81-4fe4-9621-b10c0a4c06f3/items/?page_size=100&page=1
-
-    ListItem:
-      value:
-        id: 945f6ca9-b6fa-4bd0-95c3-c4e1ecb15e2f
-        list_id: af8a84b6-c712-4252-ac8d-6e28ac9317ce
         data:
-          firstName: Jailyn
-          lastName: Pacocha
-          companyName: Kshlerin - Kiehn
-          address: 376 Gutmann Ridges
-          city: North Assunta
-          country: Iceland
-          state: PH
-          zip: "89261"
-          number: 950-707-5847
-          email: Anya.West6@yahoo.com
-          salary: 1000
-        created_at: "2022-06-20T05:46:00.936Z"
-        updated_at: "2022-06-20T05:46:00.936Z"
+          Id: '0038d00000B22zbAAB'
+          Email: info@salesforce.com
+          Phone: "(415) 555-1212"
+          LastName: Minor
+          FirstName: Geoff
+          attributes:
+            url: "/services/data/v42.0/sobjects/Contact/0038d00000B22zbAAB"
+            type: Contact
+          OtherCountry: Canada
 
-    ListItemSF1:
+    ListItemResponse:
       value:
         id: 6e26d247-e074-4f68-b72b-dd92aa02c7e0
         created_at: '2022-08-03T08:54:21.122Z'
@@ -1644,30 +2167,12 @@ components:
             type: Contact
           OtherCountry: Canada
 
-    ListItemSF2:
-      value:
-        id: f7c029ad-93c3-469c-9267-73c3c6864161
-        created_at: '2022-08-03T08:54:21.122Z'
-        updated_at: '2022-08-03T08:54:21.122Z'
-        list_id: 060b9c33-6c81-4fe4-9621-b10c0a4c06f3
-        data:
-          Id: '0038d00000B22zcAAB'
-          Email: info@salesforce.com
-          Phone: "(415) 555-1212"
-          LastName: White
-          FirstName: Carole
-          attributes:
-            url: "/services/data/v42.0/sobjects/Contact/0038d00000B22zcAAB"
-            type: Contact
-          OtherCountry:
-
     ListItemImport:
       value:
         inserted: 10000
 
-    ActionSendSMS:
+    ActionSendSMSRequest:
       value:
-        id: 99ea10e0-1f14-4f55-b976-3c88ea8ec4cd
         name: vg-send-sms
         description: Send text message using Vonage messaging APIs
         parameters:
@@ -1723,12 +2228,70 @@ components:
                 values:
                   - submitted
         timeout_seconds: 5
+
+    ActionSendSMSResponse:
+      value:
+        name: vg-send-sms
+        description: Send text message using Vonage messaging APIs
+        parameters:
+          - type: string
+            required: true
+            name: fromNumber
+          - type: string
+            required: true
+            name: toNumber
+          - type: string
+            required: true
+            name: message
+          - type: secret
+            required: true
+            name: vonage-jwt-token
+            default: vng-prd-messaging-api
+        command:
+          type: http-api-invoke
+          url: https://api.nexmo.com/v1/messages
+          method: post
+          headers:
+            - name: Content-Type
+              value: application/json
+            - name: Authorization
+              value: Bearer {{ parameters.vonage-jwt-token }}
+          payload:
+            to: "{{ parameters.toNumber }}"
+            message_type: text
+            from: "{{ parameters.fromNumber }}"
+            channel: sms
+            text: "{{ parameters.message }}"
+          response:
+            success:
+              codes:
+                - "202"
+            invocation_id: "{{response.payload.message_uuid}}"
+            error:
+              code: "{{response.payload.statusCode}}"
+              details: "{{response.payload.error.details}}"
+          async:
+            invocation_id: "{{ event.message_uuid }}"
+            status:
+              value: "{{event.status}}"
+              success:
+                values:
+                  - delivered
+              error:
+                values:
+                  - rejected
+                  - undeliverable
+                details: "{{event.error.details}}"
+              info:
+                values:
+                  - submitted
+        timeout_seconds: 5
+        id: 99ea10e0-1f14-4f55-b976-3c88ea8ec4cd
         created_at: "2022-06-23T17:45:31.782Z"
         updated_at: "2022-06-23T17:45:31.782Z"
 
-    SegmentationJob:
+    SegmentationJobRequest:
       value:
-        id: e721113d-0948-4edb-b4af-e3f0578d708c
         name: send sms with optional end-user response
         tags:
           - marketing
@@ -1785,18 +2348,87 @@ components:
                 description: unsubscribe
                 recipient:
                   correlation_id: "{{event.from}}"
+
+    SegmentationJobResponse:
+      value:
+        name: send sms with optional end-user response
+        tags:
+          - marketing
+          - uk
+        definition:
+          type: segmentation-job
+          recipients:
+            include:
+              - id: c6a4704e-2ddd-47b7-b79c-7df38feafb3f
+                type: list
+            exclude:
+              - id: fba7c209-ebb9-4b14-8acb-09a803d4f0a0
+                type: list
+          segmentations:
+            - condition:
+                expression: item.salary == 1000 || ['UK', 'USA'].includes(item.country)
+              action_call:
+                action_ref:
+                  id: 466ce4a4-9cec-40c0-83ab-c3fa64e48b6f
+                  type: action
+                parameters:
+                  - name: fromNumber
+                    value: "447418365541"
+                  - name: toNumber
+                    value: "{{ item.number }}"
+                  - name: message
+                    value: "{{ template.message }}"
+              name: text vip customers
+              description: text UK and USA vip customers
+              template:
+                type: text
+                message:
+                  Dear {{ item.firstName }}, {{ item.lastName }} :)\n This's our 1st
+                  SMS communication from Vonage campaign.\nReply back with STOP if you want
+                  to stop receiving our messages
+                encoding: utf8
+              recipient:
+                correlation_id: "{{item.number}}"
+          events_handler:
+            matching_strategy: match-first
+            matchers:
+              - condition:
+                  expression: event.text?.toLowerCase().includes('stop')
+                action_call:
+                  action_ref:
+                    type: action
+                    id: bd795581-9a93-48b0-a4bc-3b7509bf6e4d
+                  parameters:
+                    - name: listId
+                      value: fba7c209-ebb9-4b14-8acb-09a803d4f0a0
+                    - name: number
+                      value: "{{event.from}}"
+                name: opt-out
+                description: unsubscribe
+                recipient:
+                  correlation_id: "{{event.from}}"
+        id: e721113d-0948-4edb-b4af-e3f0578d708c
         created_at: "2022-06-24T07:49:33.748Z"
         updated_at: "2022-06-24T07:49:33.748Z"
 
-    SegmentationRun:
+    SegmentationRunRequest:
       value:
-        id: 51aca838-2cf6-4100-b0d2-e74ac0e95c88
         name: E2E Demo run
         job_id: e721113d-0948-4edb-b4af-e3f0578d708c
         status: scheduled
         # todo: should we group the schedule part into a dedicated object?
         start_at: "2022-06-24T04:06:36.000Z"
         end_at: "2022-06-24T08:57:55.917Z"
+
+    SegmentationRunResponse:
+      value:
+        name: E2E Demo run
+        job_id: e721113d-0948-4edb-b4af-e3f0578d708c
+        status: scheduled
+        # todo: should we group the schedule part into a dedicated object?
+        start_at: "2022-06-24T04:06:36.000Z"
+        end_at: "2022-06-24T08:57:55.917Z"
+        id: 51aca838-2cf6-4100-b0d2-e74ac0e95c88
         created_at: "2022-06-24T07:57:56.301Z"
         updated_at: "2022-06-24T07:57:56.301Z"
 
@@ -1806,173 +2438,3 @@ components:
         id: 9a8afd25-b6cc-4067-982f-5ff87b01973f
         recipient_id: 12025550135
         invocation_id: 9a8afd25-b6cc-4067-982f-5ff87b01973f
-
-  responses:
-    ListPageResponse:
-      description: List of lists associated with an application
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: "#/components/schemas/PageResponseDto"
-              - properties:
-                  _embedded:
-                    type: object
-                    readOnly: true
-                    properties:
-                      lists:
-                        type: array
-                        readOnly: true
-                        items:
-                          $ref: "#/components/schemas/ListDto"
-          examples:
-            simple:
-              $ref: "#/components/examples/ListPageResponse"
-
-    ListResponse:
-      description: "Return a single list"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ListDto"
-          examples:
-            simple:
-              $ref: "#/components/examples/ListSalesforce"
-
-    ListItemPageResponse:
-      description: "Get list items"
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: "#/components/schemas/PageResponseDto"
-              - properties:
-                  _embedded:
-                    type: object
-                    readOnly: true
-                    properties:
-                      items:
-                        type: array
-                        readOnly: true
-                        items:
-                          $ref: "#/components/schemas/ListItemDto"
-          examples:
-            simple:
-              $ref: "#/components/examples/ListItemPageResponse"
-
-    ListItemResponse:
-      description: "Get list item"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ListItemDto"
-          examples:
-            simple:
-              $ref: "#/components/examples/ListItemSF1"
-
-    ListItemImportResponse:
-      description: "Response for importing list item from file"
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ApiChangedDto"
-          examples:
-            simple:
-              $ref: "#/components/examples/ListItemImport"
-
-    ActionPageResponse:
-      description: ""
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: "#/components/schemas/PageResponseDto"
-              - properties:
-                  _embedded:
-                    type: object
-                    readOnly: true
-                    properties:
-                      actions:
-                        type: array
-                        readOnly: true
-                        items:
-                          $ref: "#/components/schemas/ActionDto"
-
-    ActionResponse:
-      description: ""
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ActionDto"
-
-    JobPageResponse:
-      description: ""
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: "#/components/schemas/PageResponseDto"
-              - properties:
-                  _embedded:
-                    type: object
-                    readOnly: true
-                    properties:
-                      jobs:
-                        type: array
-                        readOnly: true
-                        items:
-                          $ref: "#/components/schemas/JobDto"
-
-    JobResponse:
-      description: ""
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/JobDto"
-
-    EventPageResponse:
-      description: ""
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: "#/components/schemas/PageResponseDto"
-              - properties:
-                  _embedded:
-                    type: object
-                    readOnly: true
-                    properties:
-                      events:
-                        type: array
-                        readOnly: true
-                        items:
-                          oneOf:
-                            - $ref: "#/components/schemas/ActionCallSucceededEvent"
-                            - $ref: "#/components/schemas/ActionCallFailedEvent"
-                            - $ref: "#/components/schemas/ActionCallInfoEvent"
-                            - $ref: "#/components/schemas/RecipientResponseEvent"
-
-    RunPageResponse:
-      description: ""
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: "#/components/schemas/PageResponseDto"
-              - properties:
-                  _embedded:
-                    type: object
-                    readOnly: true
-                    properties:
-                      runs:
-                        type: array
-                        readOnly: true
-                        items:
-                          $ref: "#/components/schemas/ActionDto"
-
-    RunResponse:
-      description: ""
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/JobRunDto"
