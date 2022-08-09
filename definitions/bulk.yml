@@ -40,6 +40,10 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ListPageResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
       tags:
         - lists
     post:
@@ -51,6 +55,14 @@ paths:
       responses:
         "201":
           $ref: "#/components/responses/ListResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "409":
+          $ref: "#/components/responses/ErrorConflict"
+        "422":
+          $ref: "#/components/responses/ErrorResourceLimitReached"
       tags:
         - lists
   /lists/{list_id}:
@@ -62,6 +74,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ListResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
         - lists
     put:
@@ -72,6 +90,14 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ListResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
+        "409":
+          $ref: "#/components/responses/ErrorConflict"
       tags:
         - lists
     delete:
@@ -80,6 +106,10 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ListResponse"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
         - lists
   /lists/{list_id}/clear:
@@ -89,8 +119,12 @@ paths:
       operationId: listClear
       summary: Clear list - delete all the list items
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "202":
+          $ref: "#/components/responses/AcceptedResponse"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
         - lists
   /lists/{list_id}/fetch:
@@ -100,8 +134,12 @@ paths:
       operationId: listFetch
       summary: Fetch list - delete all items and sync from the datasource. Fetch is invalid for manual list
       responses:
-        "204":
-          $ref: "#/components/responses/NoContent"
+        "202":
+          $ref: "#/components/responses/AcceptedResponse"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
         - lists
   /lists/{list_id}/items:
@@ -116,6 +154,10 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ListItemPageResponse"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
         - items
     post:
@@ -126,6 +168,14 @@ paths:
       responses:
         "201":
           $ref: "#/components/responses/ListItemResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
+        "422":
+          $ref: "#/components/responses/ErrorResourceLimitReached"
       tags:
         - items
   /lists/{list_id}/items/download:
@@ -138,6 +188,10 @@ paths:
         "200":
           # todo: how to set stream response
           description: "Stream response"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
         - items
   /lists/{list_id}/items/{item_id}:
@@ -150,6 +204,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ListItemResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
         - items
     put:
@@ -160,6 +220,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ListItemResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
         - items
     delete:
@@ -168,6 +234,10 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ListItemResponse"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
         - items
   /lists/{list_id}/items/import:
@@ -179,6 +249,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ListItemImportResponse"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
+        "422":
+          $ref: "#/components/responses/ErrorResourceLimitReached"
       tags:
         - items
   /actions:
@@ -191,6 +267,10 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ActionPageResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
       tags:
         - actions
     post:
@@ -201,6 +281,14 @@ paths:
       responses:
         "201":
           $ref: "#/components/responses/ActionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "409":
+          $ref: "#/components/responses/ErrorConflict"
+        "422":
+          $ref: "#/components/responses/ErrorResourceLimitReached"
       tags:
         - actions
   /actions/{action_id}:
@@ -212,6 +300,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ActionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
         - actions
     put:
@@ -222,6 +316,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ActionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
         - actions
     delete:
@@ -230,6 +330,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/ActionResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
         - actions
   /jobs:
@@ -242,6 +348,10 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/JobPageResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
       tags:
         - jobs
     post:
@@ -252,6 +362,14 @@ paths:
       responses:
         "201":
           $ref: "#/components/responses/JobResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "409":
+          $ref: "#/components/responses/ErrorConflict"
+        "422":
+          $ref: "#/components/responses/ErrorResourceLimitReached"
       tags:
         - jobs
   /jobs/{job_id}:
@@ -263,6 +381,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/JobResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
         - jobs
     put:
@@ -273,6 +397,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/JobResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
         - jobs
     delete:
@@ -281,6 +411,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/JobResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
         - jobs
   /events:
@@ -293,6 +429,10 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/EventPageResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
       tags:
         - events
   /runs:
@@ -305,6 +445,10 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/RunPageResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
       tags:
         - runs
     post:
@@ -314,7 +458,15 @@ paths:
         $ref: "#/components/requestBodies/RunRequest"
       responses:
         "202":
-          description: ""
+          $ref: "#/components/responses/AcceptedResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
+        "422":
+          $ref: "#/components/responses/ErrorResourceLimitReached"
       tags:
         - runs
   /runs/{run_id}:
@@ -326,6 +478,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/RunResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
         - runs
   /runs/{run_id}/events:
@@ -340,6 +498,12 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/EventPageResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
         - runs
   /runs/{run_id}/summary:
@@ -355,6 +519,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/StatsRunSummaryDto"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
         - runs
   /runs/{run_id}/cancel:
@@ -365,7 +535,13 @@ paths:
       summary: Initiate run cancellation
       responses:
         "202":
-          description: ""
+          $ref: "#/components/responses/AcceptedResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
         - runs
   /webhooks/actions/status:
@@ -375,6 +551,8 @@ paths:
       responses:
         "200":
           description: ""
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
       tags:
         - webhooks
       security:
@@ -386,6 +564,8 @@ paths:
       responses:
         "200":
           description: ""
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
       tags:
         - webhooks
       security:
@@ -515,8 +695,8 @@ components:
               $ref: "#/components/examples/SegmentationRunRequest"
 
   responses:
-    NoContent:
-      description: No content
+    AcceptedResponse:
+      description: Request accepted and is processed asynchronously on the server
 
     ListResponse:
       description: "List response"
@@ -1032,6 +1212,55 @@ components:
                         text: Dima
                       job_run_id: 7d0d4e5f-6453-4c63-87cf-f95b04377324
                       recipient_id: '15053939008'
+
+    ErrorBadRequest:
+      description: Various errors that can occur during brand creation
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "common/common_errors.yml#/components/responses/DefaultError/content/application~1json/schema"
+              - type: object
+                description: Request parameters or body is invalid
+                properties:
+                  code:
+                    description: http status code
+                    example: 400
+                  path:
+                    description: url path to the requested resource
+                    example: /v0.1/bulk/lists?page=-1&page_size=2
+                  method:
+                    description: http method
+                    example: GET
+                  message:
+                    description: additional information on the error or it's root cause
+                    type: object
+                    properties:
+                      statusCode:
+                        description: http status code
+                        example:
+                      message:
+                        description: array of reason describing the errored request
+                        example: "page must not be less than 1"
+                      error:
+                        description: message describing the error
+                        example: Bad Request
+
+    ErrorConflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "common/common_errors.yml#/components/responses/DefaultError/content/application~1json/schema"
+
+    ErrorResourceLimitReached:
+      description: Resource limit reached / exceeded
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "common/common_errors.yml#/components/responses/DefaultError/content/application~1json/schema"
 
   schemas:
     ListId:
