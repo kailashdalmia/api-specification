@@ -32,7 +32,7 @@ security:
 paths:
   /lists:
     get:
-      operationId: listFindAll
+      operationId: listsFindAll
       summary: Find all lists
       parameters:
         - $ref: "#/components/parameters/Page"
@@ -47,7 +47,7 @@ paths:
       tags:
         - lists
     post:
-      operationId: listCreate
+      operationId: listsCreate
       summary: Create list
       parameters: [ ]
       requestBody:
@@ -69,7 +69,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/ListId"
     get:
-      operationId: listGet
+      operationId: listsGet
       summary: Get list by id
       responses:
         "200":
@@ -83,7 +83,7 @@ paths:
       tags:
         - lists
     put:
-      operationId: listUpdate
+      operationId: listsUpdate
       summary: Update list
       requestBody:
         $ref: "#/components/requestBodies/ListRequest"
@@ -101,7 +101,7 @@ paths:
       tags:
         - lists
     delete:
-      operationId: listDelete
+      operationId: listsDelete
       summary: Delete list
       responses:
         "200":
@@ -116,7 +116,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/ListId"
     post:
-      operationId: listClear
+      operationId: listsClear
       summary: Clear list - delete all the list items
       responses:
         "202":
@@ -131,7 +131,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/ListId"
     post:
-      operationId: listFetch
+      operationId: listsFetch
       summary: Fetch list - delete all items and sync from the datasource. Fetch is invalid for manual list
       responses:
         "202":
@@ -146,7 +146,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/ListId"
     get:
-      operationId: listItemFindAll
+      operationId: itemsFindAll
       summary: Iterate over list items
       parameters:
         - $ref: "#/components/parameters/Page"
@@ -161,7 +161,7 @@ paths:
       tags:
         - items
     post:
-      operationId: listItemCreate
+      operationId: itemsCreate
       summary: Create list item
       requestBody:
         $ref: "#/components/requestBodies/ListItemRequest"
@@ -182,7 +182,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/ListId"
     get:
-      operationId: listItemDownload
+      operationId: itemsDownload
       summary: Download list items
       responses:
         "200":
@@ -199,7 +199,7 @@ paths:
       - $ref: "#/components/parameters/ListId"
       - $ref: "#/components/parameters/ItemId"
     get:
-      operationId: listItemGet
+      operationId: itemsGet
       summary: Get list item by id
       responses:
         "200":
@@ -213,7 +213,7 @@ paths:
       tags:
         - items
     put:
-      operationId: listItemUpdate
+      operationId: itemsUpdate
       summary: Update list item
       requestBody:
         $ref: "#/components/requestBodies/ListItemRequest"
@@ -229,7 +229,7 @@ paths:
       tags:
         - items
     delete:
-      operationId: listItemDelete
+      operationId: itemsDelete
       summary: Delete list item
       responses:
         "200":
@@ -244,7 +244,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/ListId"
     post:
-      operationId: listItemImport
+      operationId: itemsImport
       summary: Import list items
       responses:
         "200":
@@ -259,7 +259,7 @@ paths:
         - items
   /actions:
     get:
-      operationId: actionFindAll
+      operationId: actionsFindAll
       summary: Find all actions
       parameters:
         - $ref: "#/components/parameters/Page"
@@ -274,7 +274,7 @@ paths:
       tags:
         - actions
     post:
-      operationId: actionCreate
+      operationId: actionsCreate
       summary: Create action_call
       requestBody:
         $ref: "#/components/requestBodies/ActionRequest"
@@ -295,7 +295,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/ActionId"
     get:
-      operationId: actionGet
+      operationId: actionsGet
       summary: Get action by id
       responses:
         "200":
@@ -309,7 +309,7 @@ paths:
       tags:
         - actions
     put:
-      operationId: actionUpdate
+      operationId: actionsUpdate
       summary: Update action_call
       requestBody:
         $ref: "#/components/requestBodies/ActionRequest"
@@ -325,7 +325,7 @@ paths:
       tags:
         - actions
     delete:
-      operationId: actionDelete
+      operationId: actionsDelete
       summary: Delete action_call
       responses:
         "200":
@@ -340,7 +340,7 @@ paths:
         - actions
   /jobs:
     get:
-      operationId: jobFindAll
+      operationId: jobsFindAll
       summary: Find all jobs
       parameters:
         - $ref: "#/components/parameters/Page"
@@ -355,7 +355,7 @@ paths:
       tags:
         - jobs
     post:
-      operationId: jobCreate
+      operationId: jobsCreate
       summary: Create job
       requestBody:
         $ref: "#/components/requestBodies/JobRequest"
@@ -376,7 +376,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/JobId"
     get:
-      operationId: jobGet
+      operationId: jobsGet
       summary: Get job by id
       responses:
         "200":
@@ -390,7 +390,7 @@ paths:
       tags:
         - jobs
     put:
-      operationId: jobUpdate
+      operationId: jobsUpdate
       summary: Update job
       requestBody:
         $ref: "#/components/requestBodies/JobRequest"
@@ -406,7 +406,7 @@ paths:
       tags:
         - jobs
     delete:
-      operationId: jobDelete
+      operationId: jobsDelete
       summary: Delete job
       responses:
         "200":
@@ -421,7 +421,7 @@ paths:
         - jobs
   /events:
     get:
-      operationId: eventFindAll
+      operationId: eventsFindAll
       summary: Get events
       parameters:
         - $ref: "#/components/parameters/Page"
@@ -437,7 +437,7 @@ paths:
         - events
   /runs:
     get:
-      operationId: runFindAll
+      operationId: runsFindAll
       summary: Find all runs
       parameters:
         - $ref: "#/components/parameters/Page"
@@ -452,7 +452,7 @@ paths:
       tags:
         - runs
     post:
-      operationId: runSchedule
+      operationId: runsSchedule
       summary: Start job
       requestBody:
         $ref: "#/components/requestBodies/RunRequest"
@@ -473,7 +473,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/RunId"
     get:
-      operationId: runGet
+      operationId: runsGet
       summary: Get run by id
       responses:
         "200":
@@ -490,7 +490,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/RunId"
     get:
-      operationId: runEvents
+      operationId: runsEvents
       summary: Get job run events
       parameters:
         - $ref: "#/components/parameters/Page"
@@ -510,7 +510,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/RunId"
     get:
-      operationId: runSummary
+      operationId: runsSummary
       summary: Get action runs and recipient responses statistics overview
       responses:
         "200":
@@ -531,7 +531,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/RunId"
     post:
-      operationId: runCancel
+      operationId: runsCancel
       summary: Initiate run cancellation
       responses:
         "202":
@@ -546,7 +546,7 @@ paths:
         - runs
   /webhooks/actions/status:
     post:
-      operationId: webhookActionStatus
+      operationId: webhooksActionStatus
       summary: Webhook endpoint to handle action call status for async actions
       responses:
         "200":
@@ -559,7 +559,7 @@ paths:
         - { }
   /webhooks/recipients/responses:
     post:
-      operationId: webhookRecipientResponse
+      operationId: webhooksRecipientResponse
       summary: Webhook endpoint to handle recipient responses
       responses:
         "200":
