@@ -905,7 +905,7 @@ components:
               $ref: "#/components/examples/ListItemImport"
 
     ActionResponse:
-      description: ""
+      description: "Response for creating an action"
       content:
         application/json:
           schema:
@@ -915,7 +915,7 @@ components:
               $ref: "#/components/examples/ActionSendSMSResponse"
 
     ActionPageResponse:
-      description: ""
+      description: "Paged actions response"
       content:
         application/json:
           schema:
@@ -1394,10 +1394,7 @@ components:
           readOnly: true
           example: 250
         _links:
-          readOnly: true
-          type: array
-          items:
-            $ref: "#/components/schemas/HalLinks"
+          $ref: "#/components/schemas/HalLinks"
         _embedded:
           type: object
           additionalProperties: true
@@ -2215,6 +2212,7 @@ components:
         - job_run_id
         - recipient_id
 
+    #    todo: where is used? part of events?
     StatsMetricDto:
       type: object
       properties:
