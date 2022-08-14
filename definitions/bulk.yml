@@ -1351,8 +1351,9 @@ components:
         href:
           type: string
           format: url
-      required:
-        - href
+          readOnly: true
+#      required:
+#        - href
 
     HalLinks:
       type: object
@@ -1367,10 +1368,10 @@ components:
           $ref: "#/components/schemas/Href"
       # todo: is all attributes of links required?
       required:
-        - first
-        - prev
+#        - first
+#        - prev
         - self
-        - next
+#        - next
 
     PageResponseDto:
       type: object
