@@ -586,7 +586,10 @@ components:
       description: Page of results to jump to
       in: query
       schema:
-        $ref: "common/hal_structures.yml#/components/schemas/Page"
+        minimum: 1
+        default: 1
+        type: number
+      required: false
       example: 1
 
     PageSize:
@@ -594,7 +597,11 @@ components:
       description: Number of results per page
       in: query
       schema:
-        $ref: "common/hal_structures.yml#/components/schemas/Page"
+        minimum: 1
+        maximum: 1000
+        default: 100
+        type: number
+      required: false
       example: 100
 
     ListId:
@@ -900,7 +907,7 @@ components:
               $ref: "#/components/examples/ListItemImport"
 
     ActionResponse:
-      description: ""
+      description: "Response for creating an action"
       content:
         application/json:
           schema:
@@ -910,12 +917,11 @@ components:
               $ref: "#/components/examples/ActionSendSMSResponse"
 
     ActionPageResponse:
-      description: ""
+      description: "Paged actions response"
       content:
         application/json:
           schema:
             allOf:
-              - $ref: "#/components/schemas/PageResponseDto"
               - type: object
                 properties:
                   _embedded:
@@ -927,6 +933,7 @@ components:
                         readOnly: true
                         items:
                           $ref: "#/components/schemas/ActionDto"
+              - $ref: "#/components/schemas/PageResponseDto"
           example:
             total_items: 1
             page: 1
@@ -1329,21 +1336,6 @@ components:
       format: uuid
       example: 12025550135
 
-#    PageQueryDto:
-#      type: object
-#      properties:
-#        page:
-#          type: number
-#          minimum: 1
-#          default: 1
-#          example: 1
-#        page_size:
-#          type: number
-#          minimum: 1
-#          maximum: 1000
-#          default: 100
-#          example: 100
-
     Href:
       type: object
       properties:
@@ -1351,8 +1343,8 @@ components:
           type: string
           format: url
           readOnly: true
-#      required:
-#        - href
+          required:
+            - href
           example: https://api-eu.vonage.com/v0.1/bulk/lists?page=5&page_size=10
 
     HalLinks:
@@ -1368,33 +1360,33 @@ components:
           $ref: "#/components/schemas/Href"
       # todo: is all attributes of links required?
       required:
-#        - first
-#        - prev
+        #        - first
+        #        - prev
         - self
-#        - next
+    #        - next
 
     PageResponseDto:
       allOf:
-        - $ref: "common/hal_structures.yml#/components/schemas/PagedResponse"
+#        - $ref: "common/hal_structures.yml#/components/schemas/PagedResponse"
         - type: object
           properties:
-#            total_items:
-#              type: number
-#              readOnly: true
-#              example: 10000
-#            total_pages:
-#              type: number
-#              readOnly: true
-#              example: 50
-#            page:
-#              type: number
-#              readOnly: true
-#              minimum: 1
-#              example: 1
-#            page_size:
-#              type: number
-#              readOnly: true
-#              example: 250
+            total_items:
+              type: number
+              readOnly: true
+              example: 10000
+            total_pages:
+              type: number
+              readOnly: true
+              example: 50
+            page:
+              type: number
+              readOnly: true
+              minimum: 1
+              example: 1
+            page_size:
+              type: number
+              readOnly: true
+              example: 250
             _links:
               $ref: "#/components/schemas/HalLinks"
             _embedded:
@@ -2210,7 +2202,7 @@ components:
         - job_run_id
         - recipient_id
 
-#    todo: where is used? part of events?
+    #    todo: where is used? part of events?
     StatsMetricDto:
       type: object
       properties:
