@@ -117,7 +117,7 @@ paths:
       - $ref: "#/components/parameters/ListId"
     post:
       operationId: listsClear
-      summary: Clear list - delete all the list items
+      summary: Clear list - delete all the list items. This is an async operation which is performed in the background.
       responses:
         "202":
           $ref: "#/components/responses/AcceptedResponse"
@@ -132,10 +132,12 @@ paths:
       - $ref: "#/components/parameters/ListId"
     post:
       operationId: listsFetch
-      summary: Fetch list - delete all items and sync from the datasource. Fetch is invalid for manual list
+      summary: Fetch list - delete all items and sync from the datasource. Fetch is invalid for manual list.  This is an async operation which is performed in the background.
       responses:
         "202":
           $ref: "#/components/responses/AcceptedResponse"
+        "400":
+          $ref: "#/components/responses/ErrorBadRequest"
         "401":
           $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
         "404":
@@ -147,7 +149,7 @@ paths:
       - $ref: "#/components/parameters/ListId"
     get:
       operationId: itemsFindAll
-      summary: Iterate over list items
+      summary: Find all list items
       parameters:
         - $ref: "#/components/parameters/Page"
         - $ref: "#/components/parameters/PageSize"
@@ -183,11 +185,10 @@ paths:
       - $ref: "#/components/parameters/ListId"
     get:
       operationId: itemsDownload
-      summary: Download list items
+      summary: Download list items as a CSV file format
       responses:
         "200":
-          # todo: how to set stream response
-          description: "Stream response"
+          $ref: "#/components/responses/ListItemDownloadResponse"
         "401":
           $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
         "404":
@@ -245,7 +246,9 @@ paths:
       - $ref: "#/components/parameters/ListId"
     post:
       operationId: itemsImport
-      summary: Import list items
+      summary: Import list items from a CSV file
+      requestBody:
+        $ref: "#/components/requestBodies/ListItemImportRequest"
       responses:
         "200":
           $ref: "#/components/responses/ListItemImportResponse"
@@ -275,7 +278,7 @@ paths:
         - actions
     post:
       operationId: actionsCreate
-      summary: Create action_call
+      summary: Create action
       requestBody:
         $ref: "#/components/requestBodies/ActionRequest"
       responses:
@@ -310,7 +313,7 @@ paths:
         - actions
     put:
       operationId: actionsUpdate
-      summary: Update action_call
+      summary: Update action by id
       requestBody:
         $ref: "#/components/requestBodies/ActionRequest"
       responses:
@@ -326,7 +329,7 @@ paths:
         - actions
     delete:
       operationId: actionsDelete
-      summary: Delete action_call
+      summary: Delete action by id
       responses:
         "200":
           $ref: "#/components/responses/ActionResponse"
@@ -391,7 +394,7 @@ paths:
         - jobs
     put:
       operationId: jobsUpdate
-      summary: Update job
+      summary: Update job by id
       requestBody:
         $ref: "#/components/requestBodies/JobRequest"
       responses:
@@ -422,7 +425,7 @@ paths:
   /events:
     get:
       operationId: eventsFindAll
-      summary: Get events
+      summary: Find all events
       parameters:
         - $ref: "#/components/parameters/Page"
         - $ref: "#/components/parameters/PageSize"
@@ -453,7 +456,7 @@ paths:
         - runs
     post:
       operationId: runsSchedule
-      summary: Start job
+      summary: Start job.  This is an async operation which is performed in the background.
       requestBody:
         $ref: "#/components/requestBodies/RunRequest"
       responses:
@@ -532,7 +535,7 @@ paths:
       - $ref: "#/components/parameters/RunId"
     post:
       operationId: runsCancel
-      summary: Initiate run cancellation
+      summary: Initiate run cancellation.  This is an async operation which is performed in the background.
       responses:
         "202":
           $ref: "#/components/responses/AcceptedResponse"
@@ -663,6 +666,17 @@ components:
           examples:
             simple:
               $ref: "#/components/examples/ListItemRequest"
+
+    ListItemImportRequest:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              file:
+                description: csv file of list items to import
+                type: string
+                format: binary
 
     ActionRequest:
       required: true
@@ -813,53 +827,70 @@ components:
                         readOnly: true
                         items:
                           $ref: "#/components/schemas/ListItemDto"
-          examples:
-            simple:
-              value:
-                total_items: 2
-                page: 1
-                page_size: 100
-                total_pages: 1
-                _links:
-                  self:
-                    href: https://api-eu.vonage.com/v0.1/bulk/lists/060b9c33-6c81-4fe4-9621-b10c0a4c06f3/items/?page_size=100&page=1
-                  prev:
-                    href: https://api-eu.vonage.com/v0.1/bulk/lists/060b9c33-6c81-4fe4-9621-b10c0a4c06f3/items/?page_size=100&page=1
-                  next:
-                    href: https://api-eu.vonage.com/v0.1/bulk/lists/060b9c33-6c81-4fe4-9621-b10c0a4c06f3/items/?page_size=100&page=1
-                  first:
-                    href: https://api-eu.vonage.com/v0.1/bulk/lists/060b9c33-6c81-4fe4-9621-b10c0a4c06f3/items/?page_size=100&page=1
-                _embedded:
-                  items:
-                    # - $ref: "#/components/examples/ListItemResponse"
-                    - id: 6e26d247-e074-4f68-b72b-dd92aa02c7e0
-                      created_at: '2022-08-03T08:54:21.122Z'
-                      updated_at: '2022-08-03T08:54:21.122Z'
-                      list_id: 060b9c33-6c81-4fe4-9621-b10c0a4c06f3
-                      data:
-                        Id: '0038d00000B22zbAAB'
-                        Email: info@salesforce.com
-                        Phone: "(415) 555-1212"
-                        LastName: Minor
-                        FirstName: Geoff
-                        attributes:
-                          url: "/services/data/v42.0/sobjects/Contact/0038d00000B22zbAAB"
-                          type: Contact
-                        OtherCountry: Canada
-                    - id: f7c029ad-93c3-469c-9267-73c3c6864161
-                      created_at: '2022-08-03T08:54:21.122Z'
-                      updated_at: '2022-08-03T08:54:21.122Z'
-                      list_id: 060b9c33-6c81-4fe4-9621-b10c0a4c06f3
-                      data:
-                        Id: '0038d00000B22zcAAB'
-                        Email: info@salesforce.com
-                        Phone: "(415) 555-1212"
-                        LastName: White
-                        FirstName: Carole
-                        attributes:
-                          url: "/services/data/v42.0/sobjects/Contact/0038d00000B22zcAAB"
-                          type: Contact
-                        OtherCountry:
+          example:
+            total_items: 2
+            page: 1
+            page_size: 100
+            total_pages: 1
+            _links:
+              self:
+                href: https://api-eu.vonage.com/v0.1/bulk/lists/060b9c33-6c81-4fe4-9621-b10c0a4c06f3/items/?page_size=100&page=1
+              prev:
+                href: https://api-eu.vonage.com/v0.1/bulk/lists/060b9c33-6c81-4fe4-9621-b10c0a4c06f3/items/?page_size=100&page=1
+              next:
+                href: https://api-eu.vonage.com/v0.1/bulk/lists/060b9c33-6c81-4fe4-9621-b10c0a4c06f3/items/?page_size=100&page=1
+              first:
+                href: https://api-eu.vonage.com/v0.1/bulk/lists/060b9c33-6c81-4fe4-9621-b10c0a4c06f3/items/?page_size=100&page=1
+            _embedded:
+              items:
+                # - $ref: "#/components/examples/ListItemResponse"
+                - id: 6e26d247-e074-4f68-b72b-dd92aa02c7e0
+                  created_at: '2022-08-03T08:54:21.122Z'
+                  updated_at: '2022-08-03T08:54:21.122Z'
+                  list_id: 060b9c33-6c81-4fe4-9621-b10c0a4c06f3
+                  data:
+                    Id: '0038d00000B22zbAAB'
+                    Email: info@salesforce.com
+                    Phone: "(415) 555-1212"
+                    LastName: Minor
+                    FirstName: Geoff
+                    attributes:
+                      url: "/services/data/v42.0/sobjects/Contact/0038d00000B22zbAAB"
+                      type: Contact
+                    OtherCountry: Canada
+                - id: f7c029ad-93c3-469c-9267-73c3c6864161
+                  created_at: '2022-08-03T08:54:21.122Z'
+                  updated_at: '2022-08-03T08:54:21.122Z'
+                  list_id: 060b9c33-6c81-4fe4-9621-b10c0a4c06f3
+                  data:
+                    Id: '0038d00000B22zcAAB'
+                    Email: info@salesforce.com
+                    Phone: "(415) 555-1212"
+                    LastName: White
+                    FirstName: Carole
+                    attributes:
+                      url: "/services/data/v42.0/sobjects/Contact/0038d00000B22zcAAB"
+                      type: Contact
+                    OtherCountry:
+
+    ListItemDownloadResponse:
+      description: csv file of list items (stream response)
+      headers:
+        transfer-encoding:
+          schema:
+            enum:
+              - chunked
+            type: string
+            example: chunked
+      content:
+#        text/csv:
+#          schema:
+#            description: file containing list items in csv format
+#            type: string
+        application/octet-stream:
+          schema:
+            type: string
+            format: binary
 
     ListItemImportResponse:
       description: "Response for importing list item from file"
@@ -898,83 +929,81 @@ components:
                         readOnly: true
                         items:
                           $ref: "#/components/schemas/ActionDto"
-          examples:
-            simple:
-              value:
-                total_items: 1
-                page: 1
-                page_size: 100
-                total_pages: 1
-                _links:
-                  self:
-                    href: https://api-eu.vonage.com/v0.1/bulk/actions?page_size=100&page=1
-                  prev:
-                    href: https://api-eu.vonage.com/v0.1/bulk/actions?page_size=100&page=1
-                  next:
-                    href: https://api-eu.vonage.com/v0.1/bulk/actions?page_size=100&page=1
-                  first:
-                    href: https://api-eu.vonage.com/v0.1/bulk/actions?page_size=100&page=1
-                _embedded:
-                  actions:
-                    # - $ref: "#/components/examples/ActionSendSMSResponse"
-                    - name: vg-send-sms
-                      description: Send text message using Vonage messaging APIs
-                      parameters:
-                        - type: string
-                          required: true
-                          name: fromNumber
-                        - type: string
-                          required: true
-                          name: toNumber
-                        - type: string
-                          required: true
-                          name: message
-                        - type: secret
-                          required: true
-                          name: vonage-jwt-token
-                          default: vng-prd-messaging-api
-                      command:
-                        type: http-api-invoke
-                        url: https://api.nexmo.com/v1/messages
-                        method: post
-                        headers:
-                          - name: Content-Type
-                            value: application/json
-                          - name: Authorization
-                            value: Bearer {{ parameters.vonage-jwt-token }}
-                        payload:
-                          to: "{{ parameters.toNumber }}"
-                          message_type: text
-                          from: "{{ parameters.fromNumber }}"
-                          channel: sms
-                          text: "{{ parameters.message }}"
-                        response:
-                          success:
-                            codes:
-                              - "202"
-                          invocation_id: "{{response.payload.message_uuid}}"
-                          error:
-                            code: "{{response.payload.statusCode}}"
-                            details: "{{response.payload.error.details}}"
-                        async:
-                          invocation_id: "{{ event.message_uuid }}"
-                          status:
-                            value: "{{event.status}}"
-                            success:
-                              values:
-                                - delivered
-                            error:
-                              values:
-                                - rejected
-                                - undeliverable
-                              details: "{{event.error.details}}"
-                            info:
-                              values:
-                                - submitted
-                      timeout_seconds: 5
-                      id: 99ea10e0-1f14-4f55-b976-3c88ea8ec4cd
-                      created_at: "2022-06-23T17:45:31.782Z"
-                      updated_at: "2022-06-23T17:45:31.782Z"
+          example:
+            total_items: 1
+            page: 1
+            page_size: 100
+            total_pages: 1
+            _links:
+              self:
+                href: https://api-eu.vonage.com/v0.1/bulk/actions?page_size=100&page=1
+              prev:
+                href: https://api-eu.vonage.com/v0.1/bulk/actions?page_size=100&page=1
+              next:
+                href: https://api-eu.vonage.com/v0.1/bulk/actions?page_size=100&page=1
+              first:
+                href: https://api-eu.vonage.com/v0.1/bulk/actions?page_size=100&page=1
+            _embedded:
+              actions:
+                # - $ref: "#/components/examples/ActionSendSMSResponse"
+                - name: vg-send-sms
+                  description: Send text message using Vonage messaging APIs
+                  parameters:
+                    - type: string
+                      required: true
+                      name: fromNumber
+                    - type: string
+                      required: true
+                      name: toNumber
+                    - type: string
+                      required: true
+                      name: message
+                    - type: secret
+                      required: true
+                      name: vonage-jwt-token
+                      default: vng-prd-messaging-api
+                  command:
+                    type: http-api-invoke
+                    url: https://api.nexmo.com/v1/messages
+                    method: post
+                    headers:
+                      - name: Content-Type
+                        value: application/json
+                      - name: Authorization
+                        value: Bearer {{ parameters.vonage-jwt-token }}
+                    payload:
+                      to: "{{ parameters.toNumber }}"
+                      message_type: text
+                      from: "{{ parameters.fromNumber }}"
+                      channel: sms
+                      text: "{{ parameters.message }}"
+                    response:
+                      success:
+                        codes:
+                          - "202"
+                      invocation_id: "{{response.payload.message_uuid}}"
+                      error:
+                        code: "{{response.payload.statusCode}}"
+                        details: "{{response.payload.error.details}}"
+                    async:
+                      invocation_id: "{{ event.message_uuid }}"
+                      status:
+                        value: "{{event.status}}"
+                        success:
+                          values:
+                            - delivered
+                        error:
+                          values:
+                            - rejected
+                            - undeliverable
+                          details: "{{event.error.details}}"
+                        info:
+                          values:
+                            - submitted
+                  timeout_seconds: 5
+                  id: 99ea10e0-1f14-4f55-b976-3c88ea8ec4cd
+                  created_at: "2022-06-23T17:45:31.782Z"
+                  updated_at: "2022-06-23T17:45:31.782Z"
 
     JobResponse:
       description: ""
@@ -1003,83 +1032,81 @@ components:
                         readOnly: true
                         items:
                           $ref: "#/components/schemas/JobDto"
-          examples:
-            simple:
-              value:
-                total_items: 1
-                page: 1
-                page_size: 100
-                total_pages: 1
-                _links:
-                  self:
-                    href: https://api-eu.vonage.com/v0.1/bulk/jobs?page_size=2&page=2
-                  prev:
-                    href: https://api-eu.vonage.com/v0.1/bulk/jobs?page_size=2&page=1
-                  next:
-                    href: https://api-eu.vonage.com/v0.1/bulk/jobs?page_size=2&page=3
-                  first:
-                    href: https://api-eu.vonage.com/v0.1/bulk/jobs?page_size=2&page=1
-                _embedded:
-                  jobs:
-                    - name: send sms with optional end-user response
-                      tags:
-                        - marketing
-                        - uk
-                      definition:
-                        type: segmentation-job
-                        recipients:
-                          include:
-                            - id: c6a4704e-2ddd-47b7-b79c-7df38feafb3f
-                              type: list
-                          exclude:
-                            - id: fba7c209-ebb9-4b14-8acb-09a803d4f0a0
-                              type: list
-                        segmentations:
-                          - condition:
-                              expression: item.salary == 1000 || ['UK', 'USA'].includes(item.country)
-                            action_call:
-                              action_ref:
-                                id: 466ce4a4-9cec-40c0-83ab-c3fa64e48b6f
-                                type: action
-                              parameters:
-                                - name: fromNumber
-                                  value: "447418365541"
-                                - name: toNumber
-                                  value: "{{ item.number }}"
-                                - name: message
-                                  value: "{{ template.message }}"
-                            name: text vip customers
-                            description: text UK and USA vip customers
-                            template:
-                              type: text
-                              message:
-                                Dear {{ item.firstName }}, {{ item.lastName }} :)\n This's our 1st
-                                SMS communication from Vonage campaign.\nReply back with STOP if you want
-                                to stop receiving our messages
-                              encoding: utf8
-                            recipient:
-                              correlation_id: "{{item.number}}"
-                        events_handler:
-                          matching_strategy: match-first
-                          matchers:
-                            - condition:
-                                expression: event.text?.toLowerCase().includes('stop')
-                              action_call:
-                                action_ref:
-                                  type: action
-                                  id: bd795581-9a93-48b0-a4bc-3b7509bf6e4d
-                                parameters:
-                                  - name: listId
-                                    value: fba7c209-ebb9-4b14-8acb-09a803d4f0a0
-                                  - name: number
-                                    value: "{{event.from}}"
-                              name: opt-out
-                              description: unsubscribe
-                              recipient:
-                                correlation_id: "{{event.from}}"
-                      id: e721113d-0948-4edb-b4af-e3f0578d708c
-                      created_at: "2022-06-24T07:49:33.748Z"
-                      updated_at: "2022-06-24T07:49:33.748Z"
+          example:
+            total_items: 1
+            page: 1
+            page_size: 100
+            total_pages: 1
+            _links:
+              self:
+                href: https://api-eu.vonage.com/v0.1/bulk/jobs?page_size=2&page=1
+              prev:
+                href: https://api-eu.vonage.com/v0.1/bulk/jobs?page_size=2&page=1
+              next:
+                href: https://api-eu.vonage.com/v0.1/bulk/jobs?page_size=2&page=1
+              first:
+                href: https://api-eu.vonage.com/v0.1/bulk/jobs?page_size=2&page=1
+            _embedded:
+              jobs:
+                - name: send sms with optional end-user response
+                  tags:
+                    - marketing
+                    - uk
+                  definition:
+                    type: segmentation-job
+                    recipients:
+                      include:
+                        - id: c6a4704e-2ddd-47b7-b79c-7df38feafb3f
+                          type: list
+                      exclude:
+                        - id: fba7c209-ebb9-4b14-8acb-09a803d4f0a0
+                          type: list
+                    segmentations:
+                      - condition:
+                          expression: item.salary == 1000 || ['UK', 'USA'].includes(item.country)
+                        action_call:
+                          action_ref:
+                            id: 466ce4a4-9cec-40c0-83ab-c3fa64e48b6f
+                            type: action
+                          parameters:
+                            - name: fromNumber
+                              value: "447418365541"
+                            - name: toNumber
+                              value: "{{ item.number }}"
+                            - name: message
+                              value: "{{ template.message }}"
+                        name: text vip customers
+                        description: text UK and USA vip customers
+                        template:
+                          type: text
+                          message:
+                            Dear {{ item.firstName }}, {{ item.lastName }} :)\n This's our 1st
+                            SMS communication from Vonage campaign.\nReply back with STOP if you want
+                            to stop receiving our messages
+                          encoding: utf8
+                        recipient:
+                          correlation_id: "{{item.number}}"
+                    events_handler:
+                      matching_strategy: match-first
+                      matchers:
+                        - condition:
+                            expression: event.text?.toLowerCase().includes('stop')
+                          action_call:
+                            action_ref:
+                              type: action
+                              id: bd795581-9a93-48b0-a4bc-3b7509bf6e4d
+                            parameters:
+                              - name: listId
+                                value: fba7c209-ebb9-4b14-8acb-09a803d4f0a0
+                              - name: number
+                                value: "{{event.from}}"
+                          name: opt-out
+                          description: unsubscribe
+                          recipient:
+                            correlation_id: "{{event.from}}"
+                  id: e721113d-0948-4edb-b4af-e3f0578d708c
+                  created_at: "2022-06-24T07:49:33.748Z"
+                  updated_at: "2022-06-24T07:49:33.748Z"
 
     RunResponse:
       description: ""
@@ -1108,33 +1135,31 @@ components:
                         readOnly: true
                         items:
                           $ref: "#/components/schemas/JobRunDto"
-          examples:
-            simple:
-              value:
-                total_items: 1
-                page: 1
-                page_size: 100
-                total_pages: 1
-                _links:
-                  self:
-                    href: https://api-eu.vonage.com/v0.1/bulk/runs?page_size=100&page=1
-                  prev:
-                    href: https://api-eu.vonage.com/v0.1/bulk/runs?page_size=100&page=1
-                  next:
-                    href: https://api-eu.vonage.com/v0.1/bulk/runs?page_size=100&page=1
-                  first:
-                    href: https://api-eu.vonage.com/v0.1/bulk/runs?page_size=100&page=1
-                _embedded:
-                  runs:
-                    # - $ref: "#/components/examples/SegmentationRunResponse"
-                    - name: E2E Demo run
-                      job_id: e721113d-0948-4edb-b4af-e3f0578d708c
-                      status: scheduled
-                      start_at: "2022-06-24T04:06:36.000Z"
-                      end_at: "2022-06-24T08:57:55.917Z"
-                      id: 51aca838-2cf6-4100-b0d2-e74ac0e95c88
-                      created_at: "2022-06-24T07:57:56.301Z"
-                      updated_at: "2022-06-24T07:57:56.301Z"
+          example:
+            total_items: 1
+            page: 1
+            page_size: 100
+            total_pages: 1
+            _links:
+              self:
+                href: https://api-eu.vonage.com/v0.1/bulk/runs?page_size=100&page=1
+              prev:
+                href: https://api-eu.vonage.com/v0.1/bulk/runs?page_size=100&page=1
+              next:
+                href: https://api-eu.vonage.com/v0.1/bulk/runs?page_size=100&page=1
+              first:
+                href: https://api-eu.vonage.com/v0.1/bulk/runs?page_size=100&page=1
+            _embedded:
+              runs:
+                # - $ref: "#/components/examples/SegmentationRunResponse"
+                - name: E2E Demo run
+                  job_id: e721113d-0948-4edb-b4af-e3f0578d708c
+                  status: scheduled
+                  start_at: "2022-06-24T04:06:36.000Z"
+                  end_at: "2022-06-24T08:57:55.917Z"
+                  id: 51aca838-2cf6-4100-b0d2-e74ac0e95c88
+                  created_at: "2022-06-24T07:57:56.301Z"
+                  updated_at: "2022-06-24T07:57:56.301Z"
 
     EventPageResponse:
       description: ""
@@ -1157,61 +1182,59 @@ components:
                             - $ref: "#/components/schemas/ActionCallFailedEvent"
                             - $ref: "#/components/schemas/ActionCallInfoEvent"
                             - $ref: "#/components/schemas/RecipientResponseEvent"
-          examples:
-            simple:
-              value:
-                total_items: 10
-                page: 1
-                page_size: 100
-                total_pages: 1
-                _links:
-                  self:
-                    href: https://api-eu.vonage.com/v0.1/bulk/runs/7d0d4e5f-6453-4c63-87cf-f95b04377324/events?page_size=100&page=1
-                  prev:
-                    href: https://api-eu.vonage.com/v0.1/bulk/runs/7d0d4e5f-6453-4c63-87cf-f95b04377324/events?page_size=100&page=1
-                  next:
-                    href: https://api-eu.vonage.com/v0.1/bulk/runs/7d0d4e5f-6453-4c63-87cf-f95b04377324/events?page_size=100&page=1
-                  first:
-                    href: https://api-eu.vonage.com/v0.1/bulk/runs/7d0d4e5f-6453-4c63-87cf-f95b04377324/events?page_size=100&page=1
-                _embedded:
-                  events:
-                    - occurred_at: '2022-08-07T13:18:21.970Z'
-                      event_type: action-call-succeeded
-                      id: e8e1eb4d-61e0-4099-8fa7-c96f1c0764ba
-                      job_id: c68e871a-c239-474d-a905-7b95f4563b7e
-                      src_ctx: et-e4ab4b75-9e7c-4f26-9328-394a5b842648
-                      action_id: 26c5bbe2-113e-4201-bd93-f69e0a03d17f
-                      event_data:
-                        url: https://postman-echo.com/post
-                        args: {}
-                        data:
-                          from: ''
-                        form: {}
-                        json:
-                          from: ''
-                        files: {}
-                        headers:
-                          host: postman-echo.com
-                          user-agent: got (https://github.com/sindresorhus/got)
-                          content-type: application/json
-                          content-length: '11'
-                          accept-encoding: gzip, deflate, br
-                          x-amzn-trace-id: Root=1-62efbb9e-53636b7b794accb87a3d662f
-                          x-forwarded-port: '443'
-                          x-nexmo-trace-id: 8a6fed94-7296-4a39-9c52-348f12b4d61a
-                          x-forwarded-proto: https
-                      job_run_id: 7d0d4e5f-6453-4c63-87cf-f95b04377324
-                      recipient_id: '14806904549'
-                    - occurred_at: '2022-08-07T13:18:20.289Z'
-                      event_type: recipient-response
-                      id: 8c8e9894-81be-4f6e-88d4-046b6c70ff8c
-                      job_id: c68e871a-c239-474d-a905-7b95f4563b7e
-                      src_ctx: et-e4ab4b75-9e7c-4f26-9328-394a5b842648
-                      event_data:
-                        from: '15053939008'
-                        text: Dima
-                      job_run_id: 7d0d4e5f-6453-4c63-87cf-f95b04377324
-                      recipient_id: '15053939008'
+          example:
+            total_items: 1
+            page: 1
+            page_size: 100
+            total_pages: 1
+            _links:
+              self:
+                href: https://api-eu.vonage.com/v0.1/bulk/runs/7d0d4e5f-6453-4c63-87cf-f95b04377324/events?page_size=100&page=1
+              prev:
+                href: https://api-eu.vonage.com/v0.1/bulk/runs/7d0d4e5f-6453-4c63-87cf-f95b04377324/events?page_size=100&page=1
+              next:
+                href: https://api-eu.vonage.com/v0.1/bulk/runs/7d0d4e5f-6453-4c63-87cf-f95b04377324/events?page_size=100&page=1
+              first:
+                href: https://api-eu.vonage.com/v0.1/bulk/runs/7d0d4e5f-6453-4c63-87cf-f95b04377324/events?page_size=100&page=1
+            _embedded:
+              events:
+                - occurred_at: '2022-08-07T13:18:21.970Z'
+                  event_type: action-call-succeeded
+                  id: e8e1eb4d-61e0-4099-8fa7-c96f1c0764ba
+                  job_id: c68e871a-c239-474d-a905-7b95f4563b7e
+                  src_ctx: et-e4ab4b75-9e7c-4f26-9328-394a5b842648
+                  action_id: 26c5bbe2-113e-4201-bd93-f69e0a03d17f
+                  event_data:
+                    url: https://postman-echo.com/post
+                    args: {}
+                    data:
+                      from: ''
+                    form: {}
+                    json:
+                      from: ''
+                    files: {}
+                    headers:
+                      host: postman-echo.com
+                      user-agent: got (https://github.com/sindresorhus/got)
+                      content-type: application/json
+                      content-length: '11'
+                      accept-encoding: gzip, deflate, br
+                      x-amzn-trace-id: Root=1-62efbb9e-53636b7b794accb87a3d662f
+                      x-forwarded-port: '443'
+                      x-nexmo-trace-id: 8a6fed94-7296-4a39-9c52-348f12b4d61a
+                      x-forwarded-proto: https
+                  job_run_id: 7d0d4e5f-6453-4c63-87cf-f95b04377324
+                  recipient_id: '14806904549'
+                - occurred_at: '2022-08-07T13:18:20.289Z'
+                  event_type: recipient-response
+                  id: 8c8e9894-81be-4f6e-88d4-046b6c70ff8c
+                  job_id: c68e871a-c239-474d-a905-7b95f4563b7e
+                  src_ctx: et-e4ab4b75-9e7c-4f26-9328-394a5b842648
+                  event_data:
+                    from: '15053939008'
+                    text: Dima
+                  job_run_id: 7d0d4e5f-6453-4c63-87cf-f95b04377324
+                  recipient_id: '15053939008'
 
     ErrorBadRequest:
       description: Invalid request parameter or body
