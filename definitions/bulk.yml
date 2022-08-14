@@ -710,7 +710,13 @@ components:
 
   responses:
     AcceptedResponse:
+      # todo: what should we return in accepted response? It currently return no content (then why not use http code 204?). I added application/json to avoid the doc warning.
       description: Request accepted and is processed asynchronously on the server
+      content:
+        application/json:
+          schema:
+            type: string
+            example: ""
 
     ListResponse:
       description: "List response"
@@ -883,10 +889,6 @@ components:
             type: string
             example: chunked
       content:
-#        text/csv:
-#          schema:
-#            description: file containing list items in csv format
-#            type: string
         application/octet-stream:
           schema:
             type: string
@@ -1349,7 +1351,6 @@ components:
         href:
           type: string
           format: url
-          example: https://api-eu.vonage.com/v0.1/bulk/lists?page=5&page_size=10
       required:
         - href
 
