@@ -737,7 +737,8 @@ components:
           schema:
             allOf:
               - $ref: "#/components/schemas/PageResponseDto"
-              - properties:
+              - type: object
+                properties:
                   _embedded:
                     type: object
                     readOnly: true
@@ -823,7 +824,8 @@ components:
           schema:
             allOf:
               - $ref: "#/components/schemas/PageResponseDto"
-              - properties:
+              - type: object
+                properties:
                   _embedded:
                     type: object
                     readOnly: true
@@ -921,7 +923,8 @@ components:
           schema:
             allOf:
               - $ref: "#/components/schemas/PageResponseDto"
-              - properties:
+              - type: object
+                properties:
                   _embedded:
                     type: object
                     readOnly: true
@@ -1024,7 +1027,8 @@ components:
           schema:
             allOf:
               - $ref: "#/components/schemas/PageResponseDto"
-              - properties:
+              - type: object
+                properties:
                   _embedded:
                     type: object
                     readOnly: true
@@ -1127,7 +1131,8 @@ components:
           schema:
             allOf:
               - $ref: "#/components/schemas/PageResponseDto"
-              - properties:
+              - type: object
+                properties:
                   _embedded:
                     type: object
                     readOnly: true
@@ -1170,7 +1175,8 @@ components:
           schema:
             allOf:
               - $ref: "#/components/schemas/PageResponseDto"
-              - properties:
+              - type: object
+                properties:
                   _embedded:
                     type: object
                     readOnly: true
