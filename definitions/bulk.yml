@@ -1353,6 +1353,7 @@ components:
           readOnly: true
 #      required:
 #        - href
+          example: https://api-eu.vonage.com/v0.1/bulk/lists?page=5&page_size=10
 
     HalLinks:
       type: object
