@@ -737,8 +737,7 @@ components:
           schema:
             allOf:
               - $ref: "#/components/schemas/PageResponseDto"
-              - type: object
-                properties:
+              - properties:
                   _embedded:
                     type: object
                     readOnly: true
@@ -824,8 +823,7 @@ components:
           schema:
             allOf:
               - $ref: "#/components/schemas/PageResponseDto"
-              - type: object
-                properties:
+              - properties:
                   _embedded:
                     type: object
                     readOnly: true
@@ -907,7 +905,7 @@ components:
               $ref: "#/components/examples/ListItemImport"
 
     ActionResponse:
-      description: "Response for creating an action"
+      description: ""
       content:
         application/json:
           schema:
@@ -917,13 +915,13 @@ components:
               $ref: "#/components/examples/ActionSendSMSResponse"
 
     ActionPageResponse:
-      description: "Paged actions response"
+      description: ""
       content:
         application/json:
           schema:
             allOf:
-              - type: object
-                properties:
+              - $ref: "#/components/schemas/PageResponseDto"
+              - properties:
                   _embedded:
                     type: object
                     readOnly: true
@@ -933,7 +931,6 @@ components:
                         readOnly: true
                         items:
                           $ref: "#/components/schemas/ActionDto"
-              - $ref: "#/components/schemas/PageResponseDto"
           example:
             total_items: 1
             page: 1
@@ -1027,8 +1024,7 @@ components:
           schema:
             allOf:
               - $ref: "#/components/schemas/PageResponseDto"
-              - type: object
-                properties:
+              - properties:
                   _embedded:
                     type: object
                     readOnly: true
@@ -1131,8 +1127,7 @@ components:
           schema:
             allOf:
               - $ref: "#/components/schemas/PageResponseDto"
-              - type: object
-                properties:
+              - properties:
                   _embedded:
                     type: object
                     readOnly: true
@@ -1175,8 +1170,7 @@ components:
           schema:
             allOf:
               - $ref: "#/components/schemas/PageResponseDto"
-              - type: object
-                properties:
+              - properties:
                   _embedded:
                     type: object
                     readOnly: true
@@ -1336,16 +1330,30 @@ components:
       format: uuid
       example: 12025550135
 
+    PageQueryDto:
+      type: object
+      properties:
+        page:
+          type: number
+          minimum: 1
+          default: 1
+          example: 1
+        page_size:
+          type: number
+          minimum: 1
+          maximum: 1000
+          default: 100
+          example: 100
+
     Href:
       type: object
       properties:
         href:
           type: string
           format: url
-          readOnly: true
-          required:
-            - href
           example: https://api-eu.vonage.com/v0.1/bulk/lists?page=5&page_size=10
+      required:
+        - href
 
     HalLinks:
       type: object
@@ -1360,46 +1368,47 @@ components:
           $ref: "#/components/schemas/Href"
       # todo: is all attributes of links required?
       required:
-        #        - first
-        #        - prev
+        - first
+        - prev
         - self
-    #        - next
+        - next
 
     PageResponseDto:
-      allOf:
-#        - $ref: "common/hal_structures.yml#/components/schemas/PagedResponse"
-        - type: object
-          properties:
-            total_items:
-              type: number
-              readOnly: true
-              example: 10000
-            total_pages:
-              type: number
-              readOnly: true
-              example: 50
-            page:
-              type: number
-              readOnly: true
-              minimum: 1
-              example: 1
-            page_size:
-              type: number
-              readOnly: true
-              example: 250
-            _links:
-              $ref: "#/components/schemas/HalLinks"
-            _embedded:
-              type: object
-              additionalProperties: true
-              readOnly: true
-          required:
-            - total_items
-            - total_pages
-            - page
-            - page_size
-            - _links
-            - _embedded
+      type: object
+      properties:
+        total_items:
+          type: number
+          readOnly: true
+          example: 10000
+        total_pages:
+          type: number
+          readOnly: true
+          example: 50
+        page:
+          type: number
+          readOnly: true
+          minimum: 1
+          example: 1
+        page_size:
+          type: number
+          readOnly: true
+          example: 250
+        _links:
+          readOnly: true
+          type: array
+          items:
+            $ref: "#/components/schemas/HalLinks"
+        _embedded:
+          type: object
+          additionalProperties: true
+          readOnly: true
+      required:
+        - total_items
+        - total_pages
+        - page
+        - page_size
+        - _links
+        - _embedded
 
     BulkBase:
       type: object
@@ -1518,20 +1527,24 @@ components:
         - type
 
     SalesforceDatasource:
-      allOf:
-        - $ref: "#/components/schemas/ListDatasourceBaseDto"
-        - type: object
-          properties:
-            integration_id:
-              type: string
-              example: salesforce_credentials
-            soql:
-              type: string
-              example: select Id, LastName, FirstName, Phone, Email FROM Contact
-          required:
-            - type
-            - integration_id
-            - soql
+      type: object
+      properties:
+        type:
+          type: string
+          default: salesforce
+          enum:
+            - salesforce
+          example: salesforce
+        integration_id:
+          type: string
+          example: salesforce_credentials
+        soql:
+          type: string
+          example: select Id, LastName, FirstName, Phone, Email FROM Contact
+      required:
+        - type
+        - integration_id
+        - soql
 
     ListItemDto:
       allOf:
@@ -2202,7 +2215,6 @@ components:
         - job_run_id
         - recipient_id
 
-    #    todo: where is used? part of events?
     StatsMetricDto:
       type: object
       properties:
