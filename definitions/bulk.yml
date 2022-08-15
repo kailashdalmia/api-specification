@@ -1458,10 +1458,11 @@ components:
       type: array
       minItems: 0
       maxItems: 10
-      minLength: 1
-      maxLength: 15
       items:
         type: string
+# todo: why min/max length fails rendering?
+#        minLength: 1
+#        maxLength: 15
 
     ListEditableFields:
       type: object
