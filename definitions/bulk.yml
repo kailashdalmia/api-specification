@@ -1454,41 +1454,48 @@ components:
       required:
         - name
 
+    NameAndDescription:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          example: my name
+        description:
+          type: string
+          maxLength: 1024
+          example: my description
+      required:
+        - name
+
     Tags:
       type: array
       minItems: 0
       maxItems: 10
       items:
         type: string
-# todo: why min/max length fails rendering?
-#        minLength: 1
-#        maxLength: 15
+        # todo: why min/max length fails rendering?
+        #        minLength: 1
+        #        maxLength: 15
 
     ListEditableFields:
-      type: object
-      properties:
-        name:
-          type: string
-          maxLength: 50
-          example: Recipients for demo
-        description:
-          type: string
-          maxLength: 1024
-        tags:
-          $ref: "#/components/schemas/Tags"
-        labels:
-          minItems: 0
-          maxItems: 50
-          type: array
-          items:
-            $ref: "#/components/schemas/ListLabel"
-        datasource:
-          discriminator:
-            propertyName: type
-          oneOf:
-            - $ref: "#/components/schemas/SalesforceDatasource"
-      required:
-        - name
+      allOf:
+        - $ref: "#/components/schemas/NameAndDescription"
+        - type: object
+          properties:
+            tags:
+              $ref: "#/components/schemas/Tags"
+            labels:
+              minItems: 0
+              maxItems: 50
+              type: array
+              items:
+                $ref: "#/components/schemas/ListLabel"
+            datasource:
+              discriminator:
+                propertyName: type
+              oneOf:
+                - $ref: "#/components/schemas/SalesforceDatasource"
 
     ListSyncStatus:
       description: sync status and it's details
@@ -1574,6 +1581,12 @@ components:
         - list_id
         - data
 
+    ActionParameterName:
+      type: string
+      minLength: 1
+      maxLength: 50
+      example: from_number
+
     ActionParameterDefinition:
       type: object
       properties:
@@ -1585,8 +1598,10 @@ components:
           default: string
           example: string
         name:
+          $ref: "#/components/schemas/ActionParameterName"
+        description:
           type: string
-          example: from
+          maxLength: 256
         required:
           type: boolean
           default: true
@@ -1600,8 +1615,7 @@ components:
       type: object
       properties:
         name:
-          type: string
-          example: from_number
+          $ref: "#/components/schemas/ActionParameterName"
         value:
           type: string
           example: 715-268-2905
@@ -1748,31 +1762,29 @@ components:
         - url
 
     ActionEditableFields:
-      type: object
-      properties:
-        name:
-          type: string
-          example: send-sms
-        parameters:
-          type: array
-          items:
-            $ref: "#/components/schemas/ActionParameterDefinition"
-        command:
-          discriminator:
-            propertyName: type
-          oneOf:
-            - $ref: "#/components/schemas/HttpApiInvoke"
-          example:
-            type: http-api-invoke
-            url: https://api.nexmo.com/v1/messages
-            method: post
-        timeout_seconds:
-          type: number
-          default: 5
-          minimum: 0
-          maximum: 60
+      allOf:
+        - $ref: "#/components/schemas/NameAndDescription"
+        - type: object
+          properties:
+            parameters:
+              type: array
+              items:
+                $ref: "#/components/schemas/ActionParameterDefinition"
+            command:
+              discriminator:
+                propertyName: type
+              oneOf:
+                - $ref: "#/components/schemas/HttpApiInvoke"
+              example:
+                type: http-api-invoke
+                url: https://api.nexmo.com/v1/messages
+                method: post
+            timeout_seconds:
+              type: number
+              default: 5
+              minimum: 0
+              maximum: 60
       required:
-        - name
         - command
 
     ActionDto:
@@ -1883,21 +1895,15 @@ components:
         - correlation_id
 
     Rule:
-      type: object
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          example: us customer
-        description:
-          type: string
-          maxLength: 1024
-        condition:
-          $ref: "#/components/schemas/Expression"
-        action_call:
-          $ref: "#/components/schemas/ActionCall"
+      allOf:
+        - $ref: "#/components/schemas/NameAndDescription"
+        - type: object
+          properties:
+            condition:
+              $ref: "#/components/schemas/Expression"
+            action_call:
+              $ref: "#/components/schemas/ActionCall"
       required:
-        - name
         - condition
         - action_call
 
@@ -1999,18 +2005,17 @@ components:
               value: "{{ template.message }}"
 
     JobEditableFields:
-      type: object
-      properties:
-        name:
-          type: string
-          example: Greeting all
-        tags:
-          $ref: "#/components/schemas/Tags"
-        definition:
-          discriminator:
-            propertyName: type
-          oneOf:
-            - $ref: "#/components/schemas/JobSegmentationDefinition"
+      allOf:
+        - $ref: "#/components/schemas/NameAndDescription"
+        - type: object
+          properties:
+            tags:
+              $ref: "#/components/schemas/Tags"
+            definition:
+              discriminator:
+                propertyName: type
+              oneOf:
+                - $ref: "#/components/schemas/JobSegmentationDefinition"
 
     JobDto:
       allOf:
@@ -2018,23 +2023,21 @@ components:
         - $ref: "#/components/schemas/JobEditableFields"
 
     RunEditableFields:
-      type: object
-      properties:
-        name:
-          type: string
-          example: holiday run
-        start_at:
-          format: date-time
-          type: string
-          example: "2022-06-06T05:46:00.936Z"
-        end_at:
-          format: date-time
-          type: string
-          example: "2022-06-20T05:46:00.936Z"
-        job_id:
-          $ref: "#/components/schemas/JobId"
+      allOf:
+        - $ref: "#/components/schemas/NameAndDescription"
+        - type: object
+          properties:
+            start_at:
+              format: date-time
+              type: string
+              example: "2022-06-06T05:46:00.936Z"
+            end_at:
+              format: date-time
+              type: string
+              example: "2022-06-20T05:46:00.936Z"
+            job_id:
+              $ref: "#/components/schemas/JobId"
       required:
-        - name
         - start_at
         - end_at
         - job_id
