@@ -1301,23 +1301,38 @@ components:
         - next
 
     PageResponseDto:
-      allOf:
-        - $ref: "common/hal_structures.yml#/components/schemas/PagedResponse"
-        - type: object
-          properties:
-            _links:
-              $ref: "#/components/schemas/HalLinks"
-            _embedded:
-              type: object
-              additionalProperties: true
-              readOnly: true
-          required:
-            - total_items
-            - total_pages
-            - page
-            - page_size
-            - _links
-            - _embedded
+      type: object
+      properties:
+        total_items:
+          type: number
+          readOnly: true
+          example: 10000
+        total_pages:
+          type: number
+          readOnly: true
+          example: 50
+        page:
+          type: number
+          readOnly: true
+          minimum: 1
+          example: 1
+        page_size:
+          type: number
+          readOnly: true
+          example: 250
+        _links:
+          $ref: "#/components/schemas/HalLinks"
+        _embedded:
+          type: object
+          additionalProperties: true
+          readOnly: true
+      required:
+        - total_items
+        - total_pages
+        - page
+        - page_size
+        - _links
+        - _embedded
 
     ListId:
       type: string
