@@ -3,7 +3,7 @@ components:
   schemas:
     Page:
       description: Page Offset
-      example: 2
+      example: 1
       type: integer
       minimum: 1
 

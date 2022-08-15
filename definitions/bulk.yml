@@ -35,8 +35,8 @@ paths:
       operationId: listsFindAll
       summary: Find all lists
       parameters:
-        - $ref: "#/components/parameters/Page"
-        - $ref: "#/components/parameters/PageSize"
+        - $ref: "common/hal_structures.yml#/components/parameters/Page"
+        - $ref: "common/hal_structures.yml#/components/parameters/PageSize"
       responses:
         "200":
           $ref: "#/components/responses/ListPageResponse"
@@ -151,8 +151,8 @@ paths:
       operationId: itemsFindAll
       summary: Find all list items
       parameters:
-        - $ref: "#/components/parameters/Page"
-        - $ref: "#/components/parameters/PageSize"
+        - $ref: "common/hal_structures.yml#/components/parameters/Page"
+        - $ref: "common/hal_structures.yml#/components/parameters/PageSize"
       responses:
         "200":
           $ref: "#/components/responses/ListItemPageResponse"
@@ -265,8 +265,8 @@ paths:
       operationId: actionsFindAll
       summary: Find all actions
       parameters:
-        - $ref: "#/components/parameters/Page"
-        - $ref: "#/components/parameters/PageSize"
+        - $ref: "common/hal_structures.yml#/components/parameters/Page"
+        - $ref: "common/hal_structures.yml#/components/parameters/PageSize"
       responses:
         "200":
           $ref: "#/components/responses/ActionPageResponse"
@@ -346,8 +346,8 @@ paths:
       operationId: jobsFindAll
       summary: Find all jobs
       parameters:
-        - $ref: "#/components/parameters/Page"
-        - $ref: "#/components/parameters/PageSize"
+        - $ref: "common/hal_structures.yml#/components/parameters/Page"
+        - $ref: "common/hal_structures.yml#/components/parameters/PageSize"
       responses:
         "200":
           $ref: "#/components/responses/JobPageResponse"
@@ -427,8 +427,8 @@ paths:
       operationId: eventsFindAll
       summary: Find all events
       parameters:
-        - $ref: "#/components/parameters/Page"
-        - $ref: "#/components/parameters/PageSize"
+        - $ref: "common/hal_structures.yml#/components/parameters/Page"
+        - $ref: "common/hal_structures.yml#/components/parameters/PageSize"
       responses:
         "200":
           $ref: "#/components/responses/EventPageResponse"
@@ -443,8 +443,8 @@ paths:
       operationId: runsFindAll
       summary: Find all runs
       parameters:
-        - $ref: "#/components/parameters/Page"
-        - $ref: "#/components/parameters/PageSize"
+        - $ref: "common/hal_structures.yml#/components/parameters/Page"
+        - $ref: "common/hal_structures.yml#/components/parameters/PageSize"
       responses:
         "200":
           $ref: "#/components/responses/RunPageResponse"
@@ -496,8 +496,8 @@ paths:
       operationId: runsEvents
       summary: Get job run events
       parameters:
-        - $ref: "#/components/parameters/Page"
-        - $ref: "#/components/parameters/PageSize"
+        - $ref: "common/hal_structures.yml#/components/parameters/Page"
+        - $ref: "common/hal_structures.yml#/components/parameters/PageSize"
       responses:
         "200":
           $ref: "#/components/responses/EventPageResponse"
@@ -581,29 +581,6 @@ components:
       type: http
 
   parameters:
-    Page:
-      name: page
-      description: Page of results to jump to
-      in: query
-      schema:
-        minimum: 1
-        default: 1
-        type: number
-      required: false
-      example: 1
-
-    PageSize:
-      name: page_size
-      description: Number of results per page
-      in: query
-      schema:
-        minimum: 1
-        maximum: 1000
-        default: 100
-        type: number
-      required: false
-      example: 100
-
     ListId:
       name: list_id
       in: path
@@ -1295,6 +1272,53 @@ components:
               - $ref: "common/common_errors.yml#/components/responses/DefaultError/content/application~1json/schema"
 
   schemas:
+    Href:
+      type: object
+      properties:
+        href:
+          type: string
+          format: url
+          example: https://api-eu.vonage.com/v0.1/bulk/lists?page=5&page_size=10
+      required:
+        - href
+
+    HalLinks:
+      type: object
+      properties:
+        first:
+          $ref: "#/components/schemas/Href"
+        prev:
+          $ref: "#/components/schemas/Href"
+        self:
+          $ref: "#/components/schemas/Href"
+        next:
+          $ref: "#/components/schemas/Href"
+      # todo: is all attributes of links required?
+      required:
+        - first
+        - prev
+        - self
+        - next
+
+    PageResponseDto:
+      allOf:
+        - $ref: "common/hal_structures.yml#/components/schemas/PagedResponse"
+        - type: object
+          properties:
+            _links:
+              $ref: "#/components/schemas/HalLinks"
+            _embedded:
+              type: object
+              additionalProperties: true
+              readOnly: true
+          required:
+            - total_items
+            - total_pages
+            - page
+            - page_size
+            - _links
+            - _embedded
+
     ListId:
       type: string
       format: uuid
@@ -1329,83 +1353,6 @@ components:
       type: string
       format: uuid
       example: 12025550135
-
-    PageQueryDto:
-      type: object
-      properties:
-        page:
-          type: number
-          minimum: 1
-          default: 1
-          example: 1
-        page_size:
-          type: number
-          minimum: 1
-          maximum: 1000
-          default: 100
-          example: 100
-
-    Href:
-      type: object
-      properties:
-        href:
-          type: string
-          format: url
-          example: https://api-eu.vonage.com/v0.1/bulk/lists?page=5&page_size=10
-      required:
-        - href
-
-    HalLinks:
-      type: object
-      properties:
-        first:
-          $ref: "#/components/schemas/Href"
-        prev:
-          $ref: "#/components/schemas/Href"
-        self:
-          $ref: "#/components/schemas/Href"
-        next:
-          $ref: "#/components/schemas/Href"
-      # todo: is all attributes of links required?
-      required:
-        - first
-        - prev
-        - self
-        - next
-
-    PageResponseDto:
-      type: object
-      properties:
-        total_items:
-          type: number
-          readOnly: true
-          example: 10000
-        total_pages:
-          type: number
-          readOnly: true
-          example: 50
-        page:
-          type: number
-          readOnly: true
-          minimum: 1
-          example: 1
-        page_size:
-          type: number
-          readOnly: true
-          example: 250
-        _links:
-          $ref: "#/components/schemas/HalLinks"
-        _embedded:
-          type: object
-          additionalProperties: true
-          readOnly: true
-      required:
-        - total_items
-        - total_pages
-        - page
-        - page_size
-        - _links
-        - _embedded
 
     BulkBase:
       type: object
