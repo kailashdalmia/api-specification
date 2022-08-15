@@ -1484,18 +1484,11 @@ components:
       required:
         - name
 
-    ListSystemFields:
-      description: Fields that are added to a list by the system
+    ListSyncStatus:
+      description: sync status and it's details
       type: object
       properties:
-        type:
-          type: string
-          readOnly: true
-          enum:
-            - salesforce
-            - manual
-          example: salesforce
-        sync_status:
+        value:
           type: string
           readOnly: true
           enum:
@@ -1508,6 +1501,32 @@ components:
             - completed
             - failed
           example: configured
+        details:
+          description: provide details on sync status
+          type: string
+        dirty:
+          description: Indicates if the list content or metadata were modified since last sync.
+          type: boolean
+        data_modified:
+          description: One or more list items were added, removed modified since latest sync.
+          type: boolean
+        metadata_modified:
+          description: List metadata (definition) is modified since latest sync.
+          type: boolean
+
+    ListSystemFields:
+      description: Fields that are added to a list by the system
+      type: object
+      properties:
+        type:
+          type: string
+          readOnly: true
+          enum:
+            - salesforce
+            - manual
+          example: salesforce
+        sync_status:
+          $ref: "#/components/schemas/ListSyncStatus"
         items_count:
           type: number
           readOnly: true
@@ -1531,8 +1550,8 @@ components:
             firstName: Adrianna
             lastName: Renner
             number: 715-268-2905
-#      required:
-#        - data
+      required:
+        - data
 
     ItemSystemFields:
       type: object
@@ -1590,11 +1609,11 @@ components:
         codes:
           default:
             - "200"
-          example:
-            - 200
           type: array
           items:
             type: string
+          example:
+            - 200
       required:
         - codes
 
@@ -2018,10 +2037,10 @@ components:
         - end_at
         - job_id
 
-    RunSystemFields:
+    RunStatus:
       type: object
       properties:
-        status:
+        value:
           type: string
           readOnly: true
           enum:
@@ -2033,6 +2052,15 @@ components:
             - completed
             - draft
           example: running
+        details:
+          type: string
+          readOnly: true
+
+    RunSystemFields:
+      type: object
+      properties:
+        status:
+          $ref: "#/components/schemas/RunStatus"
 
     RunDto:
       allOf:
