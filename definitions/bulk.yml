@@ -1454,6 +1454,15 @@ components:
       required:
         - name
 
+    Tags:
+      type: array
+      minItems: 0
+      maxItems: 10
+      minLength: 1
+      maxLength: 15
+      items:
+        type: string
+
     ListEditableFields:
       type: object
       properties:
@@ -1465,11 +1474,7 @@ components:
           type: string
           maxLength: 1024
         tags:
-          minItems: 0
-          maxItems: 10
-          type: array
-          items:
-            type: string
+          $ref: "#/components/schemas/Tags"
         labels:
           minItems: 0
           maxItems: 50
@@ -1999,11 +2004,7 @@ components:
           type: string
           example: Greeting all
         tags:
-          minItems: 0
-          maxItems: 30
-          type: array
-          items:
-            type: string
+          $ref: "#/components/schemas/Tags"
         definition:
           discriminator:
             propertyName: type
@@ -2481,7 +2482,6 @@ components:
         id: 99ea10e0-1f14-4f55-b976-3c88ea8ec4cd
         created_at: "2022-06-23T17:45:31.782Z"
         updated_at: "2022-06-23T17:45:31.782Z"
-
 
     JobSegmentationRequestExample:
       value:
