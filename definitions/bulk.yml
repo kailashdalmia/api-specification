@@ -39,7 +39,7 @@ paths:
         - $ref: "common/hal_structures.yml#/components/parameters/PageSize"
       responses:
         "200":
-          $ref: "#/components/responses/ListPageResponse"
+          $ref: "#/components/responses/ListsPagedResponse"
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
@@ -155,7 +155,7 @@ paths:
         - $ref: "common/hal_structures.yml#/components/parameters/PageSize"
       responses:
         "200":
-          $ref: "#/components/responses/ListItemPageResponse"
+          $ref: "#/components/responses/ItemsPagedResponse"
         "401":
           $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
         "404":
@@ -166,10 +166,10 @@ paths:
       operationId: itemsCreate
       summary: Create list item
       requestBody:
-        $ref: "#/components/requestBodies/ListItemRequest"
+        $ref: "#/components/requestBodies/ItemRequest"
       responses:
         "201":
-          $ref: "#/components/responses/ListItemResponse"
+          $ref: "#/components/responses/ItemResponse"
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
@@ -188,7 +188,7 @@ paths:
       summary: Download list items as a CSV file format
       responses:
         "200":
-          $ref: "#/components/responses/ListItemDownloadResponse"
+          $ref: "#/components/responses/ItemsDownloadResponse"
         "401":
           $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
         "404":
@@ -204,7 +204,7 @@ paths:
       summary: Get list item by id
       responses:
         "200":
-          $ref: "#/components/responses/ListItemResponse"
+          $ref: "#/components/responses/ItemResponse"
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
@@ -217,10 +217,10 @@ paths:
       operationId: itemsUpdate
       summary: Update list item
       requestBody:
-        $ref: "#/components/requestBodies/ListItemRequest"
+        $ref: "#/components/requestBodies/ItemRequest"
       responses:
         "200":
-          $ref: "#/components/responses/ListItemResponse"
+          $ref: "#/components/responses/ItemResponse"
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
@@ -234,7 +234,7 @@ paths:
       summary: Delete list item
       responses:
         "200":
-          $ref: "#/components/responses/ListItemResponse"
+          $ref: "#/components/responses/ItemResponse"
         "401":
           $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
         "404":
@@ -248,10 +248,10 @@ paths:
       operationId: itemsImport
       summary: Import list items from a CSV file
       requestBody:
-        $ref: "#/components/requestBodies/ListItemImportRequest"
+        $ref: "#/components/requestBodies/ItemImportRequest"
       responses:
         "200":
-          $ref: "#/components/responses/ListItemImportResponse"
+          $ref: "#/components/responses/ItemsImportResponse"
         "401":
           $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
         "404":
@@ -269,7 +269,7 @@ paths:
         - $ref: "common/hal_structures.yml#/components/parameters/PageSize"
       responses:
         "200":
-          $ref: "#/components/responses/ActionPageResponse"
+          $ref: "#/components/responses/ActionsPagedResponse"
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
@@ -350,7 +350,7 @@ paths:
         - $ref: "common/hal_structures.yml#/components/parameters/PageSize"
       responses:
         "200":
-          $ref: "#/components/responses/JobPageResponse"
+          $ref: "#/components/responses/JobsPagedResponse"
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
@@ -431,7 +431,7 @@ paths:
         - $ref: "common/hal_structures.yml#/components/parameters/PageSize"
       responses:
         "200":
-          $ref: "#/components/responses/EventPageResponse"
+          $ref: "#/components/responses/EventsPagedResponse"
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
@@ -447,7 +447,7 @@ paths:
         - $ref: "common/hal_structures.yml#/components/parameters/PageSize"
       responses:
         "200":
-          $ref: "#/components/responses/RunPageResponse"
+          $ref: "#/components/responses/RunsPagedResponse"
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
@@ -500,7 +500,7 @@ paths:
         - $ref: "common/hal_structures.yml#/components/parameters/PageSize"
       responses:
         "200":
-          $ref: "#/components/responses/EventPageResponse"
+          $ref: "#/components/responses/EventsPagedResponse"
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
@@ -517,11 +517,7 @@ paths:
       summary: Get action runs and recipient responses statistics overview
       responses:
         "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/StatsRunSummaryDto"
+          $ref: "#/components/responses/RunSummaryResponse"
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
@@ -627,24 +623,24 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/UpdateListDto"
+            $ref: "#/components/schemas/ListEditableFields"
           examples:
             manual:
-              $ref: "#/components/examples/ListManual"
+              $ref: "#/components/examples/ListManualExample"
             salesforce:
-              $ref: "#/components/examples/ListSalesforce"
+              $ref: "#/components/examples/ListSalesforceExample"
 
-    ListItemRequest:
+    ItemRequest:
       required: true
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/CreateListItemDto"
+            $ref: "#/components/schemas/ItemEditableFields"
           examples:
             simple:
-              $ref: "#/components/examples/ListItemRequest"
+              $ref: "#/components/examples/ItemRequestExample"
 
-    ListItemImportRequest:
+    ItemImportRequest:
       content:
         multipart/form-data:
           schema:
@@ -660,30 +656,30 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/CreateActionDto"
+            $ref: "#/components/schemas/ActionEditableFields"
           examples:
             simple:
-              $ref: "#/components/examples/ActionSendSMSRequest"
+              $ref: "#/components/examples/ActionSendSMSRequestExample"
 
     JobRequest:
       required: true
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/CreateJobDto"
+            $ref: "#/components/schemas/JobEditableFields"
           examples:
             simple:
-              $ref: "#/components/examples/SegmentationJobRequest"
+              $ref: "#/components/examples/JobSegmentationRequestExample"
 
     RunRequest:
       required: true
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/CreateJobRunDto"
+            $ref: "#/components/schemas/RunEditableFields"
           examples:
             simple:
-              $ref: "#/components/examples/SegmentationRunRequest"
+              $ref: "#/components/examples/RunRequestExample"
 
   responses:
     AcceptedResponse:
@@ -695,6 +691,62 @@ components:
             type: string
             example: ""
 
+    ErrorBadRequest:
+      description: Invalid request parameter or body
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "common/common_errors.yml#/components/responses/DefaultError/content/application~1json/schema"
+              - type: object
+                description: Request parameters or body is invalid
+                properties:
+                  code:
+                    description: http status code
+                    example: 400
+                  path:
+                    description: url path to the requested resource
+                    example: /v0.1/bulk/lists?page=-1&page_size=2
+                  method:
+                    description: http method
+                    example: GET
+                  message:
+                    description: additional information on the error or it's root cause
+                    type: object
+                    properties:
+                      status_code:
+                        description: http status code
+                        example: 400
+                      error:
+                        description: error string
+                        type: string
+                        example: Bad request
+                      message:
+                        description: list of error description
+                        type: array
+                        items:
+                          type: string
+                        example:
+                          - "page must not be less than 1"
+                          - "name must be longer than or equal to 1 characters"
+                          - "name must be a string"
+
+    ErrorConflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "common/common_errors.yml#/components/responses/DefaultError/content/application~1json/schema"
+
+    ErrorResourceLimitReached:
+      description: Resource limit reached / exceeded
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "common/common_errors.yml#/components/responses/DefaultError/content/application~1json/schema"
+
     ListResponse:
       description: "List response"
       content:
@@ -703,11 +755,11 @@ components:
             $ref: "#/components/schemas/ListDto"
           examples:
             manual:
-              $ref: "#/components/examples/ListManualResponse"
+              $ref: "#/components/examples/ListManualResponseExample"
             salesforce:
-              $ref: "#/components/examples/ListSalesforceResponse"
+              $ref: "#/components/examples/ListSalesforceResponseExample"
 
-    ListPageResponse:
+    ListsPagedResponse:
       description: Paged list response
       content:
         application/json:
@@ -783,17 +835,17 @@ components:
                   created_at: '2022-08-02T13:22:04.267Z'
                   updated_at: '2022-08-02T13:22:04.267Z'
 
-    ListItemResponse:
+    ItemResponse:
       description: "List item"
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ListItemDto"
+            $ref: "#/components/schemas/ItemDto"
           examples:
             simple:
-              $ref: "#/components/examples/ListItemResponse"
+              $ref: "#/components/examples/ItemsResponseExample"
 
-    ListItemPageResponse:
+    ItemsPagedResponse:
       description: "Get list items"
       content:
         application/json:
@@ -809,7 +861,7 @@ components:
                         type: array
                         readOnly: true
                         items:
-                          $ref: "#/components/schemas/ListItemDto"
+                          $ref: "#/components/schemas/ItemDto"
           example:
             total_items: 2
             page: 1
@@ -856,7 +908,7 @@ components:
                       type: Contact
                     OtherCountry:
 
-    ListItemDownloadResponse:
+    ItemsDownloadResponse:
       description: csv file of list items (stream response)
       headers:
         transfer-encoding:
@@ -871,7 +923,7 @@ components:
             type: string
             format: binary
 
-    ListItemImportResponse:
+    ItemsImportResponse:
       description: "Response for importing list item from file"
       content:
         application/json:
@@ -879,7 +931,7 @@ components:
             $ref: "#/components/schemas/ApiChangedDto"
           examples:
             simple:
-              $ref: "#/components/examples/ListItemImport"
+              $ref: "#/components/examples/ItemsImportExample"
 
     ActionResponse:
       description: "Response for creating an action"
@@ -889,9 +941,9 @@ components:
             $ref: "#/components/schemas/ActionDto"
           examples:
             simple:
-              $ref: "#/components/examples/ActionSendSMSResponse"
+              $ref: "#/components/examples/ActionSendSMSResponseExample"
 
-    ActionPageResponse:
+    ActionsPagedResponse:
       description: "Paged actions response"
       content:
         application/json:
@@ -992,9 +1044,9 @@ components:
             $ref: "#/components/schemas/JobDto"
           examples:
             simple:
-              $ref: "#/components/examples/SegmentationJobResponse"
+              $ref: "#/components/examples/JobResponseExample"
 
-    JobPageResponse:
+    JobsPagedResponse:
       description: ""
       content:
         application/json:
@@ -1092,12 +1144,12 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/JobRunDto"
+            $ref: "#/components/schemas/RunDto"
           examples:
             simple:
-              $ref: "#/components/examples/SegmentationRunResponse"
+              $ref: "#/components/examples/RunResponseExample"
 
-    RunPageResponse:
+    RunsPagedResponse:
       description: ""
       content:
         application/json:
@@ -1113,7 +1165,7 @@ components:
                         type: array
                         readOnly: true
                         items:
-                          $ref: "#/components/schemas/JobRunDto"
+                          $ref: "#/components/schemas/RunDto"
           example:
             total_items: 1
             page: 1
@@ -1140,7 +1192,15 @@ components:
                   created_at: "2022-06-24T07:57:56.301Z"
                   updated_at: "2022-06-24T07:57:56.301Z"
 
-    EventPageResponse:
+
+    RunSummaryResponse:
+      description: ""
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RunSummary"
+
+    EventsPagedResponse:
       description: ""
       content:
         application/json:
@@ -1161,6 +1221,8 @@ components:
                             - $ref: "#/components/schemas/ActionCallFailedEvent"
                             - $ref: "#/components/schemas/ActionCallInfoEvent"
                             - $ref: "#/components/schemas/RecipientResponseEvent"
+                            - $ref: "#/components/schemas/RunItemSkippedEvent"
+                            - $ref: "#/components/schemas/RunItemFailedEvent"
           example:
             total_items: 1
             page: 1
@@ -1202,7 +1264,7 @@ components:
                       x-forwarded-port: '443'
                       x-nexmo-trace-id: 8a6fed94-7296-4a39-9c52-348f12b4d61a
                       x-forwarded-proto: https
-                  job_run_id: 7d0d4e5f-6453-4c63-87cf-f95b04377324
+                  run_id: 7d0d4e5f-6453-4c63-87cf-f95b04377324
                   recipient_id: '14806904549'
                 - occurred_at: '2022-08-07T13:18:20.289Z'
                   event_type: recipient-response
@@ -1212,64 +1274,8 @@ components:
                   event_data:
                     from: '15053939008'
                     text: Dima
-                  job_run_id: 7d0d4e5f-6453-4c63-87cf-f95b04377324
+                  run_id: 7d0d4e5f-6453-4c63-87cf-f95b04377324
                   recipient_id: '15053939008'
-
-    ErrorBadRequest:
-      description: Invalid request parameter or body
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: "common/common_errors.yml#/components/responses/DefaultError/content/application~1json/schema"
-              - type: object
-                description: Request parameters or body is invalid
-                properties:
-                  code:
-                    description: http status code
-                    example: 400
-                  path:
-                    description: url path to the requested resource
-                    example: /v0.1/bulk/lists?page=-1&page_size=2
-                  method:
-                    description: http method
-                    example: GET
-                  message:
-                    description: additional information on the error or it's root cause
-                    type: object
-                    properties:
-                      status_code:
-                        description: http status code
-                        example: 400
-                      error:
-                        description: error string
-                        type: string
-                        example: Bad request
-                      message:
-                        description: list of error description
-                        type: array
-                        items:
-                          type: string
-                        example:
-                          - "page must not be less than 1"
-                          - "name must be longer than or equal to 1 characters"
-                          - "name must be a string"
-
-    ErrorConflict:
-      description: Conflict
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: "common/common_errors.yml#/components/responses/DefaultError/content/application~1json/schema"
-
-    ErrorResourceLimitReached:
-      description: Resource limit reached / exceeded
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: "common/common_errors.yml#/components/responses/DefaultError/content/application~1json/schema"
 
   schemas:
     Href:
@@ -1334,6 +1340,16 @@ components:
         - _links
         - _embedded
 
+    ApiChangedDto:
+      type: object
+      properties:
+        inserted:
+          type: number
+        updated:
+          type: number
+        deleted:
+          type: number
+
     ListId:
       type: string
       format: uuid
@@ -1362,7 +1378,7 @@ components:
     InvocationId:
       type: string
       format: uuid
-      example: 9a8afd25-b6cc-4067-982f-5ff87b01973f
+      example: "{{ event.reqId }}"
 
     RecipientId:
       type: string
@@ -1387,12 +1403,42 @@ components:
           type: string
           readOnly: true
           example: "2022-06-19T17:59:28.085Z"
-      required:
-        - id
-        - created_at
-        - updated_at
 
-    ListLabelDto:
+    ListDatasourceBase:
+      type: object
+      properties:
+        type:
+          type: string
+          default: salesforce
+          enum:
+            - salesforce
+          example: salesforce
+      required:
+        - type
+
+    SalesforceDatasource:
+      allOf:
+        - $ref: "#/components/schemas/ListDatasourceBase"
+        - type: object
+          properties:
+            type:
+              type: string
+              default: salesforce
+              enum:
+                - salesforce
+              example: salesforce
+            integration_id:
+              type: string
+              example: salesforce_credentials
+            soql:
+              type: string
+              example: select Id, LastName, FirstName, Phone, Email FROM Contact
+          required:
+            - type
+            - integration_id
+            - soql
+
+    ListLabel:
       type: object
       properties:
         name:
@@ -1408,44 +1454,7 @@ components:
       required:
         - name
 
-    ListDto:
-      allOf:
-        - $ref: "#/components/schemas/BulkBase"
-        - $ref: "#/components/schemas/CreateListDto"
-        - type: object
-          properties:
-            type:
-              type: string
-              readOnly: true
-              enum:
-                - salesforce
-                - manual
-              example: salesforce
-            sync_status:
-              type: string
-              readOnly: true
-              enum:
-                - configured
-                - syncing
-                - clearing
-                - fetching
-                - paused
-                - stopped
-                - completed
-                - failed
-              example: configured
-            items_count:
-              type: number
-              readOnly: true
-              example: 10000
-
-    CreateListDto:
-      allOf:
-        - $ref: "#/components/schemas/UpdateListDto"
-      required:
-        - name
-
-    UpdateListDto:
+    ListEditableFields:
       type: object
       properties:
         name:
@@ -1466,83 +1475,51 @@ components:
           maxItems: 50
           type: array
           items:
-            $ref: "#/components/schemas/ListLabelDto"
+            $ref: "#/components/schemas/ListLabel"
         datasource:
           discriminator:
             propertyName: type
           oneOf:
             - $ref: "#/components/schemas/SalesforceDatasource"
+      required:
+        - name
 
-    ListDatasourceBaseDto:
+    ListSystemFields:
+      description: Fields that are added to a list by the system
       type: object
       properties:
         type:
           type: string
-          default: salesforce
+          readOnly: true
           enum:
             - salesforce
+            - manual
           example: salesforce
-      required:
-        - type
-
-    SalesforceDatasource:
-      type: object
-      properties:
-        type:
+        sync_status:
           type: string
-          default: salesforce
+          readOnly: true
           enum:
-            - salesforce
-          example: salesforce
-        integration_id:
-          type: string
-          example: salesforce_credentials
-        soql:
-          type: string
-          example: select Id, LastName, FirstName, Phone, Email FROM Contact
-      required:
-        - type
-        - integration_id
-        - soql
+            - configured
+            - syncing
+            - clearing
+            - fetching
+            - paused
+            - stopped
+            - completed
+            - failed
+          example: configured
+        items_count:
+          type: number
+          readOnly: true
+          example: 10000
 
-    ListItemDto:
+    ListDto:
       allOf:
         - $ref: "#/components/schemas/BulkBase"
-        - $ref: "#/components/schemas/CreateListItemDto"
-        - type: object
-          properties:
-            list_id:
-              $ref: "#/components/schemas/ListId"
-            data:
-              type: object
-              additionalProperties: true
-              minProperties: 1
-              maxProperties: 20
-              example:
-                firstName: Adrianna
-                lastName: Renner
-                number: 715-268-2905
-          required:
-            - list_id
-            - data
+        - $ref: "#/components/schemas/ListEditableFields"
+        - $ref: "#/components/schemas/ListSystemFields"
 
-    ApiChangedDto:
-      type: object
-      properties:
-        inserted:
-          type: number
-        updated:
-          type: number
-        deleted:
-          type: number
-
-    CreateListItemDto:
-      allOf:
-        - $ref: "#/components/schemas/UpdateListItemDto"
-      required:
-        - data
-
-    UpdateListItemDto:
+    ItemEditableFields:
       type: object
       properties:
         data:
@@ -1554,8 +1531,25 @@ components:
             firstName: Adrianna
             lastName: Renner
             number: 715-268-2905
+#      required:
+#        - data
 
-    ActionParameterDefinitionDto:
+    ItemSystemFields:
+      type: object
+      properties:
+        list_id:
+          $ref: "#/components/schemas/ListId"
+
+    ItemDto:
+      allOf:
+        - $ref: "#/components/schemas/BulkBase"
+        - $ref: "#/components/schemas/ItemEditableFields"
+        - $ref: "#/components/schemas/ItemSystemFields"
+      required:
+        - list_id
+        - data
+
+    ActionParameterDefinition:
       type: object
       properties:
         type:
@@ -1575,11 +1569,9 @@ components:
         default:
           type: string
       required:
-        - type # todo if attribute has a default, it shouldn't be required
         - name
-        - required # has default
 
-    ActionParameterValueDto:
+    ActionParameterValue:
       type: object
       properties:
         name:
@@ -1592,7 +1584,7 @@ components:
         - name
         - value
 
-    ActionHttpResponseSuccessDto:
+    ActionHttpResponseSuccess:
       type: object
       properties:
         codes:
@@ -1606,7 +1598,7 @@ components:
       required:
         - codes
 
-    ActionHttpErrorDto:
+    ActionHttpError:
       type: object
       properties:
         code:
@@ -1617,17 +1609,17 @@ components:
       required:
         - details
 
-    ActionHttpResponseDto:
+    ActionHttpResponse:
       type: object
       properties:
         invocation_id:
-          type: string
+          $ref: "#/components/schemas/InvocationId"
         success:
-          $ref: "#/components/schemas/ActionHttpResponseSuccessDto"
+          $ref: "#/components/schemas/ActionHttpResponseSuccess"
         error:
-          $ref: "#/components/schemas/ActionHttpErrorDto"
+          $ref: "#/components/schemas/ActionHttpError"
 
-    ActionHttpAsyncStatusValuesDto:
+    ActionHttpAsyncStatusValues:
       type: object
       properties:
         values:
@@ -1641,14 +1633,14 @@ components:
       required:
         - values
 
-    ActionHttpAsyncErrorStatusDto:
+    ActionHttpAsyncErrorStatus:
       type: object
       properties:
         values:
           minItems: 1
           maxItems: 10
           example:
-            - "202"
+            - "400"
           type: array
           items:
             type: string
@@ -1659,7 +1651,7 @@ components:
         - values
         - details
 
-    ActionHttpAsyncStatusDto:
+    ActionHttpAsyncStatus:
       type: object
       properties:
         value:
@@ -1668,21 +1660,20 @@ components:
         success:
           example: "200"
           allOf:
-            - $ref: "#/components/schemas/ActionHttpAsyncStatusValuesDto"
+            - $ref: "#/components/schemas/ActionHttpAsyncStatusValues"
         error:
-          $ref: "#/components/schemas/ActionHttpAsyncErrorStatusDto"
+          $ref: "#/components/schemas/ActionHttpAsyncErrorStatus"
         info:
-          $ref: "#/components/schemas/ActionHttpAsyncStatusValuesDto"
+          $ref: "#/components/schemas/ActionHttpAsyncStatusValues"
       required:
         - value
         - success
 
-    ActionHttpAsyncDto:
+    ActionHttpAsync:
       type: object
       properties:
         invocation_id:
-          type: string
-          example: "{{ event.reqId }}"
+          $ref: "#/components/schemas/InvocationId"
         status:
           example:
             success:
@@ -1697,12 +1688,12 @@ components:
                 - submitted
             value: "{{ event.status }}"
           allOf:
-            - $ref: "#/components/schemas/ActionHttpAsyncStatusDto"
+            - $ref: "#/components/schemas/ActionHttpAsyncStatus"
       required:
         - invocation_id
         - status
 
-    HttpApiInvokeDto:
+    HttpApiInvoke:
       type: object
       properties:
         type:
@@ -1721,31 +1712,17 @@ components:
         headers:
           type: array
           items:
-            $ref: "#/components/schemas/ActionParameterValueDto"
+            $ref: "#/components/schemas/ActionParameterValue"
         payload:
           type: object
         response:
-          $ref: "#/components/schemas/ActionHttpResponseDto"
+          $ref: "#/components/schemas/ActionHttpResponse"
         async:
-          $ref: "#/components/schemas/ActionHttpAsyncDto"
+          $ref: "#/components/schemas/ActionHttpAsync"
       required:
-        - type
         - url
-        - method
 
-    ActionDto:
-      allOf:
-        - $ref: "#/components/schemas/BulkBase"
-        - $ref: "#/components/schemas/CreateActionDto"
-
-    CreateActionDto:
-      allOf:
-        - $ref: "#/components/schemas/UpdateActionDto"
-      required:
-        - name
-        - command
-
-    UpdateActionDto:
+    ActionEditableFields:
       type: object
       properties:
         name:
@@ -1754,12 +1731,12 @@ components:
         parameters:
           type: array
           items:
-            $ref: "#/components/schemas/ActionParameterDefinitionDto"
+            $ref: "#/components/schemas/ActionParameterDefinition"
         command:
           discriminator:
             propertyName: type
           oneOf:
-            - $ref: "#/components/schemas/HttpApiInvokeDto"
+            - $ref: "#/components/schemas/HttpApiInvoke"
           example:
             type: http-api-invoke
             url: https://api.nexmo.com/v1/messages
@@ -1769,8 +1746,16 @@ components:
           default: 5
           minimum: 0
           maximum: 60
+      required:
+        - name
+        - command
 
-    ListRefDto:
+    ActionDto:
+      allOf:
+        - $ref: "#/components/schemas/BulkBase"
+        - $ref: "#/components/schemas/ActionEditableFields"
+
+    ListRef:
       type: object
       properties:
         id:
@@ -1784,28 +1769,28 @@ components:
         - id
         - type
 
-    RecipientsDto:
+    Recipients:
       type: object
       properties:
         include:
           minItems: 1
           maxItems: 10
+          type: array
+          items:
+            $ref: "#/components/schemas/ListRef"
           example:
             - type: list
               id: 42a5313b-ea90-4166-a950-00eb6f95dfef
-          type: array
-          items:
-            $ref: "#/components/schemas/ListRefDto"
         exclude:
           minItems: 1
           maxItems: 10
           type: array
           items:
-            $ref: "#/components/schemas/ListRefDto"
+            $ref: "#/components/schemas/ListRef"
       required:
         - include
 
-    ExpressionDto:
+    Expression:
       type: object
       properties:
         expression:
@@ -1815,7 +1800,7 @@ components:
       required:
         - expression
 
-    ActionRefDto:
+    ActionRef:
       type: object
       properties:
         id:
@@ -1831,20 +1816,20 @@ components:
         - id
         - type
 
-    ActionCallDto:
+    ActionCall:
       type: object
       properties:
         action_ref:
-          $ref: "#/components/schemas/ActionRefDto"
+          $ref: "#/components/schemas/ActionRef"
         parameters:
           maxItems: 20
           type: array
           items:
-            $ref: "#/components/schemas/ActionParameterValueDto"
+            $ref: "#/components/schemas/ActionParameterValue"
       required:
         - action_ref
 
-    MessageTemplateDto:
+    MessageTemplate:
       type: object
       properties:
         type:
@@ -1863,7 +1848,7 @@ components:
       required:
         - message
 
-    RecipientCorrelationDto:
+    RecipientCorrelation:
       type: object
       properties:
         correlation_id:
@@ -1872,49 +1857,50 @@ components:
       required:
         - correlation_id
 
-    SegmentationDto:
+    Rule:
       type: object
       properties:
-        condition:
-          $ref: "#/components/schemas/ExpressionDto"
-        action_call:
-          $ref: "#/components/schemas/ActionCallDto"
         name:
           type: string
           maxLength: 255
+          example: us customer
         description:
           type: string
           maxLength: 1024
-        template:
-          $ref: "#/components/schemas/MessageTemplateDto"
-        recipient:
-          $ref: "#/components/schemas/RecipientCorrelationDto"
-      required:
-        - condition
-        - action_call
-        - recipient
-
-    EventMatcherDto:
-      type: object
-      properties:
         condition:
-          $ref: "#/components/schemas/ExpressionDto"
+          $ref: "#/components/schemas/Expression"
         action_call:
-          $ref: "#/components/schemas/ActionCallDto"
-        name:
-          type: string
-          maxLength: 255
-        description:
-          type: string
-          maxLength: 1024
-        recipient:
-          $ref: "#/components/schemas/RecipientCorrelationDto"
+          $ref: "#/components/schemas/ActionCall"
       required:
+        - name
         - condition
         - action_call
+
+    Segmentation:
+      allOf:
+        - $ref: "#/components/schemas/Rule"
+        - type: object
+          properties:
+            recipient:
+              # todo: should we move recipient to Rule? It's defined in segmentation and event matcher
+              $ref: "#/components/schemas/RecipientCorrelation"
+            template:
+              $ref: "#/components/schemas/MessageTemplate"
+      required:
+        - template
         - recipient
 
-    EventsHandlerDto:
+    EventMatcher:
+      allOf:
+        - $ref: "#/components/schemas/Rule"
+        - type: object
+          properties:
+            recipient:
+              $ref: "#/components/schemas/RecipientCorrelation"
+      required:
+        - recipient
+
+    EventsHandler:
       type: object
       properties:
         matching_strategy:
@@ -1927,11 +1913,27 @@ components:
         matchers:
           type: array
           items:
-            $ref: "#/components/schemas/EventMatcherDto"
+            $ref: "#/components/schemas/EventMatcher"
+          example:
+          - name: opt-out
+            description: unsubscribe
+            condition:
+              expression: event.text?.toLowerCase().includes('stop')
+            action_call:
+              action_ref:
+                type: action
+                id: bd795581-9a93-48b0-a4bc-3b7509bf6e4d
+              parameters:
+                - name: listId
+                  value: fba7c209-ebb9-4b14-8acb-09a803d4f0a0
+                - name: number
+                  value: "{{event.from}}"
+            recipient:
+              correlation_id: "{{event.from}}"
       required:
         - matchers
 
-    SegmentationJobDefinitionDto:
+    JobSegmentationDefinition:
       type: object
       properties:
         type:
@@ -1941,68 +1943,37 @@ components:
             - segmentation-job
           example: segmentation-job
         recipients:
-          $ref: "#/components/schemas/RecipientsDto"
+          $ref: "#/components/schemas/Recipients"
         segmentations:
           type: array
           items:
-            $ref: "#/components/schemas/SegmentationDto"
+            $ref: "#/components/schemas/Segmentation"
         events_handler:
-          $ref: "#/components/schemas/EventsHandlerDto"
+          $ref: "#/components/schemas/EventsHandler"
       required:
         - type
         - recipients
         - segmentations
+      example:
+        name: text vip customers
+        description: text UK and USA vip customers
+        recipient:
+          correlation_id: "{{item.number}}"
+        condition:
+          expression: item.salary == 1000 || ['UK', 'USA'].includes(item.country)
+        action_call:
+          action_ref:
+            id: "{{sendSmsActionId}}"
+            type: action
+          parameters:
+            - name: fromNumber
+              value: "{{my_campaign_number}}"
+            - name: toNumber
+              value: "{{ item.number }}"
+            - name: message
+              value: "{{ template.message }}"
 
-    JobDto:
-      allOf:
-        - $ref: "#/components/schemas/BulkBase"
-        - $ref: "#/components/schemas/CreateJobDto"
-        - type: object
-          properties:
-            name:
-              type: string
-              example: Greeting all
-            tags:
-              minItems: 0
-              maxItems: 30
-              type: array
-              items:
-                type: string
-            definition:
-              discriminator:
-                propertyName: type
-              oneOf:
-                - $ref: "#/components/schemas/SegmentationJobDefinitionDto"
-              example:
-                name: text vip customers
-                description: text UK and USA vip customers
-                recipient:
-                  correlation_id: "{{item.number}}"
-                condition:
-                  expression: item.salary == 1000 || ['UK', 'USA'].includes(item.country)
-                action_call:
-                  action_ref:
-                    id: "{{sendSmsActionId}}"
-                    type: action
-                  parameters:
-                    - name: fromNumber
-                      value: "{{my_campaign_number}}"
-                    - name: toNumber
-                      value: "{{ item.number }}"
-                    - name: message
-                      value: "{{ template.message }}"
-          required:
-            - name
-            - definition
-
-    CreateJobDto:
-      allOf:
-        - $ref: "#/components/schemas/UpdateJobDto"
-      required:
-        - name
-        - definition
-
-    UpdateJobDto:
+    JobEditableFields:
       type: object
       properties:
         name:
@@ -2018,25 +1989,56 @@ components:
           discriminator:
             propertyName: type
           oneOf:
-            - $ref: "#/components/schemas/SegmentationJobDefinitionDto"
-          example:
-            name: text vip customers
-            description: text UK and USA vip customers
-            recipient:
-              correlation_id: "{{item.number}}"
-            condition:
-              expression: item.salary == 1000 || ['UK', 'USA'].includes(item.country)
-            action_call:
-              action_ref:
-                id: "{{sendSmsActionId}}"
-                type: action
-              parameters:
-                - name: fromNumber
-                  value: "{{my_campaign_number}}"
-                - name: toNumber
-                  value: "{{ item.number }}"
-                - name: message
-                  value: "{{ template.message }}"
+            - $ref: "#/components/schemas/JobSegmentationDefinition"
+
+    JobDto:
+      allOf:
+        - $ref: "#/components/schemas/BulkBase"
+        - $ref: "#/components/schemas/JobEditableFields"
+
+    RunEditableFields:
+      type: object
+      properties:
+        name:
+          type: string
+          example: holiday run
+        start_at:
+          format: date-time
+          type: string
+          example: "2022-06-06T05:46:00.936Z"
+        end_at:
+          format: date-time
+          type: string
+          example: "2022-06-20T05:46:00.936Z"
+        job_id:
+          $ref: "#/components/schemas/JobId"
+      required:
+        - name
+        - start_at
+        - end_at
+        - job_id
+
+    RunSystemFields:
+      type: object
+      properties:
+        status:
+          type: string
+          readOnly: true
+          enum:
+            - scheduled
+            - running
+            - paused
+            - stopped
+            - failed
+            - completed
+            - draft
+          example: running
+
+    RunDto:
+      allOf:
+        - $ref: "#/components/schemas/BulkBase"
+        - $ref: "#/components/schemas/RunEditableFields"
+        - $ref: "#/components/schemas/RunSystemFields"
 
     StatisticsEvent:
       type: object
@@ -2076,6 +2078,17 @@ components:
         - occurred_at
         - event_data
 
+    EventError:
+      type: object
+      properties:
+        code:
+          type: string
+        details:
+          type: string
+          example: Not found
+      required:
+        - details
+
     ExecutionStatisticsEvent:
       allOf:
         - $ref: "#/components/schemas/StatisticsEvent"
@@ -2083,13 +2096,13 @@ components:
           properties:
             job_id:
               $ref: "#/components/schemas/JobId"
-            job_run_id:
+            run_id:
               $ref: "#/components/schemas/RunId"
             recipient_id:
               $ref: "#/components/schemas/RecipientId"
       required:
         - job_id
-        - job_run_id
+        - run_id
         - recipient_id
 
     ActionStatisticsEvent:
@@ -2122,60 +2135,42 @@ components:
               type: string
               example: action-call-info
             error:
-              $ref: "#/components/schemas/EventErrorDto"
+              $ref: "#/components/schemas/EventError"
 
     ActionCallSucceededEvent:
       allOf:
         - $ref: "#/components/schemas/ActionStatisticsEvent"
 
-    RecipientResponseEvent:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          example: 92cc64e5-f62b-464f-ab9c-4376bd05adfc
-        event_type:
-          type: string
-          enum:
-            - action-call-succeeded
-            - action-call-failed
-            - action-call-info
-            - recipient-response
-            - run-item-skipped
-            - run-item-failed
-          example: action-call-succeeded
-        src_ctx:
-          type: string
-          example: uk recipient
-        occurred_at:
-          format: date-time
-          type: string
-          example: "2022-06-19T20:41:59.085Z"
-        event_data:
-          type: object
-          example:
-            city: North Assunta
-            country: Iceland
-            state: PH
-        job_id:
-          $ref: "#/components/schemas/JobId"
-        job_run_id:
-          $ref: "#/components/schemas/RunId"
-        recipient_id:
-          $ref: "#/components/schemas/RecipientId"
-      required:
-        - id
-        - event_type
-        - src_ctx
-        - occurred_at
-        - event_data
-        - job_id
-        - job_run_id
-        - recipient_id
+    RunItemSkippedEvent:
+      allOf:
+        - $ref: "#/components/schemas/ExecutionStatisticsEvent"
+        - type: object
+          properties:
+            event_type:
+              type: string
+              example: run-item-skipped
 
-    #    todo: where is used? part of events?
-    StatsMetricDto:
+    RunItemFailedEvent:
+      allOf:
+        - $ref: "#/components/schemas/ExecutionStatisticsEvent"
+        - type: object
+          properties:
+            event_type:
+              type: string
+              example: run-item-failed
+            error:
+              $ref: "#/components/schemas/EventError"
+
+    RecipientResponseEvent:
+      allOf:
+        - $ref: "#/components/schemas/ExecutionStatisticsEvent"
+        - type: object
+          properties:
+            event_type:
+              type: string
+              example: recipient-response
+
+    RunStatsMetric:
       type: object
       properties:
         name:
@@ -2205,65 +2200,16 @@ components:
         - statistics
         - value
 
-    EventErrorDto:
+    RunSummary:
       type: object
       properties:
-        code:
-          type: string
-        details:
-          type: string
-          example: Not found
-      required:
-        - details
-
-    JobRunDto:
-      allOf:
-        - $ref: "#/components/schemas/BulkBase"
-        - $ref: "#/components/schemas/CreateJobRunDto"
-        - type: object
-          properties:
-            status:
-              type: string
-              readOnly: true
-              enum:
-                - scheduled
-                - running
-                - paused
-                - stopped
-                - failed
-                - completed
-                - draft
-              example: running
-
-    CreateJobRunDto:
-      type: object
-      properties:
-        name:
-          type: string
-          example: holiday run
-        start_at:
-          format: date-time
-          type: string
-          example: "2022-06-06T05:46:00.936Z"
-        end_at:
-          format: date-time
-          type: string
-          example: "2022-06-20T05:46:00.936Z"
-        job_id:
-          $ref: "#/components/schemas/JobId"
-      required:
-        - name
-        - start_at
-        - end_at
-        - job_id
-
-    StatsRunSummaryDto:
-      type: object
-      properties:
-        job_run_id:
+        run_id:
           $ref: "#/components/schemas/RunId"
         summary:
           readOnly: true
+          type: array
+          items:
+            $ref: "#/components/schemas/RunStatsMetric"
           example:
             - value: 3
               name: action-call-succeeded
@@ -2273,15 +2219,12 @@ components:
             - value: 0
               name: action-call-failed
               statistics: recipient-distinct-count
-          type: array
-          items:
-            $ref: "#/components/schemas/StatsRunSummaryDto"
       required:
-        - job_run_id
+        - run_id
         - summary
 
   examples:
-    ListManual:
+    ListManualExample:
       value:
         name: Recipients for demo
         description: List of recipients for demo
@@ -2295,7 +2238,7 @@ components:
             alias: phoneNumber
             key: true
 
-    ListManualResponse:
+    ListManualResponseExample:
       value:
         name: Recipients for demo
         description: List of recipients for demo
@@ -2315,7 +2258,7 @@ components:
         created_at: "2022-06-23T13:13:16.491Z"
         updated_at: "2022-06-23T13:13:16.491Z"
 
-    ListSalesforce:
+    ListSalesforceExample:
       value:
         name: Salesforce contact
         description: Salesforce contacts for campaign
@@ -2333,7 +2276,7 @@ components:
           integration_id: salesforce
           soql: SELECT Id, LastName, FirstName, Phone, Email, OtherCountry FROM Contact
 
-    ListSalesforceResponse:
+    ListSalesforceResponseExample:
       value:
         name: Salesforce contact
         description: Salesforce contacts for campaign
@@ -2358,7 +2301,7 @@ components:
         created_at: '2022-08-02T13:22:04.267Z'
         updated_at: '2022-08-02T13:22:04.267Z'
 
-    ListItemRequest:
+    ItemRequestExample:
       value:
         data:
           Id: '0038d00000B22zbAAB'
@@ -2371,7 +2314,7 @@ components:
             type: Contact
           OtherCountry: Canada
 
-    ListItemResponse:
+    ItemsResponseExample:
       value:
         id: 6e26d247-e074-4f68-b72b-dd92aa02c7e0
         created_at: '2022-08-03T08:54:21.122Z'
@@ -2388,11 +2331,11 @@ components:
             type: Contact
           OtherCountry: Canada
 
-    ListItemImport:
+    ItemsImportExample:
       value:
         inserted: 10000
 
-    ActionSendSMSRequest:
+    ActionSendSMSRequestExample:
       value:
         name: vg-send-sms
         description: Send text message using Vonage messaging APIs
@@ -2450,7 +2393,7 @@ components:
                   - submitted
         timeout_seconds: 5
 
-    ActionSendSMSResponse:
+    ActionSendSMSResponseExample:
       value:
         name: vg-send-sms
         description: Send text message using Vonage messaging APIs
@@ -2511,7 +2454,8 @@ components:
         created_at: "2022-06-23T17:45:31.782Z"
         updated_at: "2022-06-23T17:45:31.782Z"
 
-    SegmentationJobRequest:
+
+    JobSegmentationRequestExample:
       value:
         name: send sms with optional end-user response
         tags:
@@ -2570,7 +2514,7 @@ components:
                 recipient:
                   correlation_id: "{{event.from}}"
 
-    SegmentationJobResponse:
+    JobResponseExample:
       value:
         name: send sms with optional end-user response
         tags:
@@ -2632,7 +2576,7 @@ components:
         created_at: "2022-06-24T07:49:33.748Z"
         updated_at: "2022-06-24T07:49:33.748Z"
 
-    SegmentationRunRequest:
+    RunRequestExample:
       value:
         name: E2E Demo run
         job_id: e721113d-0948-4edb-b4af-e3f0578d708c
@@ -2641,7 +2585,7 @@ components:
         start_at: "2022-06-24T04:06:36.000Z"
         end_at: "2022-06-24T08:57:55.917Z"
 
-    SegmentationRunResponse:
+    RunResponseExample:
       value:
         name: E2E Demo run
         job_id: e721113d-0948-4edb-b4af-e3f0578d708c
@@ -2654,8 +2598,8 @@ components:
         updated_at: "2022-06-24T07:57:56.301Z"
 
     # todo: complete events example
-    ActionCallEventMessaging:
+    ActionCallEventMessagingExample:
       value:
         id: 9a8afd25-b6cc-4067-982f-5ff87b01973f
         recipient_id: 12025550135
-        invocation_id: 9a8afd25-b6cc-4067-982f-5ff87b01973f
+        invocation_id: "{{ event.message_uuid }}"

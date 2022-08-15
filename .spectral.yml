@@ -103,6 +103,3 @@ except:
 # VCP Bulk
   "#/components/requestBodies/JobRequest/content/application~1json/schema":
     - required-object-params
-
-  "definitions/bulk.yml#/components/schemas/CreateJobDto/allOf/0":
-    - required-object-params
