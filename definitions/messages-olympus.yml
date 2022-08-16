@@ -142,6 +142,13 @@ paths:
                                 The text of message to send; limited to 4096 characters, including unicode.
                       - $ref: '#/components/schemas/channelOptionsWhatsapp'
                     - allOf:
+                      - $ref: '#/components/schemas/Location'
+                      - properties:
+                          text:
+                            description: |
+                                The text of message to send; limited to 4096 characters, including unicode.
+                      - $ref: '#/components/schemas/channelOptionsWhatsapp'
+                    - allOf:
                       - $ref: '#/components/schemas/Image'
                       - properties:
                           image:
@@ -504,6 +511,9 @@ x-webhooks:
                                   maxLength: 2000
                       - allOf:
                         - $ref: "#/components/schemas/inboundWhatsAppMessageCommon"
+                        - $ref: "#/components/schemas/Location"                      
+                      - allOf:
+                        - $ref: "#/components/schemas/inboundWhatsAppMessageCommon"
                         - $ref: "#/components/schemas/Reply"
                       - allOf:
                         - $ref: "#/components/schemas/inboundWhatsAppMessageCommon"
@@ -790,6 +800,26 @@ components:
                   type: string
                   example: "Select 9am appointmaent time"
                   description: A description that may be added to the interactive options presented (available only on interactive lists).
+    
+    Location:
+      allOf:
+        - $ref: "#/components/schemas/baseMessageType"
+        - title: Location
+          x-tab-id: Text
+          description: The text of message to send.
+          required:
+            - text
+          properties:
+            message_type:
+              type: string
+              enum:
+                - text
+              example: text
+              description: The type of message to send. You must provide `text` in this field
+            text:
+              type: string
+              example: 'Nexmo Verification code: 12345.<br />Valid for 10 minutes.'
+    
     Text:
       allOf:
         - $ref: "#/components/schemas/baseMessageType"
