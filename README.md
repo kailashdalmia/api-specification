@@ -35,27 +35,58 @@ These definitions provide a single point of truth that can be used end-to-end:
 
 We use [Spectral](https://stoplight.io/open-source/spectral/) to style and validity check our files. If you're using Stoplight Studio, this picks up our style definition by default. Otherwise, you can install the tool locally like this:
 
-`npm install -g @stoplight/spectral`
+Install node version. If using node version manger you can:
+```
+nvm install && nvm use
+```
 
-And check your file (for example `verify.yml`):
+Install node dependencies:
+```
+npm i
+```
 
-`spectral lint definitions/verify.yml`
+Run validation:
+```
+npm run validate
+```
 
 This runs the same checks that we use in the build that runs when you open a pull request.
 
 In addition to semantic linting, we use [Prettier](https://prettier.io/) to enforce consistent formatting.
 
 To run prettier locally:
-
 ```
-npm install -g prettier
-prettier --list-different definitions/**/*.yml
+npm run prettier:check
 ```
 
 You can auto-format your specifications with the following command, but we recommend installing a Prettier plugin in your IDE to format on save:
-
 ```
-prettier --write definitions/**/*.yml
+npm run prettier:fix
+```
+
+### Check your API spec rendering
+Below procedure assume you are not running the `nexmo-oas-renderer` locally and docker is available and running in your machine.
+Build and run the render service locally to track changes in your API specification:
+```
+npm run docker:build
+npm run docker:run
+```
+
+Open http://localhost:4567/ in your web browser.
+
+Modify the api specification as required and refresh the relevant page for your changes to take effect. 
+
+To stop the docker container, run:
+```
+npm run docker:stop
+```
+
+### Running GitHub action checks locally
+You can run pull requests checks locally using [act](https://github.com/nektos/act) tool. Follow the act installation procedure (https://github.com/nektos/act#installation).
+
+Run the github check locally, for example to run pull request checks: 
+```
+act pull_request -W .github/workflows/ci.yml
 ```
 
 ## Contributing

@@ -1,0 +1,32 @@
+{
+  "name": "api-specification",
+  "version": "1.0.0",
+  "description": "Vonage APIs definitions",
+  "scripts": {
+    "validate": "bin/validate-specs.sh",
+    "prettier:check": "./node_modules/.bin/prettier --list-different definitions/**/*.yml",
+    "prettier:fix": "./node_modules/.bin/prettier --write definitions/**/*.yml",
+    "docker:build": "docker build . -t $npm_package_name:$npm_package_version",
+    "docker:run": "docker run -i -d --rm -v $(pwd)/definitions:/app/definitions:ro -p 4567:4567 --name $npm_package_name $npm_package_name:$npm_package_version",
+    "docker:stop": "docker stop $npm_package_name",
+    "docker:remove": "docker rm $npm_package_name",
+    "docker:clean-all": "docker system prune -a"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nexmo/api-specification.git"
+  },
+  "keywords": [
+    "openapi"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Nexmo/api-specification/issues"
+  },
+  "homepage": "https://github.com/Nexmo/api-specification#readme",
+  "devDependencies": {
+    "@stoplight/spectral": "^5.9.2",
+    "prettier": "^2.7.1"
+  }
+}
