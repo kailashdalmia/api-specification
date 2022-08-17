@@ -830,6 +830,15 @@ components:
                   type: number
                   example: -74.18847
                   description: Longitude of the message **sender**.
+                name:
+                  type: string
+                  example: "Vonage"
+                  description: Name of the location.
+                address:
+                  type: string
+                  example: "23 Main St, Holmdel, NJ 07733, USA"
+                  description: Address of the location. Only displayed if `name` is present.
+
     
     Text:
       allOf:
