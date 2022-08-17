@@ -543,13 +543,15 @@ paths:
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
         - runs
+  # todo: revised webhook endpoints - can we have a single endpoint we could customize?
   /webhooks/actions/status:
     post:
       operationId: webhooksActionStatus
       summary: Webhook endpoint to handle action call status for async actions
       responses:
+        # todo: what should be the response code for webhook? Maybe accepted?
         "200":
-          description: ""
+          description: "Empty response"
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
       tags:
@@ -562,7 +564,7 @@ paths:
       summary: Webhook endpoint to handle recipient responses
       responses:
         "200":
-          description: ""
+          description: "Empty response"
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
       tags:
@@ -697,6 +699,7 @@ components:
         application/json:
           schema:
             allOf:
+              # todo: align error response with error spec
               - $ref: "common/common_errors.yml#/components/responses/DefaultError/content/application~1json/schema"
               - type: object
                 description: Request parameters or body is invalid
@@ -760,7 +763,7 @@ components:
               $ref: "#/components/examples/ListSalesforceResponseExample"
 
     ListsPagedResponse:
-      description: Paged list response
+      description: Lists paged response
       content:
         application/json:
           schema:
@@ -836,7 +839,7 @@ components:
                   updated_at: '2022-08-02T13:22:04.267Z'
 
     ItemResponse:
-      description: "List item"
+      description: Item response
       content:
         application/json:
           schema:
@@ -846,7 +849,7 @@ components:
               $ref: "#/components/examples/ItemsResponseExample"
 
     ItemsPagedResponse:
-      description: "Get list items"
+      description: Items paged response
       content:
         application/json:
           schema:
@@ -924,7 +927,7 @@ components:
             format: binary
 
     ItemsImportResponse:
-      description: "Response for importing list item from file"
+      description: Importing list item from file response
       content:
         application/json:
           schema:
@@ -934,7 +937,7 @@ components:
               $ref: "#/components/examples/ItemsImportExample"
 
     ActionResponse:
-      description: "Response for creating an action"
+      description: Action response
       content:
         application/json:
           schema:
@@ -944,7 +947,7 @@ components:
               $ref: "#/components/examples/ActionSendSMSResponseExample"
 
     ActionsPagedResponse:
-      description: "Paged actions response"
+      description: Actions paged response
       content:
         application/json:
           schema:
@@ -1037,7 +1040,7 @@ components:
                   updated_at: "2022-06-23T17:45:31.782Z"
 
     JobResponse:
-      description: ""
+      description: Job response
       content:
         application/json:
           schema:
@@ -1047,7 +1050,7 @@ components:
               $ref: "#/components/examples/JobResponseExample"
 
     JobsPagedResponse:
-      description: ""
+      description: Jobs paged response
       content:
         application/json:
           schema:
@@ -1140,7 +1143,7 @@ components:
                   updated_at: "2022-06-24T07:49:33.748Z"
 
     RunResponse:
-      description: ""
+      description: Run response
       content:
         application/json:
           schema:
@@ -1150,7 +1153,7 @@ components:
               $ref: "#/components/examples/RunResponseExample"
 
     RunsPagedResponse:
-      description: ""
+      description: Runs paged response
       content:
         application/json:
           schema:
@@ -1194,14 +1197,14 @@ components:
 
 
     RunSummaryResponse:
-      description: ""
+      description: Run summary response
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/RunSummary"
 
     EventsPagedResponse:
-      description: ""
+      description: Events paged response
       content:
         application/json:
           schema:
@@ -1299,8 +1302,11 @@ components:
           $ref: "#/components/schemas/Href"
         next:
           $ref: "#/components/schemas/Href"
-      # todo: is all attributes of links required?
+        # todo: add last to implementation
+        last:
+          $ref: "#/components/schemas/Href"
       required:
+        # todo: fix links required in code - it make no sense to have next or prev if none available
         - first
         - prev
         - self
