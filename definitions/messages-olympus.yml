@@ -805,20 +805,31 @@ components:
       allOf:
         - $ref: "#/components/schemas/baseMessageType"
         - title: Location
-          x-tab-id: Text
-          description: The text of message to send.
+          x-tab-id: Location
+          type: object
           required:
-            - text
+            - location
           properties:
             message_type:
               type: string
               enum:
-                - text
-              example: text
-              description: The type of message to send. You must provide `text` in this field
-            text:
-              type: string
-              example: 'Nexmo Verification code: 12345.<br />Valid for 10 minutes.'
+                - location
+              example: location
+              description: The type of message to send. You must provide `location` in this field
+            location:
+              required:
+                - lat
+                - long
+              type: object
+              properties:
+                lat:
+                  type: number
+                  example: 40.34772
+                  description: Latitude of the message **sender**.
+                long:
+                  type: number
+                  example: -74.18847
+                  description: Longitude of the message **sender**.
     
     Text:
       allOf:
