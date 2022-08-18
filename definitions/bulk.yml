@@ -1928,7 +1928,7 @@ components:
         - correlation_id
 
     Rule:
-      # todo: is rule the right name?
+      # todo: is rule the right name? maybe matcher as it's used in event_handler matcher field
       allOf:
         - $ref: "#/components/schemas/NameAndDescription"
         - type: object
@@ -1937,33 +1937,27 @@ components:
               $ref: "#/components/schemas/Expression"
             action_call:
               $ref: "#/components/schemas/ActionCall"
+            recipient:
+              $ref: "#/components/schemas/RecipientCorrelation"
       required:
         - condition
         - action_call
+        - recipient
 
     Segmentation:
       allOf:
         - $ref: "#/components/schemas/Rule"
         - type: object
           properties:
-            recipient:
-              # todo: should we move recipient to Rule? It's defined in segmentation and event matcher
-              $ref: "#/components/schemas/RecipientCorrelation"
+            # todo: suggest to rethink the use of template here. an alternative will be to set the message parameter with the template.message directly. going forward parameter value could have a type to render it differently
             template:
               $ref: "#/components/schemas/MessageTemplate"
       required:
         - template
-        - recipient
 
     EventMatcher:
       allOf:
         - $ref: "#/components/schemas/Rule"
-        - type: object
-          properties:
-            recipient:
-              $ref: "#/components/schemas/RecipientCorrelation"
-      required:
-        - recipient
 
     EventsHandler:
       type: object
