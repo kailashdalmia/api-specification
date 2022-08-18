@@ -118,7 +118,7 @@ paths:
       - $ref: "#/components/parameters/ListId"
     post:
       operationId: listsClear
-      summary: Clear list - delete all the list items. This is an async operation which is performed in the background.
+      summary: Clear list by deleting all items
       responses:
         "202":
           $ref: "#/components/responses/AcceptedResponse"
@@ -133,7 +133,7 @@ paths:
       - $ref: "#/components/parameters/ListId"
     post:
       operationId: listsFetch
-      summary: Fetch list - delete all items and sync from the datasource. Fetch is invalid for manual list.  This is an async operation which is performed in the background.
+      summary: Fetch and replace all items from datasource
       responses:
         "202":
           $ref: "#/components/responses/AcceptedResponse"
@@ -550,9 +550,8 @@ paths:
       operationId: webhooksActionStatus
       summary: Webhook endpoint to handle action call status for async actions
       responses:
-        # todo: what should be the response code for webhook? Maybe accepted?
-        "200":
-          description: "Empty response"
+        "202":
+          $ref: "#/components/responses/AcceptedResponse"
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
       tags:
@@ -564,8 +563,9 @@ paths:
       operationId: webhooksRecipientResponse
       summary: Webhook endpoint to handle recipient responses
       responses:
-        "200":
-          description: "Empty response"
+        #  todo: change code to response 202
+        "202":
+          $ref: "#/components/responses/AcceptedResponse"
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
       tags:
@@ -661,8 +661,11 @@ components:
           schema:
             $ref: "#/components/schemas/ActionEditableFields"
           examples:
-            simple:
+            sms:
               $ref: "#/components/examples/ActionSendSMSRequestExample"
+            messenger:
+              $ref: "#/components/examples/ActionSendSMSRequestExample"
+#todo: add example for different channel
 
     JobRequest:
       required: true
@@ -1766,6 +1769,7 @@ components:
         - status
 
     HttpApiInvoke:
+      description: define attributes to execute an http action
       type: object
       properties:
         type:
@@ -2641,7 +2645,6 @@ components:
         name: E2E Demo run
         job_id: e721113d-0948-4edb-b4af-e3f0578d708c
         status: scheduled
-        # todo: should we group the schedule part into a dedicated object?
         start_at: "2022-06-24T04:06:36.000Z"
         end_at: "2022-06-24T08:57:55.917Z"
 
