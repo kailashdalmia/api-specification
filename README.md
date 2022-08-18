@@ -72,7 +72,7 @@ npm run docker:build
 npm run docker:run
 ```
 
-Open http://localhost:4567/ in your web browser.
+Open <http://localhost:4567/> in your web browser.
 
 Modify the api specification as required and refresh the relevant page for your changes to take effect. 
 
