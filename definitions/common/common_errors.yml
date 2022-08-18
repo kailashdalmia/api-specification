@@ -40,6 +40,23 @@ components:
                 example: You did not provide correct credentials.
               instance:
                 $ref: "#/components/schemas/instance"
+    JWTExpiredError:
+      description: JWT expired
+      content:
+        application/json:
+          schema:
+            properties:
+              type:
+                type: string
+                example: https://developer.nexmo.com/api-errors#jwt-expired
+              title:
+                type: string
+                example: Unauthorized
+              detail:
+                type: string
+                example: The JWT provided has expired.
+              instance:
+                $ref: "#/components/schemas/instance"
     NotFoundError:
       description: Resource Not Found
       content:

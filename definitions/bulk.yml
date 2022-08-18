@@ -43,7 +43,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
       tags:
         - lists
     post:
@@ -58,7 +58,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "409":
           $ref: "#/components/responses/ErrorConflict"
         "422":
@@ -77,7 +77,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
@@ -93,7 +93,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
         "409":
@@ -107,7 +107,7 @@ paths:
         "200":
           $ref: "#/components/responses/ListResponse"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
@@ -122,7 +122,7 @@ paths:
         "202":
           $ref: "#/components/responses/AcceptedResponse"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
@@ -139,7 +139,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
@@ -157,7 +157,7 @@ paths:
         "200":
           $ref: "#/components/responses/ItemsPagedResponse"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
@@ -173,7 +173,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
         "422":
@@ -190,7 +190,7 @@ paths:
         "200":
           $ref: "#/components/responses/ItemsDownloadResponse"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
@@ -208,7 +208,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
@@ -224,7 +224,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
@@ -236,7 +236,7 @@ paths:
         "200":
           $ref: "#/components/responses/ItemResponse"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
@@ -253,7 +253,7 @@ paths:
         "200":
           $ref: "#/components/responses/ItemsImportResponse"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
         "422":
@@ -273,7 +273,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
       tags:
         - actions
     post:
@@ -287,7 +287,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "409":
           $ref: "#/components/responses/ErrorConflict"
         "422":
@@ -306,7 +306,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
@@ -322,7 +322,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
@@ -336,7 +336,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
@@ -354,7 +354,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
       tags:
         - jobs
     post:
@@ -368,7 +368,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "409":
           $ref: "#/components/responses/ErrorConflict"
         "422":
@@ -387,7 +387,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
@@ -403,7 +403,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
@@ -417,7 +417,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
@@ -435,7 +435,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
       tags:
         - events
   /runs:
@@ -451,7 +451,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
       tags:
         - runs
     post:
@@ -465,7 +465,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
         "422":
@@ -484,7 +484,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
@@ -504,7 +504,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
@@ -521,7 +521,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
@@ -538,7 +538,7 @@ paths:
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
         "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+          $ref: "common/common_errors.yml#/components/responses/JWTExpiredError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
       tags:
@@ -867,9 +867,6 @@ components:
                     Phone: "(415) 555-1212"
                     LastName: Minor
                     FirstName: Geoff
-                    attributes:
-                      url: "/services/data/v42.0/sobjects/Contact/0038d00000B22zbAAB"
-                      type: Contact
                     OtherCountry: Canada
                 - id: f7c029ad-93c3-469c-9267-73c3c6864161
                   created_at: '2022-08-03T08:54:21.122Z'
@@ -881,9 +878,6 @@ components:
                     Phone: "(415) 555-1212"
                     LastName: White
                     FirstName: Carole
-                    attributes:
-                      url: "/services/data/v42.0/sobjects/Contact/0038d00000B22zcAAB"
-                      type: Contact
                     OtherCountry:
 
     ItemsDownloadResponse:
@@ -1288,38 +1282,41 @@ components:
         - next
 
     PageResponseDto:
-      type: object
-      properties:
-        total_items:
-          type: number
-          readOnly: true
-          example: 10000
-        total_pages:
-          type: number
-          readOnly: true
-          example: 50
-        page:
-          type: number
-          readOnly: true
-          minimum: 1
-          example: 1
-        page_size:
-          type: number
-          readOnly: true
-          example: 250
-        _links:
-          $ref: "#/components/schemas/HalLinks"
-        _embedded:
-          type: object
-          additionalProperties: true
-          readOnly: true
-      required:
-        - total_items
-        - total_pages
-        - page
-        - page_size
-        - _links
-        - _embedded
+      allOf:
+        # todo: use PagedResponse - if we do it currently break the examples
+        #  $ref: "common/hal_structures.yml#/components/schemas/PagedResponse"
+        - type: object
+          properties:
+            total_items:
+              type: number
+              readOnly: true
+              example: 10000
+            total_pages:
+              type: number
+              readOnly: true
+              example: 50
+            page:
+              type: number
+              readOnly: true
+              minimum: 1
+              example: 1
+            page_size:
+              type: number
+              readOnly: true
+              example: 250
+            _links:
+              $ref: "#/components/schemas/HalLinks"
+            _embedded:
+              type: object
+              additionalProperties: true
+              readOnly: true
+          required:
+            - total_items
+            - total_pages
+            - page
+            - page_size
+            - _links
+            - _embedded
 
     ErrorBase:
       description: default error attributes in vcp-bulk implementation
@@ -1359,6 +1356,8 @@ components:
                     - "name must be a string"
 
     ApiChangedDto:
+#      todo: rename to ApiDataChange
+      description: Count of affected data records as a result of the API action
       type: object
       properties:
         inserted:
@@ -1369,41 +1368,48 @@ components:
           type: number
 
     ListId:
+      description: Unique identifier for a list
       type: string
       format: uuid
       example: 4cb98f71-a879-49f7-b5cf-2314353eb52c
 
     ItemId:
+      description: Unique identifier for a list item
       type: string
       format: uuid
       example: 6e26d247-e074-4f68-b72b-dd92aa02c7e0
 
     ActionId:
+      description: Unique identifier for an action
       type: string
       format: uuid
       example: 99ea10e0-1f14-4f55-b976-3c88ea8ec4cd
 
     JobId:
+      description: Unique identifier for a job
       type: string
       format: uuid
       example: e721113d-0948-4edb-b4af-e3f0578d708c
 
     RunId:
+      description: Unique identifier for a run
       type: string
       format: uuid
       example: 51aca838-2cf6-4100-b0d2-e74ac0e95c88
 
     InvocationId:
+      description: Identifier of an action invocation
       type: string
       format: uuid
       example: "{{ event.reqId }}"
 
     RecipientId:
+      description: String identifier of a recipient, for example his email, phone number etc
       type: string
-      format: uuid
       example: 12025550135
 
     BulkBase:
+      description: Common attributes of any Bulk API resource
       type: object
       properties:
         id:
@@ -1462,17 +1468,19 @@ components:
         name:
           type: string
           maxLength: 50
-          example: first_name
+          example: phone_number
         alias:
           type: string
           maxLength: 50
+          example: phone
         key:
-          type: object
+          type: boolean
           default: false
       required:
         - name
 
     NameAndDescription:
+      description: set the name and description attributes limits for any bulk resource
       type: object
       properties:
         name:
@@ -1487,6 +1495,7 @@ components:
         - name
 
     Tags:
+      description: custom string assigned with a resource
       type: array
       minItems: 0
       maxItems: 10
@@ -1497,6 +1506,7 @@ components:
         #        maxLength: 15
 
     ListEditableFields:
+      description: Fields that are editable for a list
       allOf:
         - $ref: "#/components/schemas/NameAndDescription"
         - type: object
@@ -1564,12 +1574,14 @@ components:
           example: 10000
 
     ListDto:
+      description: List resource
       allOf:
         - $ref: "#/components/schemas/BulkBase"
         - $ref: "#/components/schemas/ListEditableFields"
         - $ref: "#/components/schemas/ListSystemFields"
 
     ItemEditableFields:
+      description: Fields that are editable for an item
       type: object
       properties:
         data:
@@ -1585,12 +1597,14 @@ components:
         - data
 
     ItemSystemFields:
+      description: Fields that are added to a list item by the system
       type: object
       properties:
         list_id:
           $ref: "#/components/schemas/ListId"
 
     ItemDto:
+      description: Item resource
       allOf:
         - $ref: "#/components/schemas/BulkBase"
         - $ref: "#/components/schemas/ItemEditableFields"
@@ -1780,6 +1794,7 @@ components:
         - url
 
     ActionEditableFields:
+      description: Fields that are editable for an action
       allOf:
         - $ref: "#/components/schemas/NameAndDescription"
         - type: object
@@ -1913,6 +1928,7 @@ components:
         - correlation_id
 
     Rule:
+      # todo: is rule the right name?
       allOf:
         - $ref: "#/components/schemas/NameAndDescription"
         - type: object
@@ -2023,6 +2039,7 @@ components:
               value: "{{ template.message }}"
 
     JobEditableFields:
+      description: Fields that are editable for a job
       allOf:
         - $ref: "#/components/schemas/NameAndDescription"
         - type: object
@@ -2041,6 +2058,7 @@ components:
         - $ref: "#/components/schemas/JobEditableFields"
 
     RunEditableFields:
+      description: Fields that are editable for a run
       allOf:
         - $ref: "#/components/schemas/NameAndDescription"
         - type: object
@@ -2080,6 +2098,7 @@ components:
           readOnly: true
 
     RunSystemFields:
+      description: Fields that are added to a run by the system
       type: object
       properties:
         status:
@@ -2133,6 +2152,7 @@ components:
         - event_data
 
     EventError:
+      # todo: maybe rename to RunErrorDetails?
       type: object
       properties:
         code:
@@ -2361,9 +2381,6 @@ components:
           Phone: "(415) 555-1212"
           LastName: Minor
           FirstName: Geoff
-          attributes:
-            url: "/services/data/v42.0/sobjects/Contact/0038d00000B22zbAAB"
-            type: Contact
           OtherCountry: Canada
 
     ItemsResponseExample:
@@ -2378,9 +2395,6 @@ components:
           Phone: "(415) 555-1212"
           LastName: Minor
           FirstName: Geoff
-          attributes:
-            url: "/services/data/v42.0/sobjects/Contact/0038d00000B22zbAAB"
-            type: Contact
           OtherCountry: Canada
 
     ItemsImportExample:
