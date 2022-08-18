@@ -825,11 +825,11 @@ components:
                 lat:
                   type: number
                   example: 40.34772
-                  description: Latitude of the message **sender**.
+                  description: Latitude of the location.
                 long:
                   type: number
                   example: -74.18847
-                  description: Longitude of the message **sender**.
+                  description: Longitude of the location.
                 name:
                   type: string
                   example: "Vonage"
