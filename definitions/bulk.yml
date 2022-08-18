@@ -698,57 +698,32 @@ components:
       content:
         application/json:
           schema:
-            allOf:
-              # todo: align error response with error spec
-              - $ref: "common/common_errors.yml#/components/responses/DefaultError/content/application~1json/schema"
-              - type: object
-                description: Request parameters or body is invalid
-                properties:
-                  code:
-                    description: http status code
-                    example: 400
-                  path:
-                    description: url path to the requested resource
-                    example: /v0.1/bulk/lists?page=-1&page_size=2
-                  method:
-                    description: http method
-                    example: GET
-                  message:
-                    description: additional information on the error or it's root cause
-                    type: object
-                    properties:
-                      status_code:
-                        description: http status code
-                        example: 400
-                      error:
-                        description: error string
-                        type: string
-                        example: Bad request
-                      message:
-                        description: list of error description
-                        type: array
-                        items:
-                          type: string
-                        example:
-                          - "page must not be less than 1"
-                          - "name must be longer than or equal to 1 characters"
-                          - "name must be a string"
+            $ref: "#/components/schemas/ErrorBase"
 
     ErrorConflict:
       description: Conflict
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: "common/common_errors.yml#/components/responses/DefaultError/content/application~1json/schema"
+            $ref: "#/components/schemas/ErrorBase"
 
     ErrorResourceLimitReached:
       description: Resource limit reached / exceeded
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: "common/common_errors.yml#/components/responses/DefaultError/content/application~1json/schema"
+            $ref: "#/components/schemas/ErrorBase"
+          example:
+            code: 422
+            path: "/v0.1/bulk/lists"
+            method: POST
+            message: Resource limit has been reached
+            timestamp: '2022-08-17T12:26:17.904Z'
+            details:
+              - resource: lists
+                limit:
+                  name: total
+                  value: 10
 
     ListResponse:
       description: "List response"
@@ -1345,6 +1320,43 @@ components:
         - page_size
         - _links
         - _embedded
+
+    ErrorBase:
+      description: default error attributes in vcp-bulk implementation
+      allOf:
+        # todo: align error response with error spec
+#        - $ref: "common/common_errors.yml#/components/responses/DefaultError/content/application~1json/schema"
+        - type: object
+          properties:
+            code:
+              description: http status code
+              example: 400
+            path:
+              description: url path to the requested resource
+              example: /v0.1/bulk/lists?page=-1&page_size=2
+            method:
+              description: http method
+              example: GET
+            message:
+              description: additional information on the error or it's root cause
+              type: object
+              properties:
+                status_code:
+                  description: http status code
+                  example: 400
+                error:
+                  description: error string
+                  type: string
+                  example: Bad request
+                message:
+                  description: list of error description
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - "page must not be less than 1"
+                    - "name must be longer than or equal to 1 characters"
+                    - "name must be a string"
 
     ApiChangedDto:
       type: object
@@ -2079,6 +2091,18 @@ components:
         - $ref: "#/components/schemas/RunEditableFields"
         - $ref: "#/components/schemas/RunSystemFields"
 
+    StatisticsEventType:
+      type: string
+      enum:
+        - action-call-succeeded
+        - action-call-failed
+        - action-call-info
+        - recipient-response
+        - run-item-skipped
+        - run-item-failed
+      example: action-call-succeeded
+      readOnly: true
+
     StatisticsEvent:
       type: object
       properties:
@@ -2087,16 +2111,7 @@ components:
           format: uuid
           example: 92cc64e5-f62b-464f-ab9c-4376bd05adfc
         event_type:
-          type: string
-          enum:
-            - action-call-succeeded
-            - action-call-failed
-            - action-call-info
-            - recipient-response
-            - run-item-skipped
-            - run-item-failed
-          example: action-call-succeeded
-          readOnly: true
+          $ref: "#/components/schemas/StatisticsEventType"
         src_ctx:
           type: string
           example: uk recipient
@@ -2164,6 +2179,8 @@ components:
             event_type:
               type: string
               example: action-call-failed
+            error:
+              $ref: "#/components/schemas/EventError"
 
     ActionCallInfoEvent:
       allOf:
@@ -2173,8 +2190,6 @@ components:
             event_type:
               type: string
               example: action-call-info
-            error:
-              $ref: "#/components/schemas/EventError"
 
     ActionCallSucceededEvent:
       allOf:
@@ -2213,19 +2228,17 @@ components:
       type: object
       properties:
         name:
-          type: string
+          $ref: "#/components/schemas/StatisticsEventType"
+        value:
+          type: number
           readOnly: true
-          example: recipient-response
+          example: 226
         statistics:
           type: string
           readOnly: true
           enum:
             - recipient-distinct-count
           example: recipient-distinct-count
-        value:
-          type: number
-          readOnly: true
-          example: 226
         occurred_at_min:
           format: date-time
           type: string
@@ -2236,8 +2249,8 @@ components:
           readOnly: true
       required:
         - name
-        - statistics
         - value
+        - statistics
 
     RunSummary:
       type: object
