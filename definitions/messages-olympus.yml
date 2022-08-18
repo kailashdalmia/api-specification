@@ -146,7 +146,7 @@ paths:
                       - properties:
                           text:
                             description: |
-                                The text of message to send; limited to 4096 characters, including unicode.
+                                The location to be sent in the message.
                       - $ref: '#/components/schemas/channelOptionsWhatsapp'
                     - allOf:
                       - $ref: '#/components/schemas/Image'
