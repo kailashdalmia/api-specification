@@ -17,12 +17,13 @@ info:
   x-apiClientRegistration: "https://dashboard.nexmo.com/sign-up"
   x-label: Alpha
 tags:
-  - name: actions
-  - name: events
-  - name: items
-  - name: jobs
   - name: lists
+  - name: items
+  - name: actions
+    description: APIs relating to working with actions
+  - name: jobs
   - name: runs
+  - name: events
   - name: webhooks
 servers:
   - url: https://api-eu.vonage.com/v0.1/bulk
@@ -514,7 +515,7 @@ paths:
       - $ref: "#/components/parameters/RunId"
     get:
       operationId: runsSummary
-      summary: Get action runs and recipient responses statistics overview
+      summary: Get run statistics overview
       responses:
         "200":
           $ref: "#/components/responses/RunSummaryResponse"
@@ -531,7 +532,7 @@ paths:
       - $ref: "#/components/parameters/RunId"
     post:
       operationId: runsCancel
-      summary: Initiate run cancellation.  This is an async operation which is performed in the background.
+      summary: Initiate run cancellation. This is an async operation which is performed in the background.
       responses:
         "202":
           $ref: "#/components/responses/AcceptedResponse"
