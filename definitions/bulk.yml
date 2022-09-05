@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Vonage Bulk API
-  description: REST APIs for VCP Bulk Jobs & Lists
+  description: REST APIs to create and orchestrate bulk communication campaigns using Vonage APIs and Applications.
   version: 0.1.0
   contact:
     name: Nexmo.com
