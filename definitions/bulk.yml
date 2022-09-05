@@ -550,8 +550,9 @@ paths:
       operationId: webhooksActionStatus
       summary: Webhook endpoint to handle action call status for async actions
       responses:
-        "202":
-          $ref: "#/components/responses/AcceptedResponse"
+        #  todo: change code to response 204
+        "204":
+          $ref: "#/components/responses/NoContentResponse"
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
       tags:
@@ -563,9 +564,9 @@ paths:
       operationId: webhooksRecipientResponse
       summary: Webhook endpoint to handle recipient responses
       responses:
-        #  todo: change code to response 202
-        "202":
-          $ref: "#/components/responses/AcceptedResponse"
+        #  todo: change code to response 204
+        "204":
+          $ref: "#/components/responses/NoContentResponse"
         "400":
           $ref: "#/components/responses/ErrorBadRequest"
       tags:
@@ -664,8 +665,9 @@ components:
             sms:
               $ref: "#/components/examples/ActionSendSMSRequestExample"
             messenger:
-              $ref: "#/components/examples/ActionSendSMSRequestExample"
-#todo: add example for different channel
+              $ref: "#/components/examples/ActionSendMessengerRequestExample"
+            add-list-item:
+              $ref: "#/components/examples/ActionAddListItemRequestExample"
 
     JobRequest:
       required: true
@@ -696,6 +698,9 @@ components:
           schema:
             type: string
             example: ""
+
+    NoContentResponse:
+      description: No content response
 
     ErrorBadRequest:
       description: Invalid request parameter or body
@@ -1800,6 +1805,7 @@ components:
 
     ActionEditableFields:
       description: Fields that are editable for an action
+      x-show-example-request: true
       allOf:
         - $ref: "#/components/schemas/NameAndDescription"
         - type: object
@@ -2457,6 +2463,98 @@ components:
                 values:
                   - submitted
         timeout_seconds: 5
+
+    ActionSendMessengerRequestExample:
+      value:
+        name: vg-send-messenger
+        description: Send messenger message using Vonage messaging APIs
+        command:
+          type: http-api-invoke
+          method: post
+          response:
+            success:
+              codes:
+                - '202'
+            error:
+              code: "{{response.payload.statusCode}}"
+              details: "{{response.payload.error.details}}"
+            invocation_id: "{{response.payload.message_uuid}}"
+          url: https://api.nexmo.com/v1/messages
+          async:
+            status:
+              info:
+                values:
+                  - submitted
+              error:
+                values:
+                  - rejected
+                  - undeliverable
+                details: "{{event.error.detail}}"
+              value: "{{event.status}}"
+              success:
+                values:
+                  - delivered
+            invocation_id: "{{ event.message_uuid }}"
+          headers:
+            - name: Content-Type
+              value: application/json
+            - name: Authorization
+              value: Bearer {{ parameters.vonage-jwt-token }}
+          payload:
+            to: "{{ parameters.to }}"
+            from: "{{ parameters.from }}"
+            text: "{{ parameters.message }}"
+            channel: messenger
+            message_type: text
+        parameters:
+          - type: string
+            required: true
+            name: from
+          - type: string
+            required: true
+            name: to
+          - type: string
+            required: true
+            name: message
+          - type: secret
+            required: true
+            name: vonage-jwt-token
+            default: vng-messaging-api
+
+    ActionAddListItemRequestExample:
+      value:
+        name: add-list-item
+        description: Add list item
+        command:
+          type: http-api-invoke
+          method: post
+          response:
+            success:
+              codes:
+                - '200'
+          url: https://api-eu.vonage.com/v0.1/bulk/lists/{{parameters.listId}}/items
+          headers:
+            - name: Content-Type
+              value: application/json
+            - name: Authorization
+              value: Bearer {{ parameters.vonage-jwt-token }}
+          payload:
+            data:
+              "{{ parameters.itemAttribute }}": "{{ parameters.attributeValue }}"
+        parameters:
+          - type: string
+            required: true
+            name: listId
+          - type: string
+            required: true
+            name: itemAttribute
+          - type: string
+            required: true
+            name: attributeValue
+          - type: secret
+            required: true
+            name: vonage-jwt-token
+            default: vng-bulk-api
 
     ActionSendSMSResponseExample:
       value:
