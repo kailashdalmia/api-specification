@@ -1914,25 +1914,6 @@ components:
       required:
         - action_ref
 
-    MessageTemplate:
-      type: object
-      properties:
-        type:
-          type: string
-          default: text
-        message:
-          type: object
-          maxLength: 8112
-          default: ""
-          example: Hello {{ item.firstName }} {{ item.lastName }}
-        encoding:
-          type: string
-          default: utf8
-          enum:
-            - utf8
-      required:
-        - message
-
     RecipientCorrelation:
       type: object
       properties:
