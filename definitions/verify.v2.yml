@@ -250,6 +250,7 @@ components:
         - $ref: '#/components/schemas/NewCodeRequestWorkflowWhatsApp'
         - $ref: '#/components/schemas/NewCodeRequestWorkflowWhatsAppInteractive'
         - $ref: '#/components/schemas/NewCodeRequestWorkflowVoice'
+        - $ref: '#/components/schemas/NewCodeRequestWorkflowEmail'
 
     NewCodeRequestWorkflowSMS:
       title: SMS
@@ -393,6 +394,43 @@ components:
             - workflow
             - brand
 
+    NewCodeRequestWorkflowEmail:
+      title: Email
+      x-tab-id: WorkflowEmail
+      allOf:
+        - $ref: '#/components/schemas/NewRequestBase'
+        - type: object
+          required:
+            - workflow
+            - brand
+          description: Request a code be sent to a user
+          properties:
+            workflow:
+              type: array
+              items:
+                type: object
+                required:
+                  - channel
+                  - to
+                properties:
+                  channel:
+                    type: string
+                    description: "The channel"
+                    enum: 
+                      - email
+                    example: "email"
+                  to:
+                    $ref: '#/components/schemas/ToEmail'
+                  from:
+                    $ref: '#/components/schemas/FromEmail'
+              example: [
+                {
+                  "channel": "email",
+                  "to": "john.doe@example.com",
+                  "from": "my.email@mycompany.com"
+                }
+              ]
+
     NewPSD2Request:
       allOf:
         - $ref: '#/components/schemas/NewRequestBase'
@@ -448,6 +486,20 @@ components:
       maxLength: 50
       example: '447700900000'
       description: The phone number to contact, in the [E.164](https://en.wikipedia.org/wiki/E.164) format. Don't use a leading + or 00 when entering a phone number, start with the country code, for example, 447700900000.
+
+    ToEmail:
+      type: string
+      minLength: 1
+      maxLength: 100
+      example: "john.doe@example.com"
+      description: The email address to contact.
+    
+    FromEmail:
+      type: string
+      minLength: 1
+      maxLength: 100
+      example: "jane.doe@example.com"
+      description: The email address from which to send the verification request. Must have previously been authorized with Vonage.
 
     CodeLength:
       type: integer
