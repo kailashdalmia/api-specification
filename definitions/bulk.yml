@@ -18,13 +18,19 @@ info:
   x-label: Alpha
 tags:
   - name: lists
+    description: APIs relating to working with lists
   - name: items
+    description: APIs relating to working with list items
   - name: actions
     description: APIs relating to working with actions
   - name: jobs
+    description: APIs relating to working with jobs
   - name: runs
+    description: APIs relating to working with runs
   - name: events
+    description: APIs relating to working with events
   - name: webhooks
+    description: APIs relating to working with webhooks
 servers:
   - url: https://api-eu.vonage.com/v0.1/bulk
     description: prod env in EU geo
@@ -573,6 +579,7 @@ paths:
         - webhooks
       security:
         - { }
+
 components:
   securitySchemes:
     bearerAuth:
@@ -614,6 +621,7 @@ components:
         $ref: "#/components/schemas/JobId"
 
     RunId:
+      # todo: change job_run_id to run_id
       name: run_id
       in: path
       description: Unique identifier for a run
@@ -1086,16 +1094,12 @@ components:
                             - name: toNumber
                               value: "{{ item.number }}"
                             - name: message
-                              value: "{{ template.message }}"
+                              value:
+                                Dear {{ item.firstName }}, {{ item.lastName }} :)\n This's our 1st
+                                SMS communication from Vonage campaign.\nReply back with STOP if you want
+                                to stop receiving our messages
                         name: text vip customers
                         description: text UK and USA vip customers
-                        template:
-                          type: text
-                          message:
-                            Dear {{ item.firstName }}, {{ item.lastName }} :)\n This's our 1st
-                            SMS communication from Vonage campaign.\nReply back with STOP if you want
-                            to stop receiving our messages
-                          encoding: utf8
                         recipient:
                           correlation_id: "{{item.number}}"
                     events_handler:
@@ -1427,13 +1431,13 @@ components:
           format: uuid
           example: 29192c4a-4058-49da-86c2-3e349d1065b7
         created_at:
-          format: date-time
           type: string
+          format: date-time
           readOnly: true
           example: "2022-06-19T17:59:28.085Z"
         updated_at:
-          format: date-time
           type: string
+          format: date-time
           readOnly: true
           example: "2022-06-19T17:59:28.085Z"
 
@@ -1958,13 +1962,7 @@ components:
     Segmentation:
       allOf:
         - $ref: "#/components/schemas/Rule"
-        - type: object
-          properties:
-            # todo: suggest to rethink the use of template here. an alternative will be to set the message parameter with the template.message directly. going forward parameter value could have a type to render it differently
-            template:
-              $ref: "#/components/schemas/MessageTemplate"
-      required:
-        - template
+        # todo: remove template from segmentation
 
     EventMatcher:
       allOf:
@@ -2037,12 +2035,12 @@ components:
             type: action
           parameters:
             - name: fromNumber
-              value: "{{my_campaign_number}}"
+              value: "{{ my_campaign_number }}"
             - name: toNumber
               value: "{{ item.number }}"
             - name: message
-              value: "{{ template.message }}"
-
+              value:
+                Hi {{ item.firstName }}, {{ item.lastName }}, Today all items is BUY ONE GET ONE FREE! Code: BUY-ONE
     JobEditableFields:
       description: Fields that are editable for a job
       allOf:
@@ -2068,20 +2066,21 @@ components:
         - $ref: "#/components/schemas/NameAndDescription"
         - type: object
           properties:
-            start_at:
-              format: date-time
-              type: string
-              example: "2022-06-06T05:46:00.936Z"
-            end_at:
-              format: date-time
-              type: string
-              example: "2022-06-20T05:46:00.936Z"
             job_id:
               $ref: "#/components/schemas/JobId"
+            # todo: should we group the schedule part into a dedicated object?
+            start_at:
+              type: string
+              format: date-time
+              example: "2022-06-06T05:46:00.936Z"
+            end_at:
+              type: string
+              format: date-time
+              example: "2022-06-20T05:46:00.936Z"
       required:
+        - job_id
         - start_at
         - end_at
-        - job_id
 
     RunStatus:
       type: object
@@ -2115,6 +2114,17 @@ components:
         - $ref: "#/components/schemas/RunEditableFields"
         - $ref: "#/components/schemas/RunSystemFields"
 
+    RunError:
+      type: object
+      properties:
+        code:
+          type: string
+        details:
+          type: string
+          example: Not found
+      required:
+        - details
+
     StatisticsEventType:
       type: string
       enum:
@@ -2140,8 +2150,8 @@ components:
           type: string
           example: uk recipient
         occurred_at:
-          format: date-time
           type: string
+          format: date-time
           example: "2022-06-19T20:41:59.085Z"
         event_data:
           type: object
@@ -2155,18 +2165,6 @@ components:
         - src_ctx
         - occurred_at
         - event_data
-
-    EventError:
-      # todo: maybe rename to RunErrorDetails?
-      type: object
-      properties:
-        code:
-          type: string
-        details:
-          type: string
-          example: Not found
-      required:
-        - details
 
     ExecutionStatisticsEvent:
       allOf:
@@ -2205,7 +2203,7 @@ components:
               type: string
               example: action-call-failed
             error:
-              $ref: "#/components/schemas/EventError"
+              $ref: "#/components/schemas/RunError"
 
     ActionCallInfoEvent:
       allOf:
@@ -2238,7 +2236,7 @@ components:
               type: string
               example: run-item-failed
             error:
-              $ref: "#/components/schemas/EventError"
+              $ref: "#/components/schemas/RunError"
 
     RecipientResponseEvent:
       allOf:
@@ -2265,12 +2263,12 @@ components:
             - recipient-distinct-count
           example: recipient-distinct-count
         occurred_at_min:
-          format: date-time
           type: string
+          format: date-time
           readOnly: true
         occurred_at_max:
-          format: date-time
           type: string
+          format: date-time
           readOnly: true
       required:
         - name
@@ -2645,16 +2643,12 @@ components:
                   - name: toNumber
                     value: "{{ item.number }}"
                   - name: message
-                    value: "{{ template.message }}"
+                    value:
+                      Dear {{ item.firstName }}, {{ item.lastName }} :)\n This's our 1st
+                      SMS communication from Vonage campaign.\nReply back with STOP if you want
+                      to stop receiving our messages
               name: text vip customers
               description: text UK and USA vip customers
-              template:
-                type: text
-                message:
-                  Dear {{ item.firstName }}, {{ item.lastName }} :)\n This's our 1st
-                  SMS communication from Vonage campaign.\nReply back with STOP if you want
-                  to stop receiving our messages
-                encoding: utf8
               recipient:
                 correlation_id: "{{item.number}}"
           events_handler:
@@ -2692,7 +2686,9 @@ components:
               - id: fba7c209-ebb9-4b14-8acb-09a803d4f0a0
                 type: list
           segmentations:
-            - condition:
+            - name: text vip customers
+              description: text UK and USA vip customers
+              condition:
                 expression: item.salary == 1000 || ['UK', 'USA'].includes(item.country)
               action_call:
                 action_ref:
@@ -2704,16 +2700,10 @@ components:
                   - name: toNumber
                     value: "{{ item.number }}"
                   - name: message
-                    value: "{{ template.message }}"
-              name: text vip customers
-              description: text UK and USA vip customers
-              template:
-                type: text
-                message:
-                  Dear {{ item.firstName }}, {{ item.lastName }} :)\n This's our 1st
-                  SMS communication from Vonage campaign.\nReply back with STOP if you want
-                  to stop receiving our messages
-                encoding: utf8
+                    value:
+                      Dear {{ item.firstName }}, {{ item.lastName }} :)\n This's our 1st
+                      SMS communication from Vonage campaign.\nReply back with STOP if you want
+                      to stop receiving our messages
               recipient:
                 correlation_id: "{{item.number}}"
           events_handler:
@@ -2751,7 +2741,6 @@ components:
         name: E2E Demo run
         job_id: e721113d-0948-4edb-b4af-e3f0578d708c
         status: scheduled
-        # todo: should we group the schedule part into a dedicated object?
         start_at: "2022-06-24T04:06:36.000Z"
         end_at: "2022-06-24T08:57:55.917Z"
         id: 51aca838-2cf6-4100-b0d2-e74ac0e95c88
