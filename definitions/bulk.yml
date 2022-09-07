@@ -18,13 +18,13 @@ info:
   x-label: Alpha
 tags:
   - name: lists
-    description: APIs relating to working with lists
+    description: API to upload and manage a list of contacts
   - name: items
-    description: APIs relating to working with list items
+    description: API to manage individual elements of a list
   - name: actions
-    description: APIs relating to working with actions
+    description: API to create communication or list management actions such as sending an SMS or creating a new list based on a set of responses
   - name: jobs
-    description: APIs relating to working with jobs
+    description: API to create a campaign ("Job") utilising a list, a set of actions and events
   - name: runs
     description: APIs relating to working with runs
   - name: events
