@@ -35,10 +35,11 @@ servers:
   - url: https://api-eu.vonage.com/v0.1/bulk
     description: prod env in EU geo
 security:
-  - bearerAuth: [ ]
+  - bearerAuth: []
 paths:
   /lists:
     get:
+      #      todo: change all operations to use the resource first
       operationId: listsFindAll
       summary: Find all lists
       parameters:
@@ -56,7 +57,7 @@ paths:
     post:
       operationId: listsCreate
       summary: Create list
-      parameters: [ ]
+      parameters: []
       requestBody:
         $ref: "#/components/requestBodies/ListRequest"
       responses:
@@ -126,6 +127,7 @@ paths:
       operationId: listsClear
       summary: Clear list by deleting all items
       responses:
+        #        todo: modify response code to 202
         "202":
           $ref: "#/components/responses/AcceptedResponse"
         "401":
@@ -141,6 +143,7 @@ paths:
       operationId: listsFetch
       summary: Fetch and replace all items from datasource
       responses:
+        #        todo: modify response code to 202
         "202":
           $ref: "#/components/responses/AcceptedResponse"
         "400":
@@ -564,7 +567,7 @@ paths:
       tags:
         - webhooks
       security:
-        - { }
+        - {}
   /webhooks/recipients/responses:
     post:
       operationId: webhooksRecipientResponse
@@ -578,7 +581,7 @@ paths:
       tags:
         - webhooks
       security:
-        - { }
+        - {}
 
 components:
   securitySchemes:
@@ -735,7 +738,7 @@ components:
             path: "/v0.1/bulk/lists"
             method: POST
             message: Resource limit has been reached
-            timestamp: '2022-08-17T12:26:17.904Z'
+            timestamp: "2022-08-17T12:26:17.904Z"
             details:
               - resource: lists
                 limit:
@@ -827,8 +830,8 @@ components:
                   items_count: 25000
                   sync_status: completed
                   content_synced: true
-                  created_at: '2022-08-02T13:22:04.267Z'
-                  updated_at: '2022-08-02T13:22:04.267Z'
+                  created_at: "2022-08-02T13:22:04.267Z"
+                  updated_at: "2022-08-02T13:22:04.267Z"
 
     ItemResponse:
       description: Item response
@@ -875,22 +878,22 @@ components:
               items:
                 # - $ref: "#/components/examples/ListItemResponse"
                 - id: 6e26d247-e074-4f68-b72b-dd92aa02c7e0
-                  created_at: '2022-08-03T08:54:21.122Z'
-                  updated_at: '2022-08-03T08:54:21.122Z'
+                  created_at: "2022-08-03T08:54:21.122Z"
+                  updated_at: "2022-08-03T08:54:21.122Z"
                   list_id: 060b9c33-6c81-4fe4-9621-b10c0a4c06f3
                   data:
-                    Id: '0038d00000B22zbAAB'
+                    Id: "0038d00000B22zbAAB"
                     Email: info@salesforce.com
                     Phone: "(415) 555-1212"
                     LastName: Minor
                     FirstName: Geoff
                     OtherCountry: Canada
                 - id: f7c029ad-93c3-469c-9267-73c3c6864161
-                  created_at: '2022-08-03T08:54:21.122Z'
-                  updated_at: '2022-08-03T08:54:21.122Z'
+                  created_at: "2022-08-03T08:54:21.122Z"
+                  updated_at: "2022-08-03T08:54:21.122Z"
                   list_id: 060b9c33-6c81-4fe4-9621-b10c0a4c06f3
                   data:
-                    Id: '0038d00000B22zcAAB'
+                    Id: "0038d00000B22zcAAB"
                     Email: info@salesforce.com
                     Phone: "(415) 555-1212"
                     LastName: White
@@ -1150,6 +1153,7 @@ components:
                         type: array
                         readOnly: true
                         items:
+                          #                          todo: change item to RunDto and not action dto
                           $ref: "#/components/schemas/RunDto"
           example:
             total_items: 1
@@ -1176,7 +1180,6 @@ components:
                   id: 51aca838-2cf6-4100-b0d2-e74ac0e95c88
                   created_at: "2022-06-24T07:57:56.301Z"
                   updated_at: "2022-06-24T07:57:56.301Z"
-
 
     RunSummaryResponse:
       description: Run summary response
@@ -1224,7 +1227,7 @@ components:
                 href: https://api-eu.vonage.com/v0.1/bulk/runs/7d0d4e5f-6453-4c63-87cf-f95b04377324/events?page_size=100&page=1
             _embedded:
               events:
-                - occurred_at: '2022-08-07T13:18:21.970Z'
+                - occurred_at: "2022-08-07T13:18:21.970Z"
                   event_type: action-call-succeeded
                   id: e8e1eb4d-61e0-4099-8fa7-c96f1c0764ba
                   job_id: c68e871a-c239-474d-a905-7b95f4563b7e
@@ -1234,33 +1237,33 @@ components:
                     url: https://postman-echo.com/post
                     args: {}
                     data:
-                      from: ''
+                      from: ""
                     form: {}
                     json:
-                      from: ''
+                      from: ""
                     files: {}
                     headers:
                       host: postman-echo.com
                       user-agent: got (https://github.com/sindresorhus/got)
                       content-type: application/json
-                      content-length: '11'
+                      content-length: "11"
                       accept-encoding: gzip, deflate, br
                       x-amzn-trace-id: Root=1-62efbb9e-53636b7b794accb87a3d662f
-                      x-forwarded-port: '443'
+                      x-forwarded-port: "443"
                       x-nexmo-trace-id: 8a6fed94-7296-4a39-9c52-348f12b4d61a
                       x-forwarded-proto: https
                   run_id: 7d0d4e5f-6453-4c63-87cf-f95b04377324
-                  recipient_id: '14806904549'
-                - occurred_at: '2022-08-07T13:18:20.289Z'
+                  recipient_id: "14806904549"
+                - occurred_at: "2022-08-07T13:18:20.289Z"
                   event_type: recipient-response
                   id: 8c8e9894-81be-4f6e-88d4-046b6c70ff8c
                   job_id: c68e871a-c239-474d-a905-7b95f4563b7e
                   src_ctx: et-e4ab4b75-9e7c-4f26-9328-394a5b842648
                   event_data:
-                    from: '15053939008'
+                    from: "15053939008"
                     text: Dima
                   run_id: 7d0d4e5f-6453-4c63-87cf-f95b04377324
-                  recipient_id: '15053939008'
+                  recipient_id: "15053939008"
 
   schemas:
     Href:
@@ -1335,7 +1338,7 @@ components:
       description: default error attributes in vcp-bulk implementation
       allOf:
         # todo: align error response with error spec
-#        - $ref: "common/common_errors.yml#/components/responses/DefaultError/content/application~1json/schema"
+        #        - $ref: "common/common_errors.yml#/components/responses/DefaultError/content/application~1json/schema"
         - type: object
           properties:
             code:
@@ -1369,16 +1372,19 @@ components:
                     - "name must be a string"
 
     ApiChangedDto:
-#      todo: rename to ApiDataChange
+      #      todo: rename to ApiDataChange
       description: Count of affected data records as a result of the API action
       type: object
       properties:
         inserted:
           type: number
+          example: 50
         updated:
           type: number
+          example: 0
         deleted:
           type: number
+          example: 0
 
     ListId:
       description: Unique identifier for a list
@@ -1421,6 +1427,20 @@ components:
       type: string
       example: 12025550135
 
+    Tags:
+      description: custom string assigned with a resource
+      type: array
+      minItems: 0
+      maxItems: 10
+      items:
+        type: string
+        # todo: why min/max length fails rendering?
+        #        minLength: 1
+        #        maxLength: 15
+      example:
+        - vip
+        - holiday
+
     BulkBase:
       description: Common attributes of any Bulk API resource
       type: object
@@ -1441,15 +1461,34 @@ components:
           readOnly: true
           example: "2022-06-19T17:59:28.085Z"
 
+    ResourceNameAndDescription:
+      description: define the name and description attributes for any resource
+      type: object
+      properties:
+        name:
+          description: the name of the resource
+          type: string
+          maxLength: 255
+          example: my name
+        description:
+          description: the description of the resource
+          type: string
+          maxLength: 1024
+          example: my description
+      required:
+        - name
+
+    ListDatasourceTypeEnum:
+      type: string
+      enum:
+        - salesforce
+      example: salesforce
+
     ListDatasourceBase:
       type: object
       properties:
         type:
-          type: string
-          default: salesforce
-          enum:
-            - salesforce
-          example: salesforce
+          $ref: "#/components/schemas/ListDatasourceTypeEnum"
       required:
         - type
 
@@ -1465,13 +1504,14 @@ components:
                 - salesforce
               example: salesforce
             integration_id:
+              description: integration id defining salesforce credential to use for this datasource
               type: string
               example: salesforce_credentials
             soql:
+              description: salesforce query defining which data to fetch from salesforce
               type: string
               example: select Id, LastName, FirstName, Phone, Email FROM Contact
           required:
-            - type
             - integration_id
             - soql
 
@@ -1479,49 +1519,26 @@ components:
       type: object
       properties:
         name:
+          description: list label name
           type: string
           maxLength: 50
           example: phone_number
         alias:
+          description: alternative name to use for this label. Use when you wish to correlate between 2 or more list that are using different label names for the same semantic data
           type: string
           maxLength: 50
           example: phone
         key:
+          description: set to true if this label should be used to correlate between 2 or more lists
           type: boolean
           default: false
       required:
         - name
 
-    NameAndDescription:
-      description: set the name and description attributes limits for any bulk resource
-      type: object
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          example: my name
-        description:
-          type: string
-          maxLength: 1024
-          example: my description
-      required:
-        - name
-
-    Tags:
-      description: custom string assigned with a resource
-      type: array
-      minItems: 0
-      maxItems: 10
-      items:
-        type: string
-        # todo: why min/max length fails rendering?
-        #        minLength: 1
-        #        maxLength: 15
-
     ListEditableFields:
       description: Fields that are editable for a list
       allOf:
-        - $ref: "#/components/schemas/NameAndDescription"
+        - $ref: "#/components/schemas/ResourceNameAndDescription"
         - type: object
           properties:
             tags:
@@ -1538,53 +1555,66 @@ components:
               oneOf:
                 - $ref: "#/components/schemas/SalesforceDatasource"
 
+    ListSyncStatusEnum:
+      description: sync status enumeration
+      type: string
+      readOnly: true
+      enum:
+        - configured
+        - syncing
+        - clearing
+        - fetching
+        - paused
+        - stopped
+        - completed
+        - failed
+      example: configured
+
     ListSyncStatus:
-      description: sync status and it's details
+      description: synchronization status between the list content (items) and it's datasource
       type: object
       properties:
         value:
-          type: string
-          readOnly: true
-          enum:
-            - configured
-            - syncing
-            - clearing
-            - fetching
-            - paused
-            - stopped
-            - completed
-            - failed
-          example: configured
+          $ref: "#/components/schemas/ListSyncStatusEnum"
         details:
           description: provide details on sync status
           type: string
+        # todo: implement dirty, data_modified and metadata_modified
         dirty:
           description: Indicates if the list content or metadata were modified since last sync.
           type: boolean
+          example: true
         data_modified:
-          description: One or more list items were added, removed modified since latest sync.
+          description: One or more list items were added, removed and/or modified since latest sync.
           type: boolean
+          example: true
         metadata_modified:
           description: List metadata (definition) is modified since latest sync.
           type: boolean
+          example: false
+
+    ListTypeEnum:
+      description: type of list, can be manual if no datasource is define, otherwise the datasource type
+      oneOf:
+        - $ref: "#/components/schemas/ListDatasourceTypeEnum"
+        - type: string
+          readOnly: true
+          enum:
+            - manual
+          example: manual
 
     ListSystemFields:
       description: Fields that are added to a list by the system
       type: object
+      readOnly: true
       properties:
         type:
-          type: string
-          readOnly: true
-          enum:
-            - salesforce
-            - manual
-          example: salesforce
+          $ref: "#/components/schemas/ListTypeEnum"
         sync_status:
           $ref: "#/components/schemas/ListSyncStatus"
         items_count:
           type: number
-          readOnly: true
-          example: 10000
+          example: 500
 
     ListDto:
       description: List resource
@@ -1598,24 +1628,28 @@ components:
       type: object
       properties:
         data:
+          description: custom item data attributes
           type: object
           additionalProperties: true
           minProperties: 1
+          # todo: how many attributes we should support
           maxProperties: 20
           example:
             firstName: Adrianna
-            lastName: Renner
-            number: 715-268-2905
+            lastName: Campbell
+            phone: 15550067383
       required:
         - data
 
     ItemSystemFields:
       description: Fields that are added to a list item by the system
       type: object
+      readOnly: true
       properties:
         list_id:
           $ref: "#/components/schemas/ListId"
 
+    # todo: rename ListItemDTO
     ItemDto:
       description: Item resource
       allOf:
@@ -1626,35 +1660,158 @@ components:
         - list_id
         - data
 
+    ActionParameterTypeEnum:
+      type: string
+      enum:
+        - string
+        - secret
+      default: string
+      example: string
+
     ActionParameterName:
       type: string
       minLength: 1
       maxLength: 50
       example: from_number
 
-    ActionParameterDefinition:
+    # todo rename from ActionParameterDefinition
+    ActionParameter:
       type: object
       properties:
-        type:
-          type: string
-          enum:
-            - string
-            - secret
-          default: string
-          example: string
         name:
           $ref: "#/components/schemas/ActionParameterName"
         description:
           type: string
           maxLength: 256
+        type:
+          $ref: "#/components/schemas/ActionParameterTypeEnum"
+        default:
+          type: string
+          example: 5552036475
         required:
           type: boolean
           default: true
           example: true
-        default:
-          type: string
       required:
         - name
+
+    # todo: remove
+    #    ActionHttpResponseSuccess:
+    #      type: object
+    #      properties:
+    #        codes:
+    #          default:
+    #            - "200"
+    #          type: array
+    #          items:
+    #            type: string
+    #          example:
+    #            - 200
+    #      required:
+    #        - codes
+
+    # todo: remove
+    #    ActionHttpError:
+    #      type: object
+    #      properties:
+    #        code:
+    #          type: string
+    #          example: "{{response.payload.statusCode}}"
+    #        details:
+    #          type: string
+    #          example: "{{response.payload.error.details}}"
+    #      required:
+    #        - details
+
+    # todo: remove
+    #    HttpApiInvokeResponse:
+    #      type: object
+    #      properties:
+    #        invocation_id:
+    #          $ref: "#/components/schemas/InvocationId"
+    #        success:
+    #          $ref: "#/components/schemas/ActionHttpResponseSuccess"
+    #        error:
+    #          $ref: "#/components/schemas/ActionHttpError"
+
+    # todo rename from ActionHttpAsyncStatusValues
+    HttpApiInvokeResponseStatus:
+      type: object
+      properties:
+        values:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 10
+          example:
+            - "202"
+      required:
+        # todo: is values mandatory? once we introduced unmapped statuses it's no longer required for error
+        - values
+
+    # todo: rename from ActionHttpAsyncErrorStatus
+    HttpApiInvokeResponseErrorStatus:
+      allOf:
+        - $ref: "#/components/schemas/HttpApiInvokeResponseStatus"
+        - type: object
+          properties:
+            details:
+              type: string
+              example: "{{ event.error.details }}"
+      required:
+        - details
+      # todo: devrel how to override the error example
+      example:
+        values:
+          - "404"
+
+    # todo: remove
+    #    ActionHttpAsyncStatus:
+    #      type: object
+    #      properties:
+    #        value:
+    #          type: string
+    #          example: "200"
+    #        success:
+    #          $ref: "#/components/schemas/ActionHttpAsyncStatusValues"
+    #        error:
+    #          $ref: "#/components/schemas/ActionHttpAsyncErrorStatus"
+    #        info:
+    #          $ref: "#/components/schemas/ActionHttpAsyncStatusValues"
+    #      required:
+    #        - value
+    #        - success
+
+    # todo: rename from ActionHttpAsync
+    HttpApiInvokeResponse:
+      type: object
+      properties:
+        invocation_id:
+          $ref: "#/components/schemas/InvocationId"
+        value:
+          # todo: should we define the default to be the http response code? this will align with the sync response today
+          description: expression used to extract the status value from the response for example in a sync response, this would be the {{response.statusCode}} or a payload attribute {{response.payload.status}} or an async event details {{event.status}}
+          type: string
+          example: "{{response.statusCode}}"
+        success:
+          $ref: "#/components/schemas/HttpApiInvokeResponseStatus"
+        info:
+          $ref: "#/components/schemas/HttpApiInvokeResponseStatus"
+        error:
+          $ref: "#/components/schemas/HttpApiInvokeResponseErrorStatus"
+        unmapped_status:
+          type: string
+          enum:
+            - success
+            - info
+            - error
+          default: error
+          example: error
+      required:
+        - invocation_id
+        - value
+        - success
 
     ActionParameterValue:
       type: object
@@ -1663,177 +1820,99 @@ components:
           $ref: "#/components/schemas/ActionParameterName"
         value:
           type: string
-          example: 715-268-2905
+          example: 15554764733
       required:
         - name
         - value
+      example:
+        name: Authorization
+        value: Bearer {{ parameters.vonage-jwt-token }}
 
-    ActionHttpResponseSuccess:
-      type: object
-      properties:
-        codes:
-          default:
-            - "200"
-          type: array
-          items:
-            type: string
-          example:
-            - 200
-      required:
-        - codes
+    # todo rename from ActionCommandDto
+    ActionCommandTypeEnum:
+      type: string
+      enum:
+        - http-api-invoke
+      default: http-api-invoke
+      example: http-api-invoke
 
-    ActionHttpError:
-      type: object
-      properties:
-        code:
-          type: string
-        details:
-          type: string
-          example: failed to run
-      required:
-        - details
-
-    ActionHttpResponse:
-      type: object
-      properties:
-        invocation_id:
-          $ref: "#/components/schemas/InvocationId"
-        success:
-          $ref: "#/components/schemas/ActionHttpResponseSuccess"
-        error:
-          $ref: "#/components/schemas/ActionHttpError"
-
-    ActionHttpAsyncStatusValues:
-      type: object
-      properties:
-        values:
-          minItems: 1
-          maxItems: 10
-          example:
-            - "202"
-          type: array
-          items:
-            type: string
-      required:
-        - values
-
-    ActionHttpAsyncErrorStatus:
-      type: object
-      properties:
-        values:
-          minItems: 1
-          maxItems: 10
-          example:
-            - "400"
-          type: array
-          items:
-            type: string
-        details:
-          type: string
-          example: "{{ event.error.details }}"
-      required:
-        - values
-        - details
-
-    ActionHttpAsyncStatus:
-      type: object
-      properties:
-        value:
-          type: string
-          example: "200"
-        success:
-          example: "200"
-          allOf:
-            - $ref: "#/components/schemas/ActionHttpAsyncStatusValues"
-        error:
-          $ref: "#/components/schemas/ActionHttpAsyncErrorStatus"
-        info:
-          $ref: "#/components/schemas/ActionHttpAsyncStatusValues"
-      required:
-        - value
-        - success
-
-    ActionHttpAsync:
-      type: object
-      properties:
-        invocation_id:
-          $ref: "#/components/schemas/InvocationId"
-        status:
-          example:
-            success:
-              values:
-                - ok
-            error:
-              values:
-                - failed
-              details: "{{ event.error.details }}"
-            info:
-              values:
-                - submitted
-            value: "{{ event.status }}"
-          allOf:
-            - $ref: "#/components/schemas/ActionHttpAsyncStatus"
-      required:
-        - invocation_id
-        - status
-
-    HttpApiInvoke:
-      description: define attributes to execute an http action
+    ActionCommandBase:
       type: object
       properties:
         type:
-          type: string
-          default: http-api-invoke
-          enum:
-            - http-api-invoke
-          example: http-api-invoke
-        url:
-          type: string
-          example: https://api.nexmo.com/v1/messages
-        method:
-          type: string
-          default: post
-          example: post
-        headers:
-          type: array
-          items:
-            $ref: "#/components/schemas/ActionParameterValue"
-        payload:
-          type: object
-        response:
-          $ref: "#/components/schemas/ActionHttpResponse"
-        async:
-          $ref: "#/components/schemas/ActionHttpAsync"
+          $ref: "#/components/schemas/ActionCommandTypeEnum"
       required:
-        - url
+        - type
+
+    # todo rename from HttpApiInvokeDto
+    HttpApiInvokeCommand:
+      description: define attributes to execute an http action
+      allOf:
+        - $ref: "#/components/schemas/ActionCommandBase"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - http-api-invoke
+              default: http-api-invoke
+              example: http-api-invoke
+            url:
+              type: string
+              example: https://api.nexmo.com/v1/messages
+            method:
+              type: string
+              default: post
+              example: post
+            headers:
+              type: array
+              items:
+                $ref: "#/components/schemas/ActionParameterValue"
+            payload:
+              type: object
+              additionalProperties: true
+              example:
+                channel: sms
+                to: "{{ parameters.toNumber }}"
+                from: "{{ parameters.fromNumber }}"
+                message_type: text
+                text: "{{ parameters.message }}"
+            response:
+              type: object
+              properties:
+                sync:
+                  # todo: set example for sync
+                  $ref: "#/components/schemas/HttpApiInvokeResponse"
+                async:
+                  $ref: "#/components/schemas/HttpApiInvokeResponse"
+          required:
+            - url
 
     ActionEditableFields:
       description: Fields that are editable for an action
       x-show-example-request: true
       allOf:
-        - $ref: "#/components/schemas/NameAndDescription"
+        - $ref: "#/components/schemas/ResourceNameAndDescription"
         - type: object
           properties:
             parameters:
               type: array
               items:
-                $ref: "#/components/schemas/ActionParameterDefinition"
+                $ref: "#/components/schemas/ActionParameter"
             command:
+              # todo: devrel - how to list the command attributes
               discriminator:
                 propertyName: type
               oneOf:
-                - $ref: "#/components/schemas/HttpApiInvoke"
-              example:
-                type: http-api-invoke
-                url: https://api.nexmo.com/v1/messages
-                method: post
+                - $ref: "#/components/schemas/HttpApiInvokeCommand"
             timeout_seconds:
               type: number
               default: 5
               minimum: 0
               maximum: 60
-      required:
-        - command
+              example: 5
+          required:
+            - command
 
     ActionDto:
       allOf:
@@ -1879,7 +1958,8 @@ components:
       type: object
       properties:
         expression:
-          type: object
+          type: string
+          description: short expression in javascript, note that you can use item attributes in expression
           maxLength: 256
           example: item.salary > 5000
       required:
@@ -1926,7 +2006,7 @@ components:
     Rule:
       # todo: is rule the right name? maybe matcher as it's used in event_handler matcher field
       allOf:
-        - $ref: "#/components/schemas/NameAndDescription"
+        - $ref: "#/components/schemas/ResourceNameAndDescription"
         - type: object
           properties:
             condition:
@@ -1964,21 +2044,21 @@ components:
           items:
             $ref: "#/components/schemas/EventMatcher"
           example:
-          - name: opt-out
-            description: unsubscribe
-            condition:
-              expression: event.text?.toLowerCase().includes('stop')
-            action_call:
-              action_ref:
-                type: action
-                id: bd795581-9a93-48b0-a4bc-3b7509bf6e4d
-              parameters:
-                - name: listId
-                  value: fba7c209-ebb9-4b14-8acb-09a803d4f0a0
-                - name: number
-                  value: "{{event.from}}"
-            recipient:
-              correlation_id: "{{event.from}}"
+            - name: opt-out
+              description: unsubscribe
+              condition:
+                expression: event.text?.toLowerCase().includes('stop')
+              action_call:
+                action_ref:
+                  type: action
+                  id: bd795581-9a93-48b0-a4bc-3b7509bf6e4d
+                parameters:
+                  - name: listId
+                    value: fba7c209-ebb9-4b14-8acb-09a803d4f0a0
+                  - name: number
+                    value: "{{event.from}}"
+              recipient:
+                correlation_id: "{{event.from}}"
       required:
         - matchers
 
@@ -2012,20 +2092,21 @@ components:
           expression: item.salary == 1000 || ['UK', 'USA'].includes(item.country)
         action_call:
           action_ref:
-            id: "{{sendSmsActionId}}"
+            id: bd795581-9a93-48b0-a4bc-3b7509bf6e4d
             type: action
           parameters:
             - name: fromNumber
-              value: "{{ my_campaign_number }}"
+              value: "15557571425"
             - name: toNumber
               value: "{{ item.number }}"
             - name: message
               value:
                 Hi {{ item.firstName }}, {{ item.lastName }}, Today all items is BUY ONE GET ONE FREE! Code: BUY-ONE
+
     JobEditableFields:
       description: Fields that are editable for a job
       allOf:
-        - $ref: "#/components/schemas/NameAndDescription"
+        - $ref: "#/components/schemas/ResourceNameAndDescription"
         - type: object
           properties:
             tags:
@@ -2044,9 +2125,11 @@ components:
     RunEditableFields:
       description: Fields that are editable for a run
       allOf:
-        - $ref: "#/components/schemas/NameAndDescription"
+        - $ref: "#/components/schemas/ResourceNameAndDescription"
         - type: object
           properties:
+            tags:
+              $ref: "#/components/schemas/Tags"
             job_id:
               $ref: "#/components/schemas/JobId"
             # todo: should we group the schedule part into a dedicated object?
@@ -2256,6 +2339,7 @@ components:
         - value
         - statistics
 
+    # todo: rename from StatsRunSummaryDto
     RunSummary:
       type: object
       properties:
@@ -2334,7 +2418,7 @@ components:
 
     ListSalesforceResponseExample:
       value:
-        name: Salesforce contact
+        name: Salesforce contacts
         description: Salesforce contacts for campaign
         tags:
           - salesforce
@@ -2354,13 +2438,13 @@ components:
         items_count: 25000
         sync_status: completed
         content_synced: true
-        created_at: '2022-08-02T13:22:04.267Z'
-        updated_at: '2022-08-02T13:22:04.267Z'
+        created_at: "2022-08-02T13:22:04.267Z"
+        updated_at: "2022-08-02T13:22:04.267Z"
 
     ItemRequestExample:
       value:
         data:
-          Id: '0038d00000B22zbAAB'
+          Id: "0038d00000B22zbAAB"
           Email: info@salesforce.com
           Phone: "(415) 555-1212"
           LastName: Minor
@@ -2370,11 +2454,11 @@ components:
     ItemsResponseExample:
       value:
         id: 6e26d247-e074-4f68-b72b-dd92aa02c7e0
-        created_at: '2022-08-03T08:54:21.122Z'
-        updated_at: '2022-08-03T08:54:21.122Z'
+        created_at: "2022-08-03T08:54:21.122Z"
+        updated_at: "2022-08-03T08:54:21.122Z"
         list_id: 060b9c33-6c81-4fe4-9621-b10c0a4c06f3
         data:
-          Id: '0038d00000B22zbAAB'
+          Id: "0038d00000B22zbAAB"
           Email: info@salesforce.com
           Phone: "(415) 555-1212"
           LastName: Minor
@@ -2384,6 +2468,64 @@ components:
     ItemsImportExample:
       value:
         inserted: 10000
+
+    #    ActionSendSMSRequestExample:
+    #      value:
+    #        name: vg-send-sms
+    #        description: Send text message using Vonage messaging APIs
+    #        parameters:
+    #          - type: string
+    #            required: true
+    #            name: fromNumber
+    #          - type: string
+    #            required: true
+    #            name: toNumber
+    #          - type: string
+    #            required: true
+    #            name: message
+    #          - type: secret
+    #            required: true
+    #            name: vonage-jwt-token
+    #            default: vng-prd-messaging-api
+    #        command:
+    #          type: http-api-invoke
+    #          url: https://api.nexmo.com/v1/messages
+    #          method: post
+    #          headers:
+    #            - name: Content-Type
+    #              value: application/json
+    #            - name: Authorization
+    #              value: Bearer {{ parameters.vonage-jwt-token }}
+    #          payload:
+    #            to: "{{ parameters.toNumber }}"
+    #            message_type: text
+    #            from: "{{ parameters.fromNumber }}"
+    #            channel: sms
+    #            text: "{{ parameters.message }}"
+    #          response:
+    #            success:
+    #              codes:
+    #                - "202"
+    #            invocation_id: "{{response.payload.message_uuid}}"
+    #            error:
+    #              code: "{{response.payload.statusCode}}"
+    #              details: "{{response.payload.error.details}}"
+    #          async:
+    #            invocation_id: "{{ event.message_uuid }}"
+    #            status:
+    #              value: "{{event.status}}"
+    #              success:
+    #                values:
+    #                  - delivered
+    #              error:
+    #                values:
+    #                  - rejected
+    #                  - undeliverable
+    #                details: "{{event.error.details}}"
+    #              info:
+    #                values:
+    #                  - submitted
+    #        timeout_seconds: 5
 
     ActionSendSMSRequestExample:
       value:
@@ -2413,22 +2555,26 @@ components:
             - name: Authorization
               value: Bearer {{ parameters.vonage-jwt-token }}
           payload:
-            to: "{{ parameters.toNumber }}"
-            message_type: text
-            from: "{{ parameters.fromNumber }}"
             channel: sms
+            to: "{{ parameters.toNumber }}"
+            from: "{{ parameters.fromNumber }}"
+            message_type: text
             text: "{{ parameters.message }}"
           response:
-            success:
-              codes:
-                - "202"
-            invocation_id: "{{response.payload.message_uuid}}"
-            error:
-              code: "{{response.payload.statusCode}}"
-              details: "{{response.payload.error.details}}"
-          async:
-            invocation_id: "{{ event.message_uuid }}"
-            status:
+            sync:
+              invocation_id: "{{response.payload.message_uuid}}"
+              value: "{{response.statusCode}}"
+              success:
+                values:
+                  - "202"
+              error:
+                values:
+                  - "400"
+                  - "404"
+                details: "{{response.payload.error.details}}"
+              unmapped_status: error
+            async:
+              invocation_id: "{{ event.message_uuid }}"
               value: "{{event.status}}"
               success:
                 values:
@@ -2438,9 +2584,7 @@ components:
                   - rejected
                   - undeliverable
                 details: "{{event.error.details}}"
-              info:
-                values:
-                  - submitted
+              unmapped_status: error
         timeout_seconds: 5
 
     ActionSendMessengerRequestExample:
@@ -2453,7 +2597,7 @@ components:
           response:
             success:
               codes:
-                - '202'
+                - "202"
             error:
               code: "{{response.payload.statusCode}}"
               details: "{{response.payload.error.details}}"
@@ -2504,22 +2648,6 @@ components:
       value:
         name: add-list-item
         description: Add list item
-        command:
-          type: http-api-invoke
-          method: post
-          response:
-            success:
-              codes:
-                - '200'
-          url: https://api-eu.vonage.com/v0.1/bulk/lists/{{parameters.listId}}/items
-          headers:
-            - name: Content-Type
-              value: application/json
-            - name: Authorization
-              value: Bearer {{ parameters.vonage-jwt-token }}
-          payload:
-            data:
-              "{{ parameters.itemAttribute }}": "{{ parameters.attributeValue }}"
         parameters:
           - type: string
             required: true
@@ -2534,6 +2662,24 @@ components:
             required: true
             name: vonage-jwt-token
             default: vng-bulk-api
+        command:
+          type: http-api-invoke
+          url: https://api-eu.vonage.com/v0.1/bulk/lists/{{parameters.listId}}/items
+          method: post
+          headers:
+            - name: Content-Type
+              value: application/json
+            - name: Authorization
+              value: Bearer {{ parameters.vonage-jwt-token }}
+          payload:
+            data:
+              "{{ parameters.itemAttribute }}": "{{ parameters.attributeValue }}"
+          response:
+            sync:
+              value: "{{response.statusCode}}"
+              success:
+                values:
+                  - "200"
 
     ActionSendSMSResponseExample:
       value:
