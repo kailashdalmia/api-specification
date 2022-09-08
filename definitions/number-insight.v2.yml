@@ -17,9 +17,6 @@ info:
 externalDocs:
   url: 'https://developer.nexmo.com/api/number-insight'
   x-sha1: 081f6d985e2e4a75586da1654fde880a96885405
-security:
-  - apiKey: []
-    apiSecret: []
 paths:
   /:
     post:
@@ -234,14 +231,4 @@ paths:
                     detail: There was an error processing your request in our platform
                     instance: 06032957-99ce-41ee-978b-9a390cd5a89b
                     type: 'https://www.nexmo.com/messages/Errors#InvalidParams'
-components:
-  parameters: {}
-  securitySchemes:
-    apiKey:
-      name: API Key
-      type: apiKey
-      in: query
-    apiSecret:
-      name: API Key
-      type: apiKey
-      in: query
+
