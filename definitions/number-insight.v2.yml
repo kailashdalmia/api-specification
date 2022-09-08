@@ -59,6 +59,43 @@ paths:
                 - insights
         description: ''
       responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  request_id:
+                    type: string
+                    example: 'aaaaaaaa-bbbb-cccc-dddd-0123456789ab'
+                  type:
+                    type: string
+                    example: phone
+                  phone:
+                    type: object
+                    properties:
+                      phone:
+                        type: string
+                        example: '16197363066'
+                      carrier:
+                        type: string
+                        example: 'Google (Grand Central) - SVR'
+                      phone_type:
+                        type: string
+                        example: 'VOIP'
+                  fraud_score:
+                    type: object
+                    properties:
+                      risk_score:
+                        type: string
+                        example: '52'
+                      risk_recommendation:
+                        type: string
+                        example: 'flag'
+                      label:
+                        type: string
+                        example: medium-low
         '200':
           description: OK
           content:
@@ -68,67 +105,34 @@ paths:
                 properties:
                   request_id:
                     type: string
+                    example: 'aaaaaaaa-bbbb-cccc-dddd-0123456789ab'
                   type:
                     type: string
+                    example: phone
                   phone:
                     type: object
                     properties:
                       phone:
                         type: string
+                        example: '15555555555'
                       carrier:
                         type: string
+                        example: ''
                       phone_type:
                         type: string
+                        example: 'INVALID'
                   fraud_score:
                     type: object
                     properties:
                       risk_score:
                         type: string
-                      risk_recommendation:
-                        type: string
+                        example: '100'
                       label:
                         type: string
-        '202':
-          description: Accepted
-          content:
-            application/json:
-              schema:
-                type: object
-                x-examples:
-                  example-1:
-                    request_id: aaaaaaaa-bbbb-cccc-dddd-0123456789ab
-                    type: phone
-                    phone:
-                      phone: '16197363066'
-                      carrier: Google (Grand Central) - SVR
-                      type: VOIP
-                    fraud_score:
-                      risk_score: '52'
-                      label: very low/low/medium-low/medium/high/very high
-                      risk_recommendation: allow/flag/block
-                properties:
-                  request_id:
-                    type: string
-                  type:
-                    type: string
-                  phone:
-                    type: object
-                    properties:
-                      phone:
-                        type: string
-                      carrier:
-                        type: string
-                      type:
-                        type: string
-                  fraud_score:
-                    type: object
-                    properties:
-                      risk_score:
-                        type: string
-                      label:
-                        type: string
+                        example: 'high'
                       risk_recommendation:
                         type: string
+                        example: 'block'
         '422':
           description: Unprocessable Entity (WebDAV)
           content:
@@ -138,12 +142,16 @@ paths:
                 properties:
                   title:
                     type: string
+                    example: 'Invalid params'
                   detail:
                     type: string
+                    example: 'The value of one or more parameters is invalid'
                   instance:
                     type: string
+                    example: '06032957-99ce-41ee-978b-9a390cd5a89b'
                   type:
                     type: string
+                    example: 'https://www.nexmo.com/messages/Errors#InvalidParams'
                   invalid_parameters:
                     type: array
                     items:
@@ -151,8 +159,10 @@ paths:
                       properties:
                         name:
                           type: string
+                          example: 'value'
                         reason:
                           type: string
+                          example: 'invalid value'
         '500':
           description: Internal Server Error
           content:
