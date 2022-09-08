@@ -23,16 +23,14 @@ security:
     apiSecret: []
 paths:
   "/":
-    parameters:
-      - $ref: "#/components/parameters/format"
     post:
       operationId: getNumberInsightBasic
       summary: Number Insight v2 default endpoint
       description: |
         This is the default endpoint to make requests for Insight data.
-      parameters:
-        - $ref: "#/components/parameters/number"
-        - $ref: "#/components/parameters/country"
+      tags:
+        - Requests
+
       responses:
         "200":
           description: OK
@@ -42,6 +40,16 @@ paths:
                 $ref: "#/components/schemas/niResponseJsonBasic"
 
 components:
+  requestBodies:
+      NewVerificationRequest:
+        required: true
+        content: 
+          application/json:
+            schema:
+              type: object
+              properties:
+                to:
+                  type: array
   parameters:
     format:
       name: format
