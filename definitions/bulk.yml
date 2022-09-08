@@ -1707,7 +1707,6 @@ components:
           example:
             - "202"
       required:
-        # todo: is values mandatory? once we introduced unmapped statuses it's no longer required for error
         - values
 
     # todo: rename from ActionHttpAsyncErrorStatus
@@ -1733,17 +1732,28 @@ components:
         invocation_id:
           $ref: "#/components/schemas/InvocationId"
         value:
-          # todo: should we define the default to be the http response code? this will align with the sync response today
           description: expression used to extract the status value from the response for example in a sync response, this would be the {{response.statusCode}} or a payload attribute {{response.payload.status}} or an async event details {{event.status}}
           type: string
+          default: "{{response.statusCode}}"
           example: "{{response.statusCode}}"
         success:
-          $ref: "#/components/schemas/HttpApiInvokeResponseStatus"
+          oneOf:
+            - $ref: "#/components/schemas/HttpApiInvokeResponseStatus"
+            - type: object
+              properties:
+                values:
+                  type: array
+                  items:
+                    type: string
+                  default:
+                    - "200"
+                    - "202"
+                    - "204"
         info:
           $ref: "#/components/schemas/HttpApiInvokeResponseStatus"
         error:
           $ref: "#/components/schemas/HttpApiInvokeResponseErrorStatus"
-        unmapped_status:
+        unmapped_value:
           type: string
           enum:
             - success
@@ -1753,8 +1763,6 @@ components:
           example: error
       required:
         - invocation_id
-        - value
-        - success
 
     ActionParameterValue:
       type: object
@@ -2430,7 +2438,7 @@ components:
                   - "400"
                   - "404"
                 details: "{{response.payload.error.details}}"
-              unmapped_status: error
+              unmapped_value: error
             async:
               invocation_id: "{{ event.message_uuid }}"
               value: "{{event.status}}"
@@ -2442,7 +2450,7 @@ components:
                   - rejected
                   - undeliverable
                 details: "{{event.error.details}}"
-              unmapped_status: error
+              unmapped_value: error
         timeout_seconds: 5
 
     ActionSendMessengerRequestExample:
