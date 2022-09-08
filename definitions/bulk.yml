@@ -920,7 +920,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ApiChangedDto"
+            $ref: "#/components/schemas/ApiDataChangedDto"
           examples:
             simple:
               $ref: "#/components/examples/ItemsImportExample"
@@ -1293,9 +1293,8 @@ components:
       required:
         # todo: fix links required in code - it make no sense to have next or prev if none available
         - first
-        - prev
         - self
-        - next
+        - last
 
     PageResponseDto:
       allOf:
@@ -1371,8 +1370,8 @@ components:
                     - "name must be longer than or equal to 1 characters"
                     - "name must be a string"
 
-    ApiChangedDto:
-      #      todo: rename to ApiDataChange
+    # todo: rename from ApiChangedDto
+    ApiDataChangedDto:
       description: Count of affected data records as a result of the API action
       type: object
       properties:
@@ -1425,7 +1424,7 @@ components:
     RecipientId:
       description: String identifier of a recipient, for example his email, phone number etc
       type: string
-      example: 12025550135
+      example: 15551584817
 
     Tags:
       description: custom string assigned with a resource
@@ -1434,7 +1433,7 @@ components:
       maxItems: 10
       items:
         type: string
-        # todo: why min/max length fails rendering?
+        # todo: devrel why min/max length fails rendering?
         #        minLength: 1
         #        maxLength: 15
       example:
@@ -1561,11 +1560,10 @@ components:
       readOnly: true
       enum:
         - configured
-        - syncing
         - clearing
         - fetching
         - paused
-        - stopped
+        - cancelled
         - completed
         - failed
       example: configured
@@ -1633,7 +1631,7 @@ components:
           additionalProperties: true
           minProperties: 1
           # todo: how many attributes we should support
-          maxProperties: 20
+          # maxProperties: 20
           example:
             firstName: Adrianna
             lastName: Campbell
@@ -1682,6 +1680,7 @@ components:
           $ref: "#/components/schemas/ActionParameterName"
         description:
           type: string
+          # todo: should we use same name and description length for action parameter (then can yse the ResourceNameAndDescription schema)
           maxLength: 256
         type:
           $ref: "#/components/schemas/ActionParameterTypeEnum"
@@ -1694,45 +1693,6 @@ components:
           example: true
       required:
         - name
-
-    # todo: remove
-    #    ActionHttpResponseSuccess:
-    #      type: object
-    #      properties:
-    #        codes:
-    #          default:
-    #            - "200"
-    #          type: array
-    #          items:
-    #            type: string
-    #          example:
-    #            - 200
-    #      required:
-    #        - codes
-
-    # todo: remove
-    #    ActionHttpError:
-    #      type: object
-    #      properties:
-    #        code:
-    #          type: string
-    #          example: "{{response.payload.statusCode}}"
-    #        details:
-    #          type: string
-    #          example: "{{response.payload.error.details}}"
-    #      required:
-    #        - details
-
-    # todo: remove
-    #    HttpApiInvokeResponse:
-    #      type: object
-    #      properties:
-    #        invocation_id:
-    #          $ref: "#/components/schemas/InvocationId"
-    #        success:
-    #          $ref: "#/components/schemas/ActionHttpResponseSuccess"
-    #        error:
-    #          $ref: "#/components/schemas/ActionHttpError"
 
     # todo rename from ActionHttpAsyncStatusValues
     HttpApiInvokeResponseStatus:
@@ -1765,23 +1725,6 @@ components:
       example:
         values:
           - "404"
-
-    # todo: remove
-    #    ActionHttpAsyncStatus:
-    #      type: object
-    #      properties:
-    #        value:
-    #          type: string
-    #          example: "200"
-    #        success:
-    #          $ref: "#/components/schemas/ActionHttpAsyncStatusValues"
-    #        error:
-    #          $ref: "#/components/schemas/ActionHttpAsyncErrorStatus"
-    #        info:
-    #          $ref: "#/components/schemas/ActionHttpAsyncStatusValues"
-    #      required:
-    #        - value
-    #        - success
 
     # todo: rename from ActionHttpAsync
     HttpApiInvokeResponse:
@@ -1890,7 +1833,6 @@ components:
 
     ActionEditableFields:
       description: Fields that are editable for an action
-      x-show-example-request: true
       allOf:
         - $ref: "#/components/schemas/ResourceNameAndDescription"
         - type: object
@@ -2029,48 +1971,38 @@ components:
       allOf:
         - $ref: "#/components/schemas/Rule"
 
+    MatchingStrategyTypeEnum:
+      type: string
+      default: match-first
+      enum:
+        - match-first
+        - match-all
+      example: match-first
+
     EventsHandler:
       type: object
       properties:
         matching_strategy:
-          type: string
-          default: match-first
-          enum:
-            - match-first
-            - match-all
-          example: match-first
+          $ref: "#/components/schemas/MatchingStrategyTypeEnum"
         matchers:
           type: array
           items:
             $ref: "#/components/schemas/EventMatcher"
-          example:
-            - name: opt-out
-              description: unsubscribe
-              condition:
-                expression: event.text?.toLowerCase().includes('stop')
-              action_call:
-                action_ref:
-                  type: action
-                  id: bd795581-9a93-48b0-a4bc-3b7509bf6e4d
-                parameters:
-                  - name: listId
-                    value: fba7c209-ebb9-4b14-8acb-09a803d4f0a0
-                  - name: number
-                    value: "{{event.from}}"
-              recipient:
-                correlation_id: "{{event.from}}"
       required:
         - matchers
+
+    JobTypeEnum:
+      type: string
+      default: segmentation-job
+      enum:
+        - segmentation-job
+      example: segmentation-job
 
     JobSegmentationDefinition:
       type: object
       properties:
         type:
-          type: string
-          default: segmentation-job
-          enum:
-            - segmentation-job
-          example: segmentation-job
+          $ref: "#/components/schemas/JobTypeEnum"
         recipients:
           $ref: "#/components/schemas/Recipients"
         segmentations:
@@ -2083,25 +2015,6 @@ components:
         - type
         - recipients
         - segmentations
-      example:
-        name: text vip customers
-        description: text UK and USA vip customers
-        recipient:
-          correlation_id: "{{item.number}}"
-        condition:
-          expression: item.salary == 1000 || ['UK', 'USA'].includes(item.country)
-        action_call:
-          action_ref:
-            id: bd795581-9a93-48b0-a4bc-3b7509bf6e4d
-            type: action
-          parameters:
-            - name: fromNumber
-              value: "15557571425"
-            - name: toNumber
-              value: "{{ item.number }}"
-            - name: message
-              value:
-                Hi {{ item.firstName }}, {{ item.lastName }}, Today all items is BUY ONE GET ONE FREE! Code: BUY-ONE
 
     JobEditableFields:
       description: Fields that are editable for a job
@@ -2146,21 +2059,24 @@ components:
         - start_at
         - end_at
 
+    RunStatusEnum:
+      type: string
+      readOnly: true
+      enum:
+        - scheduled
+        - running
+        - paused
+        - cancelled
+        - cancelling
+        - failed
+        - completed
+      example: running
+
     RunStatus:
       type: object
       properties:
         value:
-          type: string
-          readOnly: true
-          enum:
-            - scheduled
-            - running
-            - paused
-            - stopped
-            - failed
-            - completed
-            - draft
-          example: running
+          $ref: "#/components/schemas/RunStatusEnum"
         details:
           type: string
           readOnly: true
@@ -2468,64 +2384,6 @@ components:
     ItemsImportExample:
       value:
         inserted: 10000
-
-    #    ActionSendSMSRequestExample:
-    #      value:
-    #        name: vg-send-sms
-    #        description: Send text message using Vonage messaging APIs
-    #        parameters:
-    #          - type: string
-    #            required: true
-    #            name: fromNumber
-    #          - type: string
-    #            required: true
-    #            name: toNumber
-    #          - type: string
-    #            required: true
-    #            name: message
-    #          - type: secret
-    #            required: true
-    #            name: vonage-jwt-token
-    #            default: vng-prd-messaging-api
-    #        command:
-    #          type: http-api-invoke
-    #          url: https://api.nexmo.com/v1/messages
-    #          method: post
-    #          headers:
-    #            - name: Content-Type
-    #              value: application/json
-    #            - name: Authorization
-    #              value: Bearer {{ parameters.vonage-jwt-token }}
-    #          payload:
-    #            to: "{{ parameters.toNumber }}"
-    #            message_type: text
-    #            from: "{{ parameters.fromNumber }}"
-    #            channel: sms
-    #            text: "{{ parameters.message }}"
-    #          response:
-    #            success:
-    #              codes:
-    #                - "202"
-    #            invocation_id: "{{response.payload.message_uuid}}"
-    #            error:
-    #              code: "{{response.payload.statusCode}}"
-    #              details: "{{response.payload.error.details}}"
-    #          async:
-    #            invocation_id: "{{ event.message_uuid }}"
-    #            status:
-    #              value: "{{event.status}}"
-    #              success:
-    #                values:
-    #                  - delivered
-    #              error:
-    #                values:
-    #                  - rejected
-    #                  - undeliverable
-    #                details: "{{event.error.details}}"
-    #              info:
-    #                values:
-    #                  - submitted
-    #        timeout_seconds: 5
 
     ActionSendSMSRequestExample:
       value:
