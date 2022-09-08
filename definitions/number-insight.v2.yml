@@ -29,11 +29,6 @@ paths:
           application/json:
             schema:
               type: object
-              x-examples:
-                example-1:
-                  type: phone
-                  phone: '16197363066'
-                  insights: fraud_score
               properties:
                 type:
                   type: string
@@ -41,32 +36,27 @@ paths:
                     - phone
                     - email
                     - ip
+                  example: 'phone'
                 phone:
                   type: string
                   description: Phone number. Required if type = "phone".
+                  example: '003544569382'
                 email:
                   type: string
                   description: Email address. Required if type = "email".
+                  example: 'jim@doe.com'
                 ip:
                   type: string
                   description: Ip address. Required if type = "ip"
+                  example: '202.453.231.34'
                 insights:
                   type: string
                   enum:
                     - fraud_score
+                  example: 'fraud_score'
               required:
                 - type
                 - insights
-            examples:
-              example-1:
-                value:
-                  type: phone
-                  phone: '16197363066'
-                  insights: fraud_score
-          application/xml:
-            schema:
-              type: object
-              properties: {}
         description: ''
       responses:
         '200':
@@ -98,31 +88,6 @@ paths:
                         type: string
                       label:
                         type: string
-                x-examples:
-                  example-1:
-                    request_id: aaaaaaaa-bbbb-cccc-dddd-0123456789ab
-                    type: phone
-                    phone:
-                      phone: '15555555555'
-                      carrier: ''
-                      phone_type: INVALID
-                    fraud_score:
-                      risk_score: '100'
-                      risk_recommendation: block
-                      label: high
-              examples:
-                example-1:
-                  value:
-                    request_id: aaaaaaaa-bbbb-cccc-dddd-0123456789ab
-                    type: phone
-                    phone:
-                      phone: '15555555555'
-                      carrier: ''
-                      phone_type: INVALID
-                    fraud_score:
-                      risk_score: '100'
-                      risk_recommendation: block
-                      label: high
         '202':
           description: Accepted
           content:
@@ -164,19 +129,6 @@ paths:
                         type: string
                       risk_recommendation:
                         type: string
-              examples:
-                example-1:
-                  value:
-                    request_id: aaaaaaaa-bbbb-cccc-dddd-0123456789ab
-                    type: phone
-                    phone:
-                      phone: '16197363066'
-                      carrier: Google (Grand Central) - SVR
-                      type: VOIP
-                    fraud_score:
-                      risk_score: '52'
-                      label: very low/low/medium-low/medium/high/very high
-                      risk_recommendation: allow/flag/block
         '422':
           description: Unprocessable Entity (WebDAV)
           content:
@@ -201,15 +153,6 @@ paths:
                           type: string
                         reason:
                           type: string
-                x-examples:
-                  example-1:
-                    title: Invalid params
-                    detail: The value of one or more parameters is invalid
-                    instance: 06032957-99ce-41ee-978b-9a390cd5a89b
-                    type: 'https://www.nexmo.com/messages/Errors#InvalidParams'
-                    invalid_parameters:
-                      - name: value
-                        reason: Invalid value
         '500':
           description: Internal Server Error
           content:
@@ -225,10 +168,4 @@ paths:
                     type: string
                   type:
                     type: string
-                x-examples:
-                  example-1:
-                    title: Internal error
-                    detail: There was an error processing your request in our platform
-                    instance: 06032957-99ce-41ee-978b-9a390cd5a89b
-                    type: 'https://www.nexmo.com/messages/Errors#InvalidParams'
 
