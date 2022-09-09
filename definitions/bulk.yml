@@ -672,13 +672,6 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ActionEditableFields"
-          examples:
-            sms:
-              $ref: "#/components/examples/ActionSendSMSRequestExample"
-            messenger:
-              $ref: "#/components/examples/ActionSendMessengerRequestExample"
-            add-list-item:
-              $ref: "#/components/examples/ActionAddListItemRequestExample"
 
     JobRequest:
       required: true
@@ -686,9 +679,6 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/JobEditableFields"
-          examples:
-            simple:
-              $ref: "#/components/examples/JobSegmentationRequestExample"
 
     RunRequest:
       required: true
@@ -920,7 +910,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ApiDataChangedDto"
+            $ref: "#/components/schemas/ApiDataAffected"
           examples:
             simple:
               $ref: "#/components/examples/ItemsImportExample"
@@ -931,9 +921,6 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ActionDto"
-          examples:
-            simple:
-              $ref: "#/components/examples/ActionSendSMSResponseExample"
 
     ActionsPagedResponse:
       description: Actions paged response
@@ -1371,7 +1358,7 @@ components:
                     - "name must be a string"
 
     # todo: rename from ApiChangedDto
-    ApiDataChangedDto:
+    ApiDataAffected:
       description: Count of affected data records as a result of the API action
       type: object
       properties:
@@ -1490,6 +1477,8 @@ components:
           $ref: "#/components/schemas/ListDatasourceTypeEnum"
       required:
         - type
+      discriminator:
+        propertyName: type
 
     SalesforceDatasource:
       allOf:
@@ -1497,10 +1486,6 @@ components:
         - type: object
           properties:
             type:
-              type: string
-              default: salesforce
-              enum:
-                - salesforce
               example: salesforce
             integration_id:
               description: integration id defining salesforce credential to use for this datasource
@@ -1577,6 +1562,7 @@ components:
         details:
           description: provide details on sync status
           type: string
+          example: Not found
         # todo: implement dirty, data_modified and metadata_modified
         dirty:
           description: Indicates if the list content or metadata were modified since last sync.
@@ -1749,6 +1735,8 @@ components:
                     - "200"
                     - "202"
                     - "204"
+                  example:
+                    - "200"
         info:
           $ref: "#/components/schemas/HttpApiInvokeResponseStatus"
         error:
@@ -1771,13 +1759,10 @@ components:
           $ref: "#/components/schemas/ActionParameterName"
         value:
           type: string
-          example: 15554764733
+          example: "15554764733"
       required:
         - name
         - value
-      example:
-        name: Authorization
-        value: Bearer {{ parameters.vonage-jwt-token }}
 
     # todo rename from ActionCommandDto
     ActionCommandTypeEnum:
@@ -1794,10 +1779,13 @@ components:
           $ref: "#/components/schemas/ActionCommandTypeEnum"
       required:
         - type
+      discriminator:
+        propertyName: type
 
     # todo rename from HttpApiInvokeDto
     HttpApiInvokeCommand:
       description: define attributes to execute an http action
+      x-tab-id: HttpApiInvoke
       allOf:
         - $ref: "#/components/schemas/ActionCommandBase"
         - type: object
@@ -1819,6 +1807,11 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/ActionParameterValue"
+              example:
+                - name: Content-Type
+                  value: application/json
+                - name: Authorization
+                  value: Bearer {{ parameters.vonage-jwt-token }}
             payload:
               type: object
               additionalProperties: true
@@ -1831,8 +1824,8 @@ components:
             response:
               type: object
               properties:
+                # todo: set example for sync
                 sync:
-                  # todo: set example for sync
                   $ref: "#/components/schemas/HttpApiInvokeResponse"
                 async:
                   $ref: "#/components/schemas/HttpApiInvokeResponse"
@@ -1855,6 +1848,8 @@ components:
                 propertyName: type
               oneOf:
                 - $ref: "#/components/schemas/HttpApiInvokeCommand"
+              example:
+                $ref: "#/components/examples/ActionSendSMSRequestExample/value/command"
             timeout_seconds:
               type: number
               default: 5
@@ -1941,6 +1936,11 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ActionParameterValue"
+          example:
+            - name: fromNumber
+              value: "447418365541"
+            - name: toNumber
+              value: "{{ item.number }}"
       required:
         - action_ref
 
@@ -1996,6 +1996,8 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/EventMatcher"
+          example:
+            $ref: "#/components/examples/JobSegmentationRequestExample/value/definition/events_handler/matchers"
       required:
         - matchers
 
@@ -2006,23 +2008,38 @@ components:
         - segmentation-job
       example: segmentation-job
 
-    JobSegmentationDefinition:
+    JobDefinitionBase:
       type: object
       properties:
         type:
           $ref: "#/components/schemas/JobTypeEnum"
-        recipients:
-          $ref: "#/components/schemas/Recipients"
-        segmentations:
-          type: array
-          items:
-            $ref: "#/components/schemas/Segmentation"
-        events_handler:
-          $ref: "#/components/schemas/EventsHandler"
       required:
         - type
-        - recipients
-        - segmentations
+      discriminator:
+        propertyName: type
+
+    # todo: rename from JobSegmentationDefinitionDto
+    JobSegmentation:
+      allOf:
+        - $ref: "#/components/schemas/JobDefinitionBase"
+        - type: object
+          properties:
+            type:
+              example: segmentation-job
+            recipients:
+              $ref: "#/components/schemas/Recipients"
+            segmentations:
+              type: array
+              items:
+                $ref: "#/components/schemas/Segmentation"
+            events_handler:
+              $ref: "#/components/schemas/EventsHandler"
+          required:
+            - type
+            - recipients
+            - segmentations
+      discriminator:
+        propertyName: type
 
     JobEditableFields:
       description: Fields that are editable for a job
@@ -2036,7 +2053,7 @@ components:
               discriminator:
                 propertyName: type
               oneOf:
-                - $ref: "#/components/schemas/JobSegmentationDefinition"
+                - $ref: "#/components/schemas/JobSegmentation"
 
     JobDto:
       allOf:
@@ -2088,6 +2105,7 @@ components:
         details:
           type: string
           readOnly: true
+          example: Not found
 
     RunSystemFields:
       description: Fields that are added to a run by the system
