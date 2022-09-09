@@ -134,7 +134,7 @@ paths:
                         type: string
                         example: 'block'
         '422':
-          description: Unprocessable Entity (WebDAV)
+          description: Unprocessable Entity
           content:
             application/json:
               schema:
@@ -164,7 +164,7 @@ paths:
                           type: string
                           example: 'invalid value'
         '500':
-          description: Internal Server Error
+          description: Internal error
           content:
             application/json:
               schema:
@@ -172,10 +172,15 @@ paths:
                 properties:
                   title:
                     type: string
+                    example: 'Internal error'
                   detail:
                     type: string
+                    example: 'There was an error processing your request in our platform'
                   instance:
                     type: string
+                    example: '06032957-99ce-41ee-978b-9a390cd5a89b'
                   type:
                     type: string
+                    example: 'https://www.nexmo.com/messages/Errors#InvalidParams'
+
 
