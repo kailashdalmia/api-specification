@@ -2,6 +2,9 @@
 openapi: 3.0.0
 servers:
   - url: 'https://api.nexmo.com/v2/ni'
+security:
+  - basicAuth: []
+  - bearerAuth: []
 info:
   title: Number Insight API (v2)
   version: 0.0.1
@@ -183,4 +186,14 @@ paths:
                     type: string
                     example: 'https://www.nexmo.com/messages/Errors#InvalidParams'
 
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: HTTP auth can be used for syncronous calls, for asyncronous calls and call backs use JWT authentication
 
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
