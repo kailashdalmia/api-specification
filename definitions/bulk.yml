@@ -39,7 +39,7 @@ security:
 paths:
   /lists:
     get:
-      #      todo: change all operations to use the resource first
+      # todo: change all operations to use the resource first
       operationId: listsFindAll
       summary: Find all lists
       parameters:
@@ -754,7 +754,8 @@ components:
           schema:
             allOf:
               - $ref: "#/components/schemas/PageResponseDto"
-              - properties:
+              - type: object
+                properties:
                   _embedded:
                     type: object
                     readOnly: true
@@ -764,64 +765,72 @@ components:
                         readOnly: true
                         items:
                           $ref: "#/components/schemas/ListDto"
-          example:
-            page: 1
-            page_size: 100
-            total_items: 2
-            total_pages: 1
-            _links:
-              self:
-                href: https://api-eu.vonage.com/v0.1/bulk/lists?page_size=100&page=1
-              prev:
-                href: https://api-eu.vonage.com/v0.1/bulk/lists?page_size=100&page=1
-              next:
-                href: https://api-eu.vonage.com/v0.1/bulk/lists?page_size=100&page=1
-              first:
-                href: https://api-eu.vonage.com/v0.1/bulk/lists?page_size=100&page=1
-            _embedded:
-              lists:
-                # todo - can we reuse examples? Based on doc and tickets no
-                # - $ref: "#/components/examples/ListManualResponse/value"
-                - id: af8a84b6-c712-4252-ac8d-6e28ac9317ce
-                  name: Recipients for demo
-                  description: List of recipients for demo
-                  type: manual
-                  tags:
-                    - vip
-                  labels:
-                    - name: firstName
-                    - name: lastName
-                      key: false
-                    - name: number
-                      alias: phoneNumber
-                      key: true
-                  items_count: 1000
-                  sync_status: configured
-                  created_at: "2022-06-23T13:13:16.491Z"
-                  updated_at: "2022-06-23T13:13:16.491Z"
-                #                - $ref: "#/components/examples/ListSalesforceResponse/value"
-                - id: 4cb98f71-a879-49f7-b5cf-2314353eb52c
-                  name: Salesforce contact
-                  description: Salesforce contacts for campaign
-                  tags:
-                    - salesforce
-                  labels:
-                    - key: false
-                      name: Id
-                    - key: false
-                      name: Phone
-                    - key: false
-                      name: Email
-                  datasource:
-                    type: salesforce
-                    integration_id: salesforce
-                    soql: SELECT Id, LastName, FirstName, Phone, Email, OtherCountry FROM Contact
-                  type: salesforce
-                  items_count: 25000
-                  sync_status: completed
-                  content_synced: true
-                  created_at: "2022-08-02T13:22:04.267Z"
-                  updated_at: "2022-08-02T13:22:04.267Z"
+                example:
+                  page: 1
+                  page_size: 100
+                  total_items: 2
+                  total_pages: 1
+                  _links:
+                    self:
+                      href: https://api-eu.vonage.com/v0.1/bulk/lists?page_size=100&page=1
+                    prev:
+                      href: https://api-eu.vonage.com/v0.1/bulk/lists?page_size=100&page=1
+                    next:
+                      href: https://api-eu.vonage.com/v0.1/bulk/lists?page_size=100&page=1
+                    first:
+                      href: https://api-eu.vonage.com/v0.1/bulk/lists?page_size=100&page=1
+                  _embedded:
+                    lists:
+                      # todo - can we reuse examples? Based on doc and tickets no
+                      # - $ref: "#/components/examples/ListManualResponse/value"
+                      - id: af8a84b6-c712-4252-ac8d-6e28ac9317ce
+                        name: Recipients for demo
+                        description: List of recipients for demo
+                        type: manual
+                        tags:
+                          - vip
+                        labels:
+                          - name: firstName
+                          - name: lastName
+                            key: false
+                          - name: number
+                            alias: phoneNumber
+                            key: true
+                        items_count: 1000
+                        sync_status:
+                          value: configured
+                          dirty: false
+                          data_modified: false
+                          metadata_modified: false
+                        created_at: "2022-06-23T13:13:16.491Z"
+                        updated_at: "2022-06-23T13:13:16.491Z"
+                      #                - $ref: "#/components/examples/ListSalesforceResponse/value"
+                      - id: 4cb98f71-a879-49f7-b5cf-2314353eb52c
+                        name: Salesforce contact
+                        description: Salesforce contacts for campaign
+                        tags:
+                          - salesforce
+                        labels:
+                          - key: false
+                            name: Id
+                          - key: false
+                            name: Phone
+                          - key: false
+                            name: Email
+                        datasource:
+                          type: salesforce
+                          integration_id: salesforce
+                          soql: SELECT Id, LastName, FirstName, Phone, Email, OtherCountry FROM Contact
+                        type: salesforce
+                        items_count: 25000
+                        sync_status:
+                          value: configured
+                          dirty: false
+                          data_modified: false
+                          metadata_modified: false
+                        content_synced: true
+                        created_at: "2022-08-02T13:22:04.267Z"
+                        updated_at: "2022-08-02T13:22:04.267Z"
 
     ItemResponse:
       description: Item response
@@ -1464,41 +1473,6 @@ components:
       required:
         - name
 
-    ListDatasourceTypeEnum:
-      type: string
-      enum:
-        - salesforce
-      example: salesforce
-
-    ListDatasourceBase:
-      type: object
-      properties:
-        type:
-          $ref: "#/components/schemas/ListDatasourceTypeEnum"
-      required:
-        - type
-      discriminator:
-        propertyName: type
-
-    SalesforceDatasource:
-      allOf:
-        - $ref: "#/components/schemas/ListDatasourceBase"
-        - type: object
-          properties:
-            type:
-              example: salesforce
-            integration_id:
-              description: integration id defining salesforce credential to use for this datasource
-              type: string
-              example: salesforce_credentials
-            soql:
-              description: salesforce query defining which data to fetch from salesforce
-              type: string
-              example: select Id, LastName, FirstName, Phone, Email FROM Contact
-          required:
-            - integration_id
-            - soql
-
     ListLabel:
       type: object
       properties:
@@ -1519,6 +1493,51 @@ components:
       required:
         - name
 
+    ListDatasourceTypeEnum:
+      type: string
+      enum:
+        - manual
+        - salesforce
+      default: manual
+      example: salesforce
+
+    ListDatasourceBase:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/ListDatasourceTypeEnum"
+      required:
+        - type
+      discriminator:
+        propertyName: type
+
+    ListDatasourceManual:
+      allOf:
+        - $ref: "#/components/schemas/ListDatasourceBase"
+        - type: object
+          properties:
+            type:
+              example: manual
+
+    ListDatasourceSalesforce:
+      allOf:
+        - $ref: "#/components/schemas/ListDatasourceBase"
+        - type: object
+          properties:
+            type:
+              example: salesforce
+            integration_id:
+              description: integration id defining salesforce credential to use for this datasource
+              type: string
+              example: salesforce_credentials
+            soql:
+              description: salesforce query defining which data to fetch from salesforce
+              type: string
+              example: select Id, LastName, FirstName, Phone, Email FROM Contact
+          required:
+            - integration_id
+            - soql
+
     ListEditableFields:
       description: Fields that are editable for a list
       allOf:
@@ -1537,7 +1556,8 @@ components:
               discriminator:
                 propertyName: type
               oneOf:
-                - $ref: "#/components/schemas/SalesforceDatasource"
+                - $ref: "#/components/schemas/ListDatasourceManual"
+                - $ref: "#/components/schemas/ListDatasourceSalesforce"
 
     ListSyncStatusEnum:
       description: sync status enumeration
@@ -1577,23 +1597,12 @@ components:
           type: boolean
           example: false
 
-    ListTypeEnum:
-      description: type of list, can be manual if no datasource is define, otherwise the datasource type
-      oneOf:
-        - $ref: "#/components/schemas/ListDatasourceTypeEnum"
-        - type: string
-          readOnly: true
-          enum:
-            - manual
-          example: manual
-
+    # todo: root list type is removed - use the datasource type
     ListSystemFields:
       description: Fields that are added to a list by the system
       type: object
       readOnly: true
       properties:
-        type:
-          $ref: "#/components/schemas/ListTypeEnum"
         sync_status:
           $ref: "#/components/schemas/ListSyncStatus"
         items_count:
@@ -2333,10 +2342,15 @@ components:
           - name: number
             alias: phoneNumber
             key: true
-        id: af8a84b6-c712-4252-ac8d-6e28ac9317ce
-        type: manual
+        datasource:
+          type: manual
         items_count: 1000
-        sync_status: configured
+        sync_status:
+          value: configured
+          dirty: false
+          data_modified: false
+          metadata_modified: false
+        id: af8a84b6-c712-4252-ac8d-6e28ac9317ce
         created_at: "2022-06-23T13:13:16.491Z"
         updated_at: "2022-06-23T13:13:16.491Z"
 
@@ -2375,11 +2389,15 @@ components:
           type: salesforce
           integration_id: salesforce
           soql: SELECT Id, LastName, FirstName, Phone, Email, OtherCountry FROM Contact
-        id: 4cb98f71-a879-49f7-b5cf-2314353eb52c
         type: salesforce
         items_count: 25000
-        sync_status: completed
+        sync_status:
+          value: configured
+          dirty: false
+          data_modified: false
+          metadata_modified: false
         content_synced: true
+        id: 4cb98f71-a879-49f7-b5cf-2314353eb52c
         created_at: "2022-08-02T13:22:04.267Z"
         updated_at: "2022-08-02T13:22:04.267Z"
 
