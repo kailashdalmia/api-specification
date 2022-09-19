@@ -1238,7 +1238,7 @@ components:
                         job_id: c68e871a-c239-474d-a905-7b95f4563b7e
                         src_ctx: et-e4ab4b75-9e7c-4f26-9328-394a5b842648
                         action_id: 26c5bbe2-113e-4201-bd93-f69e0a03d17f
-                        event_data:
+                        data:
                           url: https://postman-echo.com/post
                           args: {}
                           data:
@@ -1264,7 +1264,7 @@ components:
                         id: 8c8e9894-81be-4f6e-88d4-046b6c70ff8c
                         job_id: c68e871a-c239-474d-a905-7b95f4563b7e
                         src_ctx: et-e4ab4b75-9e7c-4f26-9328-394a5b842648
-                        event_data:
+                        data:
                           from: "15053939008"
                           text: Dima
                         run_id: 7d0d4e5f-6453-4c63-87cf-f95b04377324
@@ -2181,7 +2181,7 @@ components:
           type: string
           format: date-time
           example: "2022-06-19T20:41:59.085Z"
-        event_data:
+        data:
           type: object
           example:
             city: North Assunta
@@ -2807,7 +2807,7 @@ components:
         job_id: c5bd28ff-a738-4d36-afe0-d8cf5a0637f2
         src_ctx: text vip customers
         action_id: 963e715b-9083-4656-a131-10316d788b25
-        event_data:
+        data:
           to: "16502907207"
           from: "12012857888"
           usage:
