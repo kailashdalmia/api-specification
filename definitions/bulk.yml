@@ -1233,7 +1233,7 @@ components:
                   _embedded:
                     events:
                       - occurred_at: "2022-08-07T13:18:21.970Z"
-                        event_type: action-call-succeeded
+                        type: action-call-succeeded
                         id: e8e1eb4d-61e0-4099-8fa7-c96f1c0764ba
                         job_id: c68e871a-c239-474d-a905-7b95f4563b7e
                         src_ctx: et-e4ab4b75-9e7c-4f26-9328-394a5b842648
@@ -1260,7 +1260,7 @@ components:
                         run_id: 7d0d4e5f-6453-4c63-87cf-f95b04377324
                         recipient_id: "14806904549"
                       - occurred_at: "2022-08-07T13:18:20.289Z"
-                        event_type: recipient-response
+                        type: recipient-response
                         id: 8c8e9894-81be-4f6e-88d4-046b6c70ff8c
                         job_id: c68e871a-c239-474d-a905-7b95f4563b7e
                         src_ctx: et-e4ab4b75-9e7c-4f26-9328-394a5b842648
@@ -2158,6 +2158,10 @@ components:
         - recipient-response
         - run-item-skipped
         - run-item-failed
+        - run-item-submitted
+        - run-items-total
+        - run-items-ready
+        - run-items-excluded
       example: action-call-succeeded
       readOnly: true
 
@@ -2168,7 +2172,7 @@ components:
           type: string
           format: uuid
           example: 92cc64e5-f62b-464f-ab9c-4376bd05adfc
-        event_type:
+        type:
           $ref: "#/components/schemas/StatisticsEventType"
         src_ctx:
           type: string
@@ -2223,7 +2227,7 @@ components:
         - $ref: "#/components/schemas/ActionStatisticsEvent"
         - type: object
           properties:
-            event_type:
+            type:
               type: string
               example: action-call-failed
             error:
@@ -2234,7 +2238,7 @@ components:
         - $ref: "#/components/schemas/ActionStatisticsEvent"
         - type: object
           properties:
-            event_type:
+            type:
               type: string
               example: action-call-info
 
@@ -2247,7 +2251,7 @@ components:
         - $ref: "#/components/schemas/ExecutionStatisticsEvent"
         - type: object
           properties:
-            event_type:
+            type:
               type: string
               example: run-item-skipped
 
@@ -2256,7 +2260,7 @@ components:
         - $ref: "#/components/schemas/ExecutionStatisticsEvent"
         - type: object
           properties:
-            event_type:
+            type:
               type: string
               example: run-item-failed
             error:
@@ -2267,7 +2271,7 @@ components:
         - $ref: "#/components/schemas/ExecutionStatisticsEvent"
         - type: object
           properties:
-            event_type:
+            type:
               type: string
               example: recipient-response
 
@@ -2284,8 +2288,9 @@ components:
           type: string
           readOnly: true
           enum:
-            - recipient-distinct-count
-          example: recipient-distinct-count
+            - distinct-count-by-recipient
+            - count
+          example: distinct-count-by-recipient
         occurred_at_min:
           type: string
           format: date-time
@@ -2313,12 +2318,12 @@ components:
           example:
             - value: 3
               name: action-call-succeeded
-              statistics: recipient-distinct-count
+              statistics: distinct-count-by-recipient
               occurred_at_min: "2022-06-20T05:52:49.063Z"
               occurred_at_max: "2022-06-20T05:52:49.099Z"
             - value: 0
               name: action-call-failed
-              statistics: recipient-distinct-count
+              statistics: distinct-count-by-recipient
       required:
         - run_id
         - summary
@@ -2798,7 +2803,7 @@ components:
     ActionCallEventMessagingExample:
       value:
         id: 9a8afd25-b6cc-4067-982f-5ff87b01973f
-        event_type: action-call-info
+        type: action-call-info
         job_id: c5bd28ff-a738-4d36-afe0-d8cf5a0637f2
         src_ctx: text vip customers
         action_id: 963e715b-9083-4656-a131-10316d788b25
