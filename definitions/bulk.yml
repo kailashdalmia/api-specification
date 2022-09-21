@@ -641,9 +641,9 @@ components:
             $ref: "#/components/schemas/ListEditableFields"
           examples:
             manual:
-              $ref: "#/components/examples/ListManualExample"
+              $ref: "#/components/examples/ListManualRequestExample"
             salesforce:
-              $ref: "#/components/examples/ListSalesforceExample"
+              $ref: "#/components/examples/ListSalesforceRequestExample"
 
     ItemRequest:
       required: true
@@ -783,10 +783,8 @@ components:
                     lists:
                       # todo - can we reuse examples? Based on doc and tickets no
                       # - $ref: "#/components/examples/ListManualResponse/value"
-                      - id: af8a84b6-c712-4252-ac8d-6e28ac9317ce
-                        name: Recipients for demo
+                      - name: Recipients for demo
                         description: List of recipients for demo
-                        type: manual
                         tags:
                           - vip
                         attributes:
@@ -796,17 +794,19 @@ components:
                           - name: number
                             alias: phoneNumber
                             key: true
+                        datasource:
+                          type: manual
                         items_count: 1000
                         sync_status:
                           value: configured
                           dirty: false
                           data_modified: false
                           metadata_modified: false
+                        id: af8a84b6-c712-4252-ac8d-6e28ac9317ce
                         created_at: "2022-06-23T13:13:16.491Z"
                         updated_at: "2022-06-23T13:13:16.491Z"
-                      #                - $ref: "#/components/examples/ListSalesforceResponse/value"
-                      - id: 4cb98f71-a879-49f7-b5cf-2314353eb52c
-                        name: Salesforce contact
+                      # - $ref: "#/components/examples/ListSalesforceResponse/value"
+                      - name: Salesforce contact
                         description: Salesforce contacts for campaign
                         tags:
                           - salesforce
@@ -821,16 +821,6 @@ components:
                           type: salesforce
                           integration_id: salesforce
                           soql: SELECT Id, LastName, FirstName, Phone, Email, OtherCountry FROM Contact
-                        type: salesforce
-                        items_count: 25000
-                        sync_status:
-                          value: configured
-                          dirty: false
-                          data_modified: false
-                          metadata_modified: false
-                        content_synced: true
-                        created_at: "2022-08-02T13:22:04.267Z"
-                        updated_at: "2022-08-02T13:22:04.267Z"
 
     ItemResponse:
       description: Item response
@@ -2329,7 +2319,7 @@ components:
         - summary
 
   examples:
-    ListManualExample:
+    ListManualRequestExample:
       value:
         name: Recipients for demo
         description: List of recipients for demo
@@ -2368,7 +2358,7 @@ components:
         created_at: "2022-06-23T13:13:16.491Z"
         updated_at: "2022-06-23T13:13:16.491Z"
 
-    ListSalesforceExample:
+    ListSalesforceRequestExample:
       value:
         name: Salesforce contact
         description: Salesforce contacts for campaign
