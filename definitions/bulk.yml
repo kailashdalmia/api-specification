@@ -789,7 +789,7 @@ components:
                         type: manual
                         tags:
                           - vip
-                        labels:
+                        attributes:
                           - name: firstName
                           - name: lastName
                             key: false
@@ -810,7 +810,7 @@ components:
                         description: Salesforce contacts for campaign
                         tags:
                           - salesforce
-                        labels:
+                        attributes:
                           - key: false
                             name: Id
                           - key: false
@@ -1482,21 +1482,21 @@ components:
       required:
         - name
 
-    ListLabel:
+    ListAttribute:
       type: object
       properties:
         name:
-          description: list label name
+          description: list attribute name
           type: string
           maxLength: 50
           example: phone_number
         alias:
-          description: alternative name to use for this label. Use when you wish to correlate between 2 or more list that are using different label names for the same semantic data
+          description: alternative name to use for this attribute. Use when you wish to correlate between 2 or more list that are using different attribute names for the same semantic data
           type: string
           maxLength: 50
           example: phone
         key:
-          description: set to true if this label should be used to correlate between 2 or more lists
+          description: set to true if this attribute should be used to correlate between 2 or more lists
           type: boolean
           default: false
       required:
@@ -1555,12 +1555,12 @@ components:
           properties:
             tags:
               $ref: "#/components/schemas/Tags"
-            labels:
+            attributes:
               minItems: 0
               maxItems: 50
               type: array
               items:
-                $ref: "#/components/schemas/ListLabel"
+                $ref: "#/components/schemas/ListAttribute"
             datasource:
               discriminator:
                 propertyName: type
@@ -2335,7 +2335,7 @@ components:
         description: List of recipients for demo
         tags:
           - vip
-        labels:
+        attributes:
           - name: firstName
           - name: lastName
             key: false
@@ -2349,7 +2349,7 @@ components:
         description: List of recipients for demo
         tags:
           - vip
-        labels:
+        attributes:
           - name: firstName
           - name: lastName
             key: false
@@ -2374,7 +2374,7 @@ components:
         description: Salesforce contacts for campaign
         tags:
           - salesforce
-        labels:
+        attributes:
           - key: false
             name: Id
           - key: false
@@ -2392,7 +2392,7 @@ components:
         description: Salesforce contacts for campaign
         tags:
           - salesforce
-        labels:
+        attributes:
           - key: false
             name: Id
           - key: false
