@@ -1,0 +1,515 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: WhatsApp Template Management API
+  description: 'The Messages API consolidates and normalises exchanges across all messaging channels. It allows you to use a single API to interact with our various channels such as SMS, MMS, WhatsApp, Viber and Facebook Messenger'
+  contact:
+    name: Vonage DevRel
+    email: devrel@vonage.com
+    url: 'https://developer.vonage.com/'
+  x-label: Beta
+servers:
+  - url: 'https://api.nexmo.com/v2/whatsapp-manager'
+paths:
+  '/wabas/{id}/templates':
+    get:
+      summary: List Templates
+      operationId: ListTemplates
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paging:
+                    type: object
+                    properties:
+                      cursors:
+                        type: object
+                        properties:
+                          before:
+                            type: string
+                            example: MAZDZD
+                            description: The template before the first template in the current list
+                          after:
+                            type: string
+                            example: MjQZD
+                            description: The template after the last template in the current list
+                  templates:
+                    type: array
+                    description: An array of templates in the current list.
+                    items:
+                      type: object
+                      description: A template object.
+                      properties:
+                        id:
+                          type: string
+                          description: The unique identifier for this template.
+                          example: '1045638762820500'
+                        name:
+                          type: string
+                          description: The name of the template
+                          example: sample_issue_resolution
+                        language:
+                          type: string
+                          example: en
+                          description: 'The langauge of the template. The same template name can be used for multiple language versions. A list of supported languages is available in the [WhatsApp documentation](https://developers.facebook.com/docs/whatsapp/api/messages/message-templates/)'
+                        status:
+                          type: string
+                          description: The status of the template. Templates with a status of `APPROVED` can be used in WhatsApp template messages.
+                          enum:
+                            - APPROVED
+                            - REJECTED
+                            - IN_APPEAL
+                            - PENDING
+                            - PENDING_DELETION
+                            - DELETED
+                            - DISABLED
+                            - LOCKED
+                          example: APPROVED
+                        category:
+                          type: string
+                          description: The category of the template. This determines the purpose of the template.
+                          example: TRANSACTIONAL
+                          enum:
+                            - TRANSACTIONAL
+                            - MARKETING
+                            - OTP
+                            - ACCOUNT_UPDATE
+                            - PAYMENT_UPDATE
+                            - PERSONAL_FINANCE_UPDATE
+                            - SHIPPING_UPDATE
+                            - RESERVATION_UPDATE
+                            - ISSUE_RESOLUTION
+                            - APPOINTMENT_UPDATE
+                            - TRANSPORTATION_UPDATE
+                            - TICKET_UPDATE
+                            - ALERT_UPDATE
+                            - AUTO_REPLY
+                        components:
+                          type: array
+                          description: An array of objects representing the parts of the template itself.
+                          items:
+                            anyOf:
+                              - $ref: '#/components/schemas/TemplateComponentStandard'
+                              - $ref: '#/components/schemas/TemplateComponentButtons'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples: {}
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: 'Get a list of templates,and their associated metadata, for the specified WABA ID. If multiple language variants exist for a template, each variant will be returned as a separate template object.'
+      parameters:
+        - schema:
+            type: number
+            example: 10
+          in: query
+          name: limit
+          description: The number of templates to return in the list.
+        - schema:
+            type: string
+            example: APPROVED
+            enum:
+              - APPROVED
+              - IN_APPEAL
+              - PENDING
+              - REJECTED
+              - DISABLED
+              - PAUSED
+              - LIMIT_EXCEEDED
+          in: query
+          name: status
+          description: 'A filter for returning only templates matching a specific status. '
+        - schema:
+            type: string
+            example: en
+          in: query
+          name: language
+          description: 'A filter  for returning only templates matching a specific language code. A list of supported languages is available in the [WhatsApp documentation](https://developers.facebook.com/docs/whatsapp/api/messages/message-templates/) '
+        - schema:
+            type: string
+            example: special offer
+          in: query
+          name: name_or_content
+          description: 'A search filter representing the name, either full or partial, or content of a template. Only matching templates will be returned in the list.'
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: The id of the WABA
+    post:
+      summary: Create Template
+      operationId: CreateTemplate
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  example-1:
+                    id: '408766354711449'
+                properties:
+                  id:
+                    type: string
+                    description: The unique ID of the created template.
+                    example: '408766354711449'
+                required:
+                  - id
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: Submit a new template to be associated with this WABA
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Content-Type
+          description: application/json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the template
+                  example: sample_issue_resolution
+                language:
+                  type: string
+                  description: 'The langauge of the template. The same template name can be used for multiple language versions. A list of supported languages is available in the [WhatsApp documentation](https://developers.facebook.com/docs/whatsapp/api/messages/message-templates/)'
+                  example: en
+                category:
+                  type: string
+                  description: The required category of the template. The category determines what the template will be used for.
+                  example: TRANSACTIONAL
+                  enum:
+                    - TRANSACTIONAL
+                    - MARKETING
+                    - OTP
+                components:
+                  type: array
+                  description: An array of objects representing the parts of the template itself.
+                  minItems: 0
+                  items:
+                    type: object
+                    minProperties: 0
+                    properties:
+                      type:
+                        type: string
+                        example: BODY
+                        description: The type of template component.
+                        enum:
+                          - HEADER
+                          - BODY
+                          - FOOTER
+                          - BUTTONS
+                      format:
+                        type: string
+                        description: The format of the template component.
+                        example: TEXT
+                        enum:
+                          - TEXT
+                          - IMAGE
+                          - DOCUMENT
+                          - VIDEO
+                      text:
+                        type: string
+                        description: 'The text to be displayed in this template component. EIther `plain text` or `text with placeholders {{1}}`.'
+                        example: 'Your parcel from {{1}} is due to arrive on {{2}} between {{3}} and {{4}}.'
+                      buttons:
+                        type: array
+                        description: 'Where `type` is set to `BUTTONS`, an array of button objects representing the properties of each button. '
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              description: The type of button.
+                              example: QUICK_REPLY
+                              enum:
+                                - QUICK_REPLY
+                                - URL
+                                - PHONE_NUMBER
+                            text:
+                              type: string
+                              description: The test to appear on the button.
+                              example: 'Yes'
+                            url:
+                              type: string
+                              format: uri
+                              description: A URL to which the end-user will be directed when hitting the button.
+                              example: 'https://example.com/special-offer-opt-in'
+                            phone_number:
+                              type: string
+                              description: Phone number to which a phone call would be placed by the end-user when hitting the button.
+                              example: '8001111111'
+                          required:
+                            - type
+                            - text
+                    required:
+                      - type
+              required:
+                - name
+                - language
+                - category
+                - components
+            examples: {}
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+        description: ''
+    delete:
+      summary: Delete Template
+      operationId: DeleteTemplate
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example-1:
+                  value:
+                    type: 'https://developer.vonage.com/api-errors#not-found'
+                    title: Not Found
+                    detail: Template does not exist or you do not have access
+                    instance: template_name_example
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: Delete a template of the specified name associated with the WABA ID
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: name
+          description: The name of the template to be deleted
+          required: true
+  /media/uploads:
+    post:
+      summary: Media Upload
+      operationId: MediaUpload
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  example-1:
+                    h: '2:c2FtcGxlLm1wNA==:image/jpeg:GKAj0gAUCZmJ1voFADip2iIAAAAAbugbAAAA:e:1472075513:ARZ_3ybzrQqEaluMUdI'
+                properties:
+                  h:
+                    type: string
+                    description: The uploaded file's file handle
+                    example: ':c2FtcGxlLm1wNA==:image/jpeg:GKAj0gAUCZmJ1voFADip2iIAAAAAbugbAAAA:e:1472075513:ARZ_3ybzrQqEaluMUdI'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: 'Upload media files to the WhatsApp platform. Once uploaded, you can use an uploaded file''s handle to create a media template.'
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: file_type
+          required: true
+          description: 'The file''s MIME type. Valid values are: `image/jpeg`, `image/jpg`, `image/png`, and `video/mp4`.'
+        - schema:
+            type: string
+          in: header
+          name: Content-Type
+          description: multipart/form-data
+          required: true
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                '':
+                  type: string
+                  format: binary
+                  description: The file to be uploaded.
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    TemplateComponentStandard:
+      title: TemplateComponentStandard
+      x-stoplight:
+        id: 4gbjwmsd5aa4p
+      type: object
+      description: A template component of `type` other than `BUTTONS`
+      properties:
+        type:
+          type: string
+          description: The type of template component.
+          example: BODY
+          enum:
+            - HEADER
+            - BODY
+            - FOOTER
+        format:
+          type: string
+          description: The format of the template component.
+          example: TEXT
+        text:
+          type: string
+          description: 'The text to be displayed in this template component. EIther `plain text` or `text with placeholders {{1}}`.'
+          example: 'Your parcel from {{1}} is due to arrive on {{2}} between {{3}} and {{4}}.'
+    TemplateComponentButtons:
+      title: TemplateComponentButtons
+      x-stoplight:
+        id: 4gbjwmsd5aa4p
+      type: object
+      description: A template component with a `type` of `BUTTONS`
+      properties:
+        type:
+          type: string
+          description: The type of template component.
+          example: BUTTONS
+          enum:
+            - BUTTONS
+        buttons:
+          type: array
+          description: An array of objects representing button components.
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                description: The type of button
+                enum:
+                  - QUICK_REPLY
+                  - URL
+                  - PHONE_NUMBER
+                example: QUICK_REPLY
+              text:
+                type: string
+                description: The text displayed on the button.
+                example: 'Yes'
+              url:
+                type: string
+                description: |
+                  URL to which the end-user will be directed when hitting the button.
+                example: 'https://example.com/special-offer-opt-in'
+                format: uri
+              phone_number:
+                type: string
+                description: Phone number to which a phone call would be placed by the end-user when hitting the button.
+                example: '8001111111'
+    ErrorResponse:
+      type: object
+      x-examples:
+        example-1:
+          type: 'https://developer.vonage.com/api-errors#not-found'
+          title: Not Found
+          detail: WABA does not exist or you do not have access.
+          instance_id: bf0ca0bf927b3b52e3cb03217e1a1ddf
+      properties:
+        type:
+          type: string
+          description: URL for the documentation regarding the error.
+          example: 'https://developer.vonage.com/api-errors#not-found'
+        title:
+          type: string
+          description: The title of the error.
+          example: Not Found
+        detail:
+          type: string
+          description: A description of the error.
+          example: WABA does not exist or you do not have access.
+        instance_id:
+          type: string
+          description: The instance ID for the request that generated the error.
+          example: bf0ca0bf927b3b52e3cb03217e1a1ddf
+      description: Response body for error responses
+      title: ErrorResponse
