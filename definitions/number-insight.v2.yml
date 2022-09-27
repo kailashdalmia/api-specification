@@ -37,32 +37,30 @@ paths:
                   type: string
                   enum:
                     - phone
-                    - email
-                    - ip
                   example: 'phone'
                 phone:
                   type: string
                   description: Phone number. Required if type = "phone".
                   example: '003544569382'
-                email:
-                  type: string
-                  description: Email address. Required if type = "email".
-                  example: 'jim@doe.com'
-                ip:
-                  type: string
-                  description: Ip address. Required if type = "ip"
-                  example: '202.453.231.34'
+                # email:
+                #   type: string
+                #   description: Email address. Required if type = "email".
+                #   example: 'jim@doe.com'
+                # ip:
+                #   type: string
+                #   description: Ip address. Required if type = "ip"
+                #   example: '202.453.231.34'
                 insights:
-                  type: string
-                  enum:
-                    - fraud_score
-                  example: 'fraud_score'
+                  type: array
+                  items:
+                    type: string
+                    example: 'fraud_score'
               required:
                 - type
                 - insights
         description: ''
       responses:
-        '202':
+        '200':
           description: Accepted
           content:
             application/json:
@@ -92,50 +90,13 @@ paths:
                     properties:
                       risk_score:
                         type: string
-                        example: '52'
-                      risk_recommendation:
-                        type: string
-                        example: 'flag'
-                      label:
-                        type: string
-                        example: medium-low
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  request_id:
-                    type: string
-                    example: 'aaaaaaaa-bbbb-cccc-dddd-0123456789ab'
-                  type:
-                    type: string
-                    example: phone
-                  phone:
-                    type: object
-                    properties:
-                      phone:
-                        type: string
-                        example: '15555555555'
-                      carrier:
-                        type: string
-                        example: ''
-                      phone_type:
-                        type: string
-                        example: 'INVALID'
-                  fraud_score:
-                    type: object
-                    properties:
-                      risk_score:
-                        type: string
-                        example: '100'
-                      label:
-                        type: string
-                        example: 'high'
+                        example: '70'
                       risk_recommendation:
                         type: string
                         example: 'block'
+                      label:
+                        type: string
+                        example: high
         '422':
           description: Unprocessable Entity
           content:
