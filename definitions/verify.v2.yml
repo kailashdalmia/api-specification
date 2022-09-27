@@ -250,6 +250,7 @@ components:
         - $ref: '#/components/schemas/NewCodeRequestWorkflowWhatsApp'
         - $ref: '#/components/schemas/NewCodeRequestWorkflowWhatsAppInteractive'
         - $ref: '#/components/schemas/NewCodeRequestWorkflowVoice'
+        - $ref: '#/components/schemas/NewCodeRequestWorkflowEmail'
 
     NewCodeRequestWorkflowSMS:
       title: SMS
@@ -393,6 +394,38 @@ components:
             - workflow
             - brand
 
+    NewCodeRequestWorkflowEmail:
+      title: Email
+      x-tab-id: WorkflowEmail
+      allOf:
+        - type: object
+          description: Request an email code be sent to the user.
+          properties:
+            workflow:
+              type: array
+              items:
+                type: object
+                properties:
+                  channel:
+                    type: string
+                    description: "The channel"
+                    enum: 
+                      - email
+                    example: email
+                  to:
+                    $ref: '#/components/schemas/ToEmail'
+                required:
+                  - channel
+                  - to
+              example: [
+                  {
+                    "channel": "email",
+                    "to": "lemony.snicket@acme.com"
+                  }
+                ]
+          required:
+            - workflow
+
     NewPSD2Request:
       allOf:
         - $ref: '#/components/schemas/NewRequestBase'
@@ -448,6 +481,12 @@ components:
       maxLength: 50
       example: '447700900000'
       description: The phone number to contact, in the [E.164](https://en.wikipedia.org/wiki/E.164) format. Don't use a leading + or 00 when entering a phone number, start with the country code, for example, 447700900000.
+
+    ToEmail:
+      type: string
+      format: email
+      example: 'john.bull@company.com'
+      description: The email address to send the verification request to.
 
     CodeLength:
       type: integer
