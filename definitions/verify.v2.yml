@@ -1,7 +1,7 @@
 openapi: 3.0.2
 info:
   title: Vonage Verify API (v2)
-  version: 0.0.13
+  version: 0.0.14
   description: Verify API provides a choice of routes for sending a code to a user. You can use this to confirm a user's contact information, as a second factor when authenticating users, or for step-up authentication.
   contact:
     name: Vonage DevRel
