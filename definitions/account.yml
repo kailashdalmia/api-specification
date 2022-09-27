@@ -161,7 +161,7 @@ paths:
     servers:
       - url: "https://rest.nexmo.com"
     post:
-      operationId: changeAccountSettings
+      operationId: registerSender
       summary: Register an email sender
       description: >-
         Register an email sender with an API Key for using email with Verify V2.
