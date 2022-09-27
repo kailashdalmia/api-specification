@@ -52,9 +52,11 @@ paths:
                 #   example: '202.453.231.34'
                 insights:
                   type: array
+                  enum:
+                    - 'fraud_score'
+                  example: ['fraud_score']
                   items:
                     type: string
-                    example: 'fraud_score'
               required:
                 - type
                 - insights
