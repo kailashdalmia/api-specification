@@ -343,9 +343,6 @@ components:
                     $ref: '#/components/schemas/To'
                   from:
                     $ref: '#/components/schemas/From'
-                  template:
-                    type: string
-                    example: abc:123:verify
                 required:
                   - channel
                   - to
