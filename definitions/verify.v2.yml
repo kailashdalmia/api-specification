@@ -414,13 +414,16 @@ components:
                     example: email
                   to:
                     $ref: '#/components/schemas/ToEmail'
+                  from:
+                    $ref: '#/components/schemas/FromEmail'
                 required:
                   - channel
                   - to
               example: [
                   {
                     "channel": "email",
-                    "to": "lemony.snicket@acme.com"
+                    "to": "lemony.snicket@acme.com",
+                    "from": "jane.doe@company.com"
                   }
                 ]
           required:
@@ -487,6 +490,12 @@ components:
       format: email
       example: 'john.bull@company.com'
       description: The email address to send the verification request to.
+
+    FromEmail:
+      type: string
+      format: email
+      example: 'jane.doe@acme.com'
+      description: The email address to send the verification request from.
 
     CodeLength:
       type: integer
