@@ -43,6 +43,7 @@ paths:
                   type: string
                   description: A single phone number that you need insight about in national or international format.".
                   example: '003544569382'
+                # These are in the eventual roadmap
                 # email:
                 #   type: string
                 #   description: Email address. Required if type = "email".
@@ -73,9 +74,11 @@ paths:
                 properties:
                   request_id:
                     type: string
+                    description: Unique UUID for this request for reference.
                     example: 'aaaaaaaa-bbbb-cccc-dddd-0123456789ab'
                   type:
                     type: string
+                    description: The type of lookup used in the request. Currently always `phone`
                     example: phone
                   phone:
                     type: object
@@ -83,23 +86,29 @@ paths:
                       phone:
                         type: string
                         example: '16197363066'
+                        description: The phone number to check against.
                       carrier:
                         type: string
+                        description: The name of the network carrier.
                         example: 'Google (Grand Central) - SVR'
                       phone_type:
                         type: string
+                        description: Type of phone. Examples include `Mobile`, `Landline`, `VOIP`, `PrePaid`, `Personal`, `Toll-Free`.
                         example: 'VOIP'
                   fraud_score:
                     type: object
                     properties:
                       risk_score:
                         type: string
+                        description: Score derived from evaluating data attributes associated with the phone number. `risk_score` ranges from 0-100 with 0 being least risk and 100 as the highest risk score.
                         example: '70'
                       risk_recommendation:
                         type: string
+                        description: Recommended action based on the `fraud-score`. Can be one of `allow`, `flag` or `block`.
                         example: 'block'
                       label:
                         type: string
+                        description: Verbose description of mapped risk score. Can be one of `very-low`, `low`, `medium-low`, `medium`, `high`, `very-high`.
                         example: high
         '400':
           description: Unprocessable Entity
