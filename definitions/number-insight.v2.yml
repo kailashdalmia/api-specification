@@ -18,7 +18,7 @@ info:
     name: The MIT License (MIT)
     url: 'https://opensource.org/licenses/MIT'
 externalDocs:
-  url: 'https://developer.nexmo.com/api/number-insight'
+  url: 'https://developer.vonage.com/number-insight/overview'
   x-sha1: 081f6d985e2e4a75586da1654fde880a96885405
 paths:
   /:
@@ -35,12 +35,13 @@ paths:
               properties:
                 type:
                   type: string
+                  description: Accepted value is “phone” when a phone number is provided to receive insight.
                   enum:
                     - phone
                   example: 'phone'
                 phone:
                   type: string
-                  description: Phone number. Required if type = "phone".
+                  description: A single phone number that you need insight about in national or international format.".
                   example: '003544569382'
                 # email:
                 #   type: string
@@ -58,6 +59,7 @@ paths:
                   items:
                     type: string
               required:
+                - phone
                 - type
                 - insights
         description: ''
@@ -99,6 +101,36 @@ paths:
                       label:
                         type: string
                         example: high
+        '400':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                    example: "Your request parameters didn't validate."
+                  detail:
+                    type: string
+                    example: 'Found errors validating 1 of your submitted parameters.'
+                  instance:
+                    type: string
+                    example: 'a00a6d15-27db-49e7-802c-4162ebd92e61'
+                  type:
+                    type: string
+                    example: 'https://developer.vonage.com/api-errors'
+                  invalid_parameters:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: 'type'
+                        reason:
+                          type: string
+                          example: 'must not be null'
         '422':
           description: Unprocessable Entity
           content:
