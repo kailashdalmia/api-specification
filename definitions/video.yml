@@ -1,0 +1,1430 @@
+openapi: 3.0.3
+x-stoplight:
+  id: dka9bkyfsi8b4
+info:
+  title: Vonage Video
+  version: "0.2.1"
+  contact:
+    name: Vonage DevRel
+    url: "https://developer.vonage.com"
+    email: devlre@vonage.com
+  description: APIs relating to Vonage Video
+servers:
+  - url: "https://video.api.vonage.com"
+    description: Vonage Video
+paths:
+  /session/create:
+    parameters: []
+    post:
+      tags:
+        - Sessions
+      summary: Create New Session
+      operationId: session-create
+      responses:
+        "200":
+          $ref: "#/components/responses/New-Session"
+      description: Generate a new session.
+      requestBody:
+        $ref: "#/components/requestBodies/Create-Session"
+
+  /v2/project/{application_id}/session/{session_id}/signal:
+    post:
+      tags:
+        - Signaling
+      parameters:
+        - $ref: "#/components/parameters/application_id"
+        - $ref: "#/components/parameters/session_id"
+      summary: Send a signal to all participants
+      description: Use the Signal REST API to send signals to all participants in an active Vonage Video session or to a specific client connected to that session. Signals sent from the server have an empty from parameter in the signal received handlers on clients connected to the session. For a signal sent from a participant in the session, the from property is set the connection ID of the client that sent the signal, but in this case there is no associated connection.
+      requestBody:
+        $ref: "#/components/requestBodies/Signal"
+      operationId: send-signal
+      responses:
+        "200":
+          $ref: "#/components/responses/Blank-200"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 400
+                      message:
+                        example: "One of the signal properties — data, type, sessionId or connectionId — is invalid."
+
+        "403":
+          description: Authentication Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 403
+                      message:
+                        example: You are not authorized to send the signal. Check your authentication credentials.
+        "404":
+          description: Missing resource
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 404
+                      message:
+                        example: The client specified by the connectionId property is not connected to the session.
+        "413":
+          description: Data length exceeded
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 413
+                      message:
+                        example: The type string exceeds the maximum length (128 bytes), or the data string exceeds the maximum size (8 kB).
+
+  /v2/project/{application_id}/session/{session_id}/connection/{connection_id}/signal:
+    parameters:
+      - $ref: "#/components/parameters/application_id"
+      - $ref: "#/components/parameters/session_id"
+      - name: connection_id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Specific publisher connection ID
+    post:
+      tags:
+        - Signaling
+      summary: Send signal to a specific participant
+      description: Send signals to a specific participant in an active Vonage Video session
+      operationId: post-v2-projects-application_id-session-session_id-connection-connect_id-signal
+      requestBody:
+        $ref: "#/components/requestBodies/Signal"
+      responses:
+        "200":
+          $ref: "#/components/responses/Blank-200"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 400
+                      message:
+                        example: "One of the signal properties — data, type, sessionId or connectionId — is invalid."
+        "403":
+          description: Authentication Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 403
+                      message:
+                        example: You are not authorized to send the signal. Check your authentication credentials.
+        "404":
+          description: Missing resource
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 404
+                      message:
+                        example: The client specified by the connectionId property is not connected to the session.
+        "413":
+          description: Data length exceeded
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 413
+                      message:
+                        example: The type string exceeds the maximum length (128 bytes), or the data string exceeds the maximum size (8 kB).
+
+  /v2/project/{application_id}/session/{session_id}/connection/{connection_id}:
+    parameters:
+      - $ref: "#/components/parameters/application_id"
+      - $ref: "#/components/parameters/session_id"
+      - $ref: "#/components/parameters/connection_id"
+    delete:
+      tags:
+        - Moderation
+      summary: Force a connection to disconnect
+      description: Force a client to disconnect from a session
+      operationId: delete-v2-projects-application_id-session-session_id-connection-connection_id
+      responses:
+        "200":
+          $ref: "#/components/responses/Blank-200"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 400
+                      message:
+                        example: One of the arguments — sessionId or connectionId — is invalid.
+        "403":
+          description: Authentication Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 403
+                      message:
+                        example: You are not authorized to forceDisconnect, check your authentication credentials.
+        "404":
+          description: Missing resource
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 403
+                      message:
+                        example: The client specified by the connectionId property is not connected to the session.
+  /v2/project/{application_id}/session/{session_id}/stream/{stream_id}:
+    parameters:
+      - $ref: "#/components/parameters/application_id"
+      - $ref: "#/components/parameters/session_id"
+      - $ref: "#/components/parameters/stream_id"
+    get:
+      tags:
+        - Sessions
+      summary: Get layout information about a stream
+      description: |
+        Use this method to get information on an Vonage Video stream
+
+        For example, you can call this method to get information about layout classes used by an Vonage Video stream. The layout classes define how the stream is displayed in the layout of a broadcast stream.
+      operationId: get-v2-project-application_id-session-session_id-stream-stream_id
+      responses:
+        "200":
+          $ref: "#/components/responses/Stream-Layout"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 400
+                      message:
+                        example: Invalid request. This response may indicate that data in your request data is invalid JSON. Or it may indicate that you do not pass in a session ID or you passed in an invalid stream ID.
+        "403":
+          description: Authentication Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 403
+                      message:
+                        example: You passed in an invalid Vonage JWT token.
+        "404":
+          description: Missing resource
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 404
+                      message:
+                        example: The session exists but has not had any streams added to it yet.
+        "408":
+          description: Invalid stream ID
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 408
+                      message:
+                        example: You passed in an invalid stream ID.
+
+  /v2/project/{application_id}/session/{session_id}/stream:
+    parameters:
+      - $ref: "#/components/parameters/application_id"
+      - $ref: "#/components/parameters/session_id"
+    get:
+      tags:
+        - Sessions
+      operationId: get-stream-layouts
+      summary: Get information about all connected stream layouts
+      description: |
+        Use this method to get information on all Vonage Video streams in a session
+
+        For example, you can call this method to get information about layout classes used by an Vonage Video stream. The layout classes define how the stream is displayed in the layout of a broadcast stream.
+      responses:
+        "200":
+          $ref: "#/components/responses/Multi-Stream-Layout"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 400
+                      message:
+                        example: Invalid request. This response may indicate that data in your request data is invalid JSON. Or it may indicate that you do not pass in a session ID or you passed in an invalid stream ID.
+        "403":
+          description: Authentication Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 403
+                      message:
+                        example: You passed in an invalid Vonage JWT token.
+        "404":
+          description: Missing resource
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 404
+                      message:
+                        example: The session exists but has not had any streams added to it yet.
+        "408":
+          description: Invalid stream ID
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 408
+                      message:
+                        example: You passed in an invalid stream ID.
+    put:
+      tags:
+        - Sessions
+      summary: Change the layout of a stream
+      description: Use this method to change layout classes for an Vonage Video stream. The layout classes define how the stream is displayed in the layout of a composed Vonage Video archive.
+      operationId: put-v2-project-application_id-session-session_id-stream
+      requestBody:
+        $ref: "#/components/requestBodies/Change-Stream-Layout"
+      responses:
+        "200":
+          $ref: "#/components/responses/Blank-200"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 400
+                      message:
+                        example: Invalid request. This response may indicate that data in your request data is invalid JSON. It may also indicate that you passed in invalid layout options.
+        "403":
+          description: Authentication Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 403
+                      message:
+                        example: Authentication error
+
+  /v2/project/{application_id}/session/{session_id}/stream/{stream_id}/mute:
+    parameters:
+      - $ref: "#/components/parameters/application_id"
+      - $ref: "#/components/parameters/session_id"
+      - $ref: "#/components/parameters/stream_id"
+    post:
+      tags:
+        - Moderation
+      summary: Mute a specific stream
+      description: Force mute a specific publisher stream
+      operationId: post-v2-project-application_id-session-session_id-stream-stream_id-mute
+      responses:
+        "200":
+          $ref: "#/components/responses/Project-Details"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 400
+                      message:
+                        example: Invalid request
+        "403":
+          description: Authentication Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 403
+                      message:
+                        example: Authentication error
+        "404":
+          description: Missing resource
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 404
+                      message:
+                        example: Not found. The session or stream is not found
+
+  /v2/project/{application_id}/session/{session_id}/mute:
+    parameters:
+      - $ref: "#/components/parameters/application_id"
+      - $ref: "#/components/parameters/session_id"
+    post:
+      tags:
+        - Moderation
+      summary: Mute multiple participants in a session
+      description: You can use the Vonage Video REST API to force all streams (except for an optional list of streams) in a session to mute published audio. You can also use this method to disable the force mute state of a session (see below).
+      operationId: mute-multiple-participants
+      requestBody:
+        $ref: "#/components/requestBodies/Mute-Multiple-Streams"
+      responses:
+        "200":
+          $ref: "#/components/responses/Project-Details"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 400
+                      message:
+                        example: Invalid request. This response may indicate that data in your request data is invalid JSON.
+        "403":
+          description: Authentication Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 403
+                      message:
+                        example: Authentication error
+        "404":
+          description: Missing resource
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 404
+                      message:
+                        example: Not found. The session or stream is not found
+
+  /v2/project/{application_id}/archive:
+    parameters:
+      - $ref: "#/components/parameters/application_id"
+    get:
+      tags:
+        - Archives
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: offset
+          description: Set an offset query parameters to specify the index offset of the first archive. 0 is offset of the most recently started archive (excluding deleted archive). 1 is the offset of the archive that started prior to the most recent archive. The default value is 0.
+        - schema:
+            type: integer
+          in: query
+          name: count
+          description: Set a count query parameter to limit the number of archives to be returned. The default number of archives returned is 50 (or fewer, if there are fewer than 50 archives). The maximum number of archives the call will return is 1000.
+        - schema:
+            type: string
+          in: query
+          name: session_id
+          description: Set a sessionId query parameter to list archives for a specific session ID. (This is useful when listing multiple archives for an automatically archived session.)
+      summary: List all archives in an application
+      description: List all archives in an application
+      operationId: get-v2-project-application_id-archive
+      responses:
+        "200":
+          $ref: "#/components/responses/Multi-Archive-Response"
+        "403":
+          description: Authentication Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 403
+                      message:
+                        example: Authentication error
+    post:
+      tags:
+        - Archives
+      summary: Create a new archive
+      description: Create a new archive
+      operationId: post-v2-project-application_id-archive
+      requestBody:
+        $ref: "#/components/requestBodies/New-Archive"
+      responses:
+        "200":
+          $ref: "#/components/responses/Archive-Details"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - allOf:
+                      - $ref: "#/components/schemas/Video-Error"
+                      - type: object
+                        description: Missing Session ID
+                        properties:
+                          code:
+                            example: 400
+                          message:
+                            example: You do not pass in a session ID or you pass in an invalid session ID.
+                  - allOf:
+                      - $ref: "#/components/schemas/Video-Error"
+                      - type: object
+                        description: No connected clients
+                        properties:
+                          code:
+                            example: 400
+                          message:
+                            example: No clients are actively connected to the Vonage Video session.
+                  - allOf:
+                      - $ref: "#/components/schemas/Video-Error"
+                      - type: object
+                        description: Invalid resolution
+                        properties:
+                          code:
+                            example: 400
+                          message:
+                            example: You specify an invalid resolution value.
+                  - allOf:
+                      - $ref: "#/components/schemas/Video-Error"
+                      - type: object
+                        description: Invalid `outputMode` Resolution
+                        properties:
+                          code:
+                            example: 400
+                          message:
+                            example: The outputMode property is set to "individual" and you set the resolution property and (which is not supported in individual stream archives).
+        "403":
+          description: Authentication Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 403
+                      message:
+                        example: Authentication error
+        "404":
+          description: Missing resource
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 404
+                      message:
+                        example: The session does not exist, or the session exists but there are no clients connected to it.
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - allOf:
+                      - $ref: "#/components/schemas/Video-Error"
+                      - type: object
+                        description: Not using the Vonage Video Media Router
+                        properties:
+                          code:
+                            example: 409
+                          message:
+                            example: You attempted to start an archive for a session that does not use the Vonage Video Media Router.
+                  - allOf:
+                      - $ref: "#/components/schemas/Video-Error"
+                      - type: object
+                        description: Archive already started
+                        properties:
+                          code:
+                            example: 409
+                          message:
+                            example: You attempt to start an archive for a session that is already being recorded without setting the multiArchiveTag option
+                  - allOf:
+                      - $ref: "#/components/schemas/Video-Error"
+                      - type: object
+                        description: Non-Unique multiArchiveTag specified
+                        properties:
+                          code:
+                            example: 409
+                          message:
+                            example: You attempt to start a simultaneous archive for a session without setting a unique multiArchiveTag value.
+
+  /v2/project/{application_id}/archive/{archive_id}:
+    parameters:
+      - $ref: "#/components/parameters/application_id"
+      - $ref: "#/components/parameters/archive_id"
+    get:
+      tags:
+        - Archives
+      operationId: get-archive-information
+      summary: Return archive information for specific archive
+      description: Return archive information for specific archive
+      responses:
+        "200":
+          $ref: "#/components/responses/Archive-Details"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 400
+                      message:
+                        example: You do not pass in a session ID or you pass in an invalid archive ID.
+        "403":
+          description: Authentication Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 403
+                      message:
+                        example: You passed in an invalid JWT token.
+
+    delete:
+      tags:
+        - Archives
+      summary: Delete an archive
+      description: Delete an archive
+      operationId: delete-v2-project-application_id-archive-archive_id
+      responses:
+        "204":
+          description: No Content
+        "403":
+          description: Authentication Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 403
+                      message:
+                        example: You passed in an invalid JWT token.
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 409
+                      message:
+                        example: Status of the archive is not "uploaded", "available", or "deleted"
+
+  /v2/project/{application_id}/archive/{archive_id}/streams:
+    parameters:
+      - $ref: "#/components/parameters/application_id"
+      - $ref: "#/components/parameters/archive_id"
+    patch:
+      tags:
+        - Archives
+      summary: Add or remove a stream from an archive
+      description: Use this method to change the streams included in a composed archive that was started with the streamMode set to "manual"
+      operationId: patch-v2-project-application_id-archive-archive_id-streams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - title: Remove Stream
+                  x-tab-id: RemoveStream
+                  allOf:
+                    - $ref: "#/components/schemas/Remove-Stream-From-Archive"
+                - title: Add Stream
+                  x-tab-id: AddStream
+                  allOf:
+                    - $ref: "#/components/schemas/Add-Stream-To-Archive"
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 400
+                      message:
+                        example: Invalid request. This response may indicate that data provided in your request is an invalid JSON, or the request couldn't be fulfilled because the archive was started with streamMode set to "auto", which does not support stream manipulation.
+        "403":
+          description: Authentication Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 403
+                      message:
+                        example: Authentication error.
+        "404":
+          description: Missing resource
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 404
+                      message:
+                        example: Archive or stream not found
+
+  /v2/project/{application_id}/archive/{archive_id}/stop:
+    parameters:
+      - $ref: "#/components/parameters/application_id"
+      - $ref: "#/components/parameters/archive_id"
+    post:
+      tags:
+        - Archives
+      operationId: stop-archive
+      summary: Stop an archive
+      description: |
+        To stop recording an archive, submit an HTTP POST request.
+
+        Archives stop recording after 4 hours (14,400 seconds), or 60 seconds after the last client disconnects from the session, or 60 minutes after the last client stops publishing. However, automatic archives continue recording to multiple consecutive files of up to 4 hours in length each. For more information, see Archive duration
+
+        Calling this method for automatic archives has no effect. Automatic archives continue recording to multiple consecutive files of up to 4 hours (14,400 seconds) in length each, until 60 seconds after the last client disconnects from the session, or 60 minutes after the last client stops publishing a stream to the session.
+      responses:
+        "200":
+          $ref: "#/components/responses/Archive-Details"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 400
+                      message:
+                        example: You did not pass a Session ID or you passed an invalid Session ID
+        "403":
+          description: Authentication Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 403
+                      message:
+                        example: You passed an invalid JWT token
+        "404":
+          description: Missing resource
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 404
+                      message:
+                        example: You passed an invalid archive ID
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 409
+                      message:
+                        example: You attempted to stop an archive that was not being recorded
+
+  /v2/project/{application_id}/archive/{archive_id}/layout:
+    parameters:
+      - $ref: "#/components/parameters/application_id"
+      - $ref: "#/components/parameters/archive_id"
+    put:
+      tags:
+        - Archives
+      summary: Change the layout of an archive
+      description: You can dynamically change the layout type of a composed archive while it is being recorded.
+      operationId: put-v2-project-application_id-archive-archive_id-layout
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Layout"
+      responses:
+        "200":
+          $ref: "#/components/responses/Blank-200"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 400
+                      message:
+                        example: Invalid request. This response may indicate that data in your request data is invalid JSON. It may also indicate that you passed in invalid layout options.
+        "403":
+          description: Authentication Error
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Video-Error"
+                  - type: object
+                    properties:
+                      code:
+                        example: 403
+                      message:
+                        example: Authentication error.
+
+components:
+  schemas:
+    Add-Stream-To-Archive:
+      type: object
+      properties:
+        addStream:
+          type: string
+          description: The Stream ID
+          example: "12312312-3811-4726-b508-e41a0f96c68f"
+        hasAudio:
+          type: boolean
+          description: Whether the composed archive should include the stream's audio (true, the default) or not (false)
+          example: true
+        hasVideo:
+          type: boolean
+          description: Whether the composed archive should include the stream's video (true, the default) or not (false).
+          example: true
+      required:
+        - addStream
+
+    Archive-Detail:
+      type: object
+      properties:
+        createdAt:
+          type: integer
+          description: The timestamp for when the archive started recording, expressed in milliseconds since the Unix epoch (January 1, 1970, 00:00:00 UTC).
+          example: 1384221730000
+        duration:
+          type: integer
+          description: The duration of the archive in seconds. For archives that have are being recorded (with the status property set to "started"), this value is set to 0.
+          example: 5049
+        hasAudio:
+          $ref: "#/components/schemas/Has-Audio"
+        hasVideo:
+          $ref: "#/components/schemas/Has-Video"
+        id:
+          type: string
+          description: The unique archive ID.
+          example: "b40ef09b-3811-4726-b508-e41a0f96c68f"
+        name:
+          $ref: "#/components/schemas/Archive-Name"
+        applicationId:
+          type: string
+          description: Your Vonage application ID
+          example: "78d335fa-323d-0114-9c3d-d6f0d48968cf"
+        reason:
+          type: string
+          description: For archives with the status "stopped", this can be set to "maximum duration exceeded", "maximum idle time exceeded", "session ended", "user initiated". For archives with the status "failed", this can be set to "failure".
+          example: ""
+        resolution:
+          $ref: "#/components/schemas/Resolution"
+        sessionId:
+          $ref: "#/components/schemas/Session-ID"
+        size:
+          type: integer
+          description: The size of the archive file. For archives that have not been generated, this value is set to 0.
+          example: 247748791
+        status:
+          type: string
+          enum:
+            - available
+            - expired
+            - failed
+            - paused
+            - started
+            - stopped
+            - uploaded
+          description: |
+            The status of the archive:
+
+            * "available" — The archive is available for download from the Vonage Video cloud.
+            * "expired" — The archive is no longer available for download from the Vonage Video cloud.
+            * "failed" — The archive recording failed.
+            * "paused" — When an archive is paused, nothing is recorded. The archive is paused if any of the following conditions occur:
+                * No clients are publishing streams to the session. In this case, there is a timeout of 60 minutes, after which the archive stops and the archive status changes to "stopped".
+                * All clients disconnect the session. After 60 seconds the archive stops and the archive status changes to "stopped".
+                
+                If a client resumes publishing while the archive is in the "paused" state, the archive recording resumes and the status changes back to "started".
+            * "started" — The archive started and is in the process of being recorded.
+            * "stopped" — The archive stopped recording.
+            * "uploaded" — The archive is available for download from the S3 bucket you specified in your Video API account.
+          example: available
+        streamMode:
+          $ref: "#/components/schemas/Stream-Mode"
+        streams:
+          type: array
+          items:
+            type: object
+            properties:
+              streamId:
+                type: string
+                description: The stream ID of the stream included in the archive.
+              hasAudio:
+                $ref: "#/components/schemas/Has-Audio"
+              hasVideo:
+                $ref: "#/components/schemas/Has-Video"
+        url:
+          type: string
+          description: The download URL of the available archive file. This is only set for an archive with the status set to "available"; for other archives, (including archives with the status "uploaded") this property is set to null. The download URL is obfuscated, and the file is only available from the URL for 10 minutes.
+          example: https://tokbox.com.archive2.s3.amazonaws.com/123456/09141e29-8770-439b-b180-337d7e637545/archive.mp4
+
+    Archive-Name:
+      type: string
+      description: The name of the archive (for your own identification)
+      example: Foo
+
+    Has-Audio:
+      type: boolean
+      description: Whether the archive will record audio (true, the default) or not (false). If you set both hasAudio and hasVideo to false, the call to this method results in an error.
+      example: true
+
+    Has-Video:
+      type: boolean
+      description: Whether the archive will record video (true, the default) or not (false). If you set both hasAudio and hasVideo to false, the call to this method results in an error.
+      example: true
+
+    Layout:
+      type: object
+      properties:
+        type:
+          type: string
+          description: 'Specify this to assign the initial layout type for the archive. This applies only to composed archives. This object has three properties: type, stylesheet, and screenshareType, which are each strings. Valid values for the layout property are "bestFit" (best fit), "custom" (custom), "horizontalPresentation" (horizontal presentation), "pip" (picture-in-picture), and "verticalPresentation" (vertical presentation)). If you specify a "custom" layout type, set the stylesheet property of the layout object to the stylesheet. (For other layout types, do not set a stylesheet property.) Set the screenshareType property to the layout type to use when there is a screen-sharing stream in the session. (This property is optional.) Note if you set the screenshareType property, you must set the type property to "bestFit" and leave the stylesheet property unset. If you do not specify an initial layout type, the archive uses the best fit layout type.'
+          enum:
+            - bestFit
+            - custom
+            - horizontalPresentation
+            - pip
+            - verticalPresentation
+          example: bestFit
+        stylesheet:
+          type: string
+          description: Used for the `custom` layout to define the visual layout
+          example: "stream.instructor {position: absolute; width: 100%;  height:50%;}"
+        screenshareType:
+          type: string
+          enum:
+            - bestFit
+            - custom
+            - horizontalPresentation
+            - pip
+            - verticalPresentation
+          description: Set the screenshareType property to the layout type to use when there is a screen-sharing stream in the session. (This property is optional.) Note if you set the screenshareType property, you must set the type property to "bestFit" and leave the stylesheet property unset.
+          example: pip
+
+    OutputMode:
+      type: string
+      enum:
+        - composed
+        - individual
+      description: Whether all streams in the archive are recorded to a single file ("composed", the default) or to individual files ("individual").
+
+    Remove-Stream-From-Archive:
+      type: object
+      properties:
+        removeStream:
+          type: string
+          description: Stream ID to remove from the archive
+          example: "12312312-3811-4726-b508-e41a0f96c68f"
+      required:
+        - removeStream
+
+    Resolution:
+      type: string
+      enum:
+        - 640x480
+        - 480x640
+        - 1280x720
+        - 720x1280
+        - 1080x1920
+        - 1920x1080
+      description: The resolution of the archive, either "640x480" (SD landscape, the default), "1280x720" (HD landscape), "1920x1080" (FHD landscape), "480x640" (SD portrait), "720x1280" (HD portrait), or "1080x1920" (FHD portrait). You may want to use a portrait aspect ratio for archives that include video streams from mobile devices (which often use the portrait aspect ratio). This property only applies to composed archives. If you set this property and set the outputMode property to "individual", the call to the REST method results in an error.
+
+    Session-ID:
+      type: string
+      description: The session ID of the Vonage Video session you are working with
+      example: flR1ZSBPY3QgMjkgMTI6MTM6MjMgUERUIDIwMTN
+
+    Stream-Layout:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The Stream ID
+          example: "8b732909-0a06-46a2-8ea8-074e64d43422"
+        videoType:
+          type: string
+          description: Set to "camera", "screen", or "custom". A "screen" video uses screen sharing on the publisher as the video source; a "custom" video is published by a web client using an HTML VideoTrack element as the video source.
+          example: camera
+        name:
+          type: string
+          description: The stream name (if one was set when the client published the stream).
+          example: ""
+        layoutClassList:
+          type: array
+          description: An array of the layout classes for the stream.
+          example:
+            - full
+          items:
+            type: string
+            example: "full"
+
+    Stream-Mode:
+      type: string
+      enum:
+        - auto
+        - manual
+      description: Whether streams included in the archive are selected automatically ("auto", the default) or manually ("manual"). When streams are selected automatically ("auto"), all streams in the session can be included in the archive. When streams are selected manually ("manual"), you specify streams to be included based on calls to this REST method. You can specify whether a stream's audio, video, or both are included in the archive. In composed archives, in both automatic and manual modes, the archive composer includes streams based on stream prioritization rules.
+      example: manual
+
+    Video-Error:
+      description: Error thrown in the Vonage Video API
+      type: object
+      properties:
+        code:
+          type: integer
+          description: HTTP response code that is returned
+        message:
+          type: string
+          description: Error that was exhibited
+
+  securitySchemes:
+    Vonage JWT:
+      type: http
+      scheme: bearer
+
+  responses:
+    Blank-200:
+      description: OK
+
+    New-Session:
+      description: Sample Response when creating a new session
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                session_id:
+                  type: string
+                application_id:
+                  type: string
+                create_dt:
+                  type: string
+                media_server_url:
+                  type: string
+
+    Invalid-Credentials:
+      description: Invalid credentials
+      content:
+        application/json:
+          schema:
+            properties:
+              code:
+                type: integer
+                example: 403
+              message:
+                type: string
+                example: You are not authorized to send the signal. Check your authentication credentials.
+          examples:
+            example-1:
+              value:
+                code: 404
+                message: "You are not authorized to forceDisconnect, check your authentication credentials."
+
+    Multi-Archive-Response:
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              count:
+                type: integer
+                description: The total number of archives for the API key.
+                example: 1
+              items:
+                type: array
+                description: An array of objects defining each archive retrieved. Archives are listed from the newest to the oldest in the return set.
+                items:
+                  $ref: "#/components/schemas/Archive-Detail"
+
+    Multi-Stream-Layout:
+      description: Information about multiple streams layout config
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              count:
+                type: integer
+                description: Number of items in the response
+                example: 1
+              items:
+                type: array
+                description: Stream layouts for requested session IDs
+                items:
+                  $ref: "#/components/schemas/Stream-Layout"
+
+    Stream-Layout:
+      description: Information about a stream's layout
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Stream-Layout"
+
+    Project-Details:
+      description: Project Details
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              applicationId:
+                type: string
+                description: The Vonage application ID
+                example: "78d335fa-323d-0114-9c3d-d6f0d48968cf"
+              status:
+                type: string
+                description: Whether the project is active ("ACTIVE") or suspended ("SUSPENDED")
+                example: ACTIVE
+              name:
+                type: string
+                description: The name, if you specified one when creating the project; or an empty string if you did not specify a name
+                example: Joe Montana
+              environment:
+                type: string
+                description: This is set to "standard" or "enterprise", and it refers to the environment a project is running on. Enterprise package partners have access to the enterprise environment.
+                example: standard
+              createdAt:
+                type: integer
+                description: The time at which the project was created (a UNIX timestamp, in milliseconds)
+                example: 1414642898000
+
+    Archive-Details:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Archive-Detail"
+
+  requestBodies:
+    Change-Stream-Layout:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              items:
+                type: array
+                description: Array of stream IDs and their new class lists
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: 8b732909-0a06-46a2-8ea8-074e64d43422
+                    layoutClassList:
+                      type: array
+                      description: Array of class names as strings
+                      example:
+                        - full
+                      items:
+                        type: string
+            required:
+              - items
+
+    Create-Session:
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            properties:
+              archiveMode:
+                type: string
+                description: Set to always to have the session archived automatically. With the archiveModeset to manual (the default), you can archive the session by calling the REST /archive POST method. If you set the archiveMode to always, you must also set the p2p.preference parameter to disabled (the default).
+              location:
+                type: string
+                description: The IP address that the Vonage Video APi will use to situate the session in its global network. If no location hint is passed in (which is recommended), the session uses a media server based on the location of the first client connecting to the session. Pass a location hint in only if you know the general geographic region (and a representative IP address) and you think the first client connecting may not be in that region. Specify an IP address that is representative of the geographical location for the session.
+              p2p.preference:
+                type: string
+                description: Set to enabled if you prefer clients to attempt to send audio-video streams directly to other clients; set to disabled for sessions that use the Vonage Video Media Router. (Optional; the default setting is disabled -- the session uses the Vonage Video Media Router.)
+          examples:
+            example-1:
+              value: archiveMode=always
+
+    Mute-Multiple-Streams:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              active:
+                type: boolean
+                description: Whether to mute streams in the session (true) and enable the mute state of the session, or to disable the mute state of the session (false). With the mute state enabled (true), all current and future streams published to the session (with the exception of streams in the excludedStreamIds array) are muted. When you call this method with the active property set to false, future streams published to the session are not muted (but any existing muted streams remain muted).
+                example: true
+              excludedStreamIds:
+                type: array
+                description: |
+                  The stream IDs for streams that should not be muted. This is an optional property. If you omit this property, all streams in the session will be muted. This property only applies when the active property is set to true. When the active property is set to false, it is ignored.
+
+                  The elements in the excludedStreamIds array are stream IDs (strings) for the streams you wish to exclude from being muted.
+
+                  If you do not wish to include an array of excluded streams, do not include any body content.
+                example:
+                  - excludedStream1
+                  - excludedStream2
+                items:
+                  type: string
+            required:
+              - active
+              - excludedStreamIds
+
+    New-Archive:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              sessionId:
+                $ref: "#/components/schemas/Session-ID"
+              hasAudio:
+                $ref: "#/components/schemas/Has-Audio"
+              hasVideo:
+                $ref: "#/components/schemas/Has-Video"
+              layout:
+                $ref: "#/components/schemas/Layout"
+              name:
+                $ref: "#/components/schemas/Archive-Name"
+              outputMode:
+                $ref: "#/components/schemas/OutputMode"
+              resolution:
+                $ref: "#/components/schemas/Resolution"
+              streamMode:
+                $ref: "#/components/schemas/Stream-Mode"
+            required:
+              - sessionId
+
+    Signal:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              type:
+                type: string
+                description: Type of data that is being sent to the client. This cannot exceed 128 bytes.
+                example: chat
+              data:
+                type: string
+                description: Payload that is being sent to the client. This cannot exceed 8kb.
+                example: Text of the chat message
+            required:
+              - type
+              - data
+
+  parameters:
+    application_id:
+      name: application_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Vonage Application UUID
+    session_id:
+      name: session_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Video session ID
+    connection_id:
+      name: connection_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Specific publisher connection ID
+    stream_id:
+      name: stream_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Stream ID
+    archive_id:
+      name: archive_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Archive UUID to use
+
+security:
+  - Vonage JWT: []
+
+tags:
+  - name: Archives
+    description: APIs relating to working with archives
+  - name: Moderation
+    description: APIs relating to moderating participants
+  - name: Sessions
+    description: APIs relating to creating and working with Sessions
+  - name: Signaling
+    description: APIs relating to sending and recieving Signals

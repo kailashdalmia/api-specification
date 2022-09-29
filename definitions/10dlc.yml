@@ -1,7 +1,7 @@
 openapi: 3.0.3
 
 info:
-  version: 1.0.3
+  version: 1.0.7
   title: 10DLC Brand and Campaign Provisioning
   contact:
     name: Vonage
@@ -21,6 +21,7 @@ paths:
       parameters:
         - $ref: "common/hal_structures.yml#/components/parameters/Page"
         - $ref: "common/hal_structures.yml#/components/parameters/PageSize"
+        - $ref: '#/components/parameters/filter'
       tags:
         - Brands
       description: List brands
@@ -210,7 +211,7 @@ paths:
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
         "422":
           $ref: "#/components/responses/ErrorVettingParameters"
-        
+
     post:
       tags:
         - Brands
@@ -285,6 +286,7 @@ paths:
       parameters:
         - $ref: "common/hal_structures.yml#/components/parameters/Page"
         - $ref: "common/hal_structures.yml#/components/parameters/PageSize"
+        - $ref: '#/components/parameters/filter'
       tags:
         - Campaigns
       description: List campaigns
@@ -385,6 +387,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/BrandId"
       - $ref: "#/components/parameters/CampaignId"
+      - $ref: '#/components/parameters/filter'
     get:
       parameters:
         - $ref: "common/hal_structures.yml#/components/parameters/Page"
@@ -463,7 +466,39 @@ paths:
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
         "422":
           $ref: "#/components/responses/ErrorNumbersParameters"
-
+  /v1/10dlc/partnercampaigns/import:
+    post:
+      summary: Import a partner campaign to Vonage
+      description: >
+        Import a partner campaign by sharing it with Vonage. Your account needs
+        a special capability to be able to carry on with this operation.
+      tags:
+        - Campaigns
+      operationId: importPartnerCampaign
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                account_id:
+                  $ref: '#/components/schemas/AccountID'
+                campaign_id:
+                  $ref: '#/components/schemas/CampaignId'
+                label:
+                  $ref: '#/components/schemas/CampaignLabel'
+              required:
+                - account_id
+                - campaign_id
+      responses:
+        '201':
+          $ref: '#/components/responses/ImportPartnerCampaignResponse'
+        '400':
+          $ref: '#/components/responses/ErrorGeneric'
+        '401':
+          $ref: 'common/common_errors.yml#/components/responses/BadCredentialsError'
+        '404':
+          $ref: 'common/common_errors.yml#/components/responses/NotFoundError'
   /v1/10dlc/enum/vetting/classes:
     get:
       tags:
@@ -580,33 +615,21 @@ components:
         message_flow: "string"
         help_message: "string"
         mno_metadata:
-          - network_id: "10017"
-            min_msg_samples: 1,
-            msg_class: A
-            req_subscriber_opt_out: false
-            mno_review: false,
-            no_embedded_phone: true,
-            mno: "AT&T"
-            tpm: 3000
-            req_subscriber_help: false
-            req_subscriber_opt_in: true
-            mno_support: true
-            no_embedded_link: true
-            qualify: true
-            status: "APPROVED"
-          - network_id: "10035"
-            min_msg_samples: 1,
-            req_subscriber_help: false
-            req_subscriber_opt_out: false
-            req_subscriber_opt_in: true
-            mno_review: false
-            mno_support: true
-            no_embedded_phone: true,
-            no_embedded_link: true
-            qualify: true
-            brand_tier: "LOW"
-            mno: "TMO"
-            status: "APPROVED"
+          status: "REGISTERED"
+          network_id: "10017"
+          min_msg_samples: 1
+          msg_class: A
+          req_subscriber_opt_out: false
+          mno_review: false,
+          no_embedded_phone: true
+          mno: "AT&T"
+          tpm: 3000
+          req_subscriber_help: false
+          req_subscriber_opt_in: true
+          mno_support: true
+          no_embedded_link: true
+          qualify: true
+          brand_tier: "LOW"
         auto_renewal: true
         status: "ACTIVE"
         _links:
@@ -674,6 +697,23 @@ components:
             att_msg_class: null
 
   responses:
+    ImportPartnerCampaignResponse:
+      description: Imported partner campaign summary
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              brand_id:
+                $ref: '#/components/schemas/BrandId'
+              campaign_id:
+                $ref: '#/components/schemas/CampaignId'
+              sharing_status:
+                $ref: '#/components/schemas/SharingStatus'
+              downstream_cnp_id:
+                $ref: '#/components/schemas/CnpID'
+              upstream_cnp_id:
+                $ref: '#/components/schemas/CnpID'
     ErrorCouldNotRemoveNumberResponse:
       description: Error response for number deletion errors
       content:
@@ -1253,29 +1293,7 @@ components:
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: "#/components/schemas/CampaignResponse"
-              - type: object
-                properties:
-                  _links:
-                    type: object
-                    properties:
-                      self:
-                        type: object
-                        properties:
-                          href:
-                            type: string
-                            example: "https://api.nexmo.com/v1/10dlc/brands/BLQKOPK/campaigns/57b3a89e-c9fa-4860-aec2-ad7f51539dab"
-                      brand:
-                        type: object
-                        properties:
-                          href:
-                            type: string
-                            example: "https://api.nexmo.com/v1/10dlc/brands/BLQKOPK"
-          examples:
-            simple:
-              value:
-                $ref: "#/components/examples/Campaign/value"
+            $ref: "#/components/schemas/CampaignResponse"
 
     SingleNumberResponse:
       description: Return a single number in a campaign
@@ -1513,6 +1531,27 @@ components:
               - vetting_class
 
   schemas:
+    CampaignLabel:
+      description: Friendly name associated with this campaign.
+      type: string
+      maxLength: 50
+    SharingStatus:
+      description: >-
+        Sharing Status. Please refer to the /enum endpoint for an update list of
+        valid values.
+      type: string
+      maxLength: 50
+      enum:
+        - PENDING
+        - ACCEPTED
+        - DECLINED
+    CnpID:
+      description: >-
+        CNP ID. Please refer to the /enum endpoint for an update list of valid
+        values.
+      type: string
+      maxLength: 50
+
     AccountID:
       description: The Vonage Account ID
       type: string
@@ -2088,6 +2127,9 @@ components:
           maxLength: 2048
           example:
             $ref: "#/components/examples/Campaign/value/message_flow"
+        partner:
+          type: boolean
+          example: true
         help_message:
           type: string
           description: Help message of the campaign
@@ -2155,8 +2197,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/UseCaseMNOMetadata"
-          example:
-            $ref: "#/components/examples/Campaign/value/mno_metadata"
         status:
           type: string
           example:
@@ -2208,7 +2248,7 @@ components:
     CampaignStatus:
       description: Statuses that a campaign can be in
       type: string
-      example: APPROVED
+      example: ACTIVE
       enum:
         - ACTIVE
         - EXPIRED
@@ -2289,7 +2329,7 @@ components:
             - state
             - postal_code
             - country
-    
+
     CreateSoleProprietorBrand:
       allOf:
         - $ref: "#/components/schemas/BrandBase"
@@ -2353,13 +2393,13 @@ components:
     MNOCampaignStatus:
       description: Statuses that a campaign has in relation to a specific MNO
       type: string
-      example: APPROVED
+      example: REGISTERED
       enum:
         - UNKNOWN
         - REVIEW
         - REJECTED
-        - APPROVED
         - SUSPENDED
+        - REGISTERED
 
     Number:
       description: Telephone Number
@@ -2434,7 +2474,7 @@ components:
         - phone
         - country
         - email
-       
+
     UpdatePrivateCompanyBrand:
       type: object
       properties:
@@ -2461,7 +2501,7 @@ components:
         - email
         - stock_symbol
         - stock_exchange
-            
+
     UpdateSoleProprietorBrand:
       type: object
       properties:
@@ -2475,7 +2515,7 @@ components:
         - phone
         - country
         - email
-        
+
     IdentityStatus:
       description: >-
         The 4 statuses are defined as follow:
@@ -2559,6 +2599,32 @@ components:
           type: integer
         tmo_brand_tier:
           type: string
+        status:
+          type: string
+          enum:
+            $ref: "#/components/schemas/MNOCampaignStatus/enum"
+          example: "REGISTERED"
+        tmo_tpd:
+          type: integer
+          example: 0
+        att_number_based:
+          type: integer
+          example: 3000
+        complaints:
+          type: array
+          items:
+            type: object
+            properties:
+              description:
+                type: string
+              dca:
+                type: string
+                example: SINCH
+              created_at:
+                type: string
+                example: '2022-08-01T14:26:25.862Z'  
+
+          
 
     VettingRequest:
       type: object
@@ -2605,6 +2671,87 @@ components:
       description: ID associated with a vetting request
       type: string
       pattern: ^[0-9A-F]{7}$
+
+    Filter:
+          type: array
+          title: Filter
+          description: >
+            This is a double array representing filters combined with AND and OR
+            operators.
+
+            The first level is combined with an AND operator and the second one with
+            an OR.
+
+
+            **Note**: the total number of rules should not exceed 3.
+
+
+            Example:
+
+              The filter
+
+              [[{"field":"name","type":"==","value":"doe"},{"field":"age","type":"<=","value":42}],[{"field":"address.country","type":"regexp","value":"^EN$|^FR$"}]]
+
+              is URL-encoded as a query parameter:
+
+              filter=%5B%5B%7B%22field%22%3A%22name%22%2C%22type%22%3A%22%3D%3D%22%2C%22value%22%3A%22doe%22%7D%2C%7B%22field%22%3A%22age%22%2C%22type%22%3A%22%3C%3D%22%2C%22value%22%3A42%7D%5D%2C%5B%7B%22field%22%3A%22address.country%22%2C%22type%22%3A%22regexp%22%2C%22value%22%3A%22%5EEN%24%7C%5EFR%24%22%7D%5D%5D
+
+              the equivalent logic is:
+
+              ((name==doe OR age<=42) AND (address.country match "EN" or "FR"))
+          minItems: 1
+          maxItems: 3
+          items:
+            type: array
+            minItems: 1
+            maxItems: 3
+            items:
+              type: object
+              title: Rule
+              description: Represents a single rule that can be combined into a filter.
+              required:
+                - field
+                - type
+                - value
+              properties:
+                field:
+                  type: string
+                  title: Field selector
+                  description: >
+                    The path used to to get the field of an input item to evaluate
+                    against.
+
+                    It can target a nested field, in which case it's dot-separated.
+                  example: address.country
+                type:
+                  type: string
+                  title: Type
+                  description: The type of the rule
+                  example: ==
+                  enum:
+                    - regexp
+                    - '!='
+                    - '!=$'
+                    - '!=='
+                    - '!^='
+                    - '!~='
+                    - <
+                    - <=
+                    - '='
+                    - '=$'
+                    - '=='
+                    - '>'
+                    - '>='
+                    - ^=
+                    - ~=
+                value:
+                  title: The value to evaluate against
+                  example: NGO
+                  oneOf:
+                    - type: string
+                    - type: number
+                    - type: boolean
+                    - type: integer
 
   securitySchemes:
     basicAuth:
@@ -2671,6 +2818,38 @@ components:
       required: true
       schema:
         $ref: "#/components/schemas/VettingRequestId"
+
+    filter:
+      description: >
+        Narrow down results based on matching conditions.
+
+        Follow the [comprehensive guide](https://developer.vonage.com/messages/10-dlc/filter) to learn how to craft filter queries.
+      in: query
+      name: filter
+      required: false
+      schema:
+        $ref: '#/components/schemas/Filter'
+      examples:
+        simple:
+          description: Simple "age == 42" rule
+          value:
+            - - field: age
+                type: '=='
+                value: 42
+        combination:
+          description: |
+            Combination of AND or OR rules.
+            ((name==doe OR age<=42) AND (address.country match "EN" or "FR"))
+          value:
+            - - field: name
+                type: '=='
+                value: doe
+              - field: age
+                type: <=
+                value: 42
+            - - field: address.country
+                type: regexp
+                value: ^EN$|^FR$
 tags:
   - name: Brands
     description: APIs relating to working with Brands
@@ -2678,44 +2857,44 @@ tags:
     description: APIs relating to working with Campaigns
   - name: Numbers
     description: APIs relating to working with Numbers in Campaigns
-  
+
 x-errors:
   brand-conflict:
     description: A conflict when a brand is being created or edited and there is an issue with a 3rd party vendor.
     resolution: Ensure all required fields have values and there are no errors in those values. If the error persists, contact [support@vonage.com](support@vonage.com).
-  
+
   brand-parameters:
     description: There are errors in the brand data submitted.
     resolution: Ensure all required fields have values included and correct any errors to values in the specified fields.
-  
+
   invalid-usecase-data:
     description: There are errors in the data submitted for use case qualification.
     resolution: Ensure all required fields have values included and correct any errors to values in the specified fields.
-  
+
   use-case-denied:
     description: The use case requested has been denied for this brand.
     resolution: Ensure your use case does not require additional brand vetting or pre/post Mobile Network Operator approval.
-  
+
   vetting-conflict:
     description: A conflict during the brand vetting request has occurred.
     resolution: If the error persists, contact [support@vonage.com](mailto:support@vonage.com).
-  
+
   invalid-vetting-data:
     description: There are errors in the vetting request data submitted.
     resolution: Ensure all required fields have values and correct any errors to values in the specified fields.
-  
+
   invalid-json:
     description: Your request cannot be parsed.
     resolution: Ensure there are no invalid characters or values in your request.
-  
+
   brand-not-qualified:
     description: A conflict when a campaign is being created under a brand that hasn't qualified for the specified use case.
     resolution: Verify the brand use case qualifies before submitting the campaign.
-  
+
   invalid-campaign-data:
     description: There are errors in the campaign data submitted.
     resolution: Ensure all required fields have values and correct any errors to values in the specified fields.
-  
+
   numbers-already-linked:
     description: The number you are attempting to link is already linked to another campaign.
     resolution: You must link a unique number to a campaign. Link a different number to this campaign.

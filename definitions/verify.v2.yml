@@ -1,0 +1,812 @@
+openapi: 3.0.2
+info:
+  title: Vonage Verify API (v2)
+  version: 0.0.14
+  description: Verify API provides a choice of routes for sending a code to a user. You can use this to confirm a user's contact information, as a second factor when authenticating users, or for step-up authentication.
+  contact:
+    name: Vonage DevRel
+    email: devrel@vonage.ctom
+    url: 'https://developer.vonage.com/'
+servers:
+  - url: https://api.nexmo.com/v2/verify
+security:
+  - basicAuth: []
+  - bearerAuth: []
+tags:
+  - name: Requests
+    description: Verify Requests
+
+paths:
+  /:
+    post:
+      operationId: newRequest
+      summary: Request a verification be sent to a user
+      description: Start verifying that we can reach this user given a set of contact details
+      tags:
+        - Requests
+      requestBody:
+        $ref: '#/components/requestBodies/NewVerificationRequest'
+      responses:
+        "202":
+          description: The request was started
+          content:
+            application/json:
+              schema:
+                required:
+                  - request_id
+                type: object
+                properties:
+                  request_id:
+                    $ref: '#/components/schemas/RequestId'
+        "422":
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidParams'
+        "429":
+          description: "Rate Limited"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorThrottled"
+
+  /{request_id}:
+    parameters:
+      - $ref: '#/components/parameters/request_id'
+  #   get:
+  #     operationId: RequestStatus
+  #     summary: Fetch full information about a specific request by ID
+  #     description: >-
+  #       <p style="font-weight:bold; color: red;">To be implemented.</p>
+  #       Returns detailed information about the original request, its current status, and any events that have already taken place.
+  #     responses:
+  #       "200":
+  #         description: Good
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/VerifyResource'
+        # "404":
+        #   description: "No such request"
+        #   content:
+        #     application/json:
+        #       schema:
+        #         $ref: "#/components/schemas/ErrorInvalidRequest"
+
+    post:
+      operationId: checkCode
+      summary: Check a supplied code against a request to see if it is valid
+      description: Allows a code to be checked against an existing Verification request
+      tags:
+        - Requests
+      requestBody:
+        $ref: '#/components/requestBodies/CheckCodeRequest'
+
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: "Invalid Code"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorInvalidCodeRequest'
+        "404":
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorInvalidRequest"
+        "409":
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorConflictRequest"
+        "410":
+          description: "Invalid Code"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorExpiredRequest"
+        "429":
+          description: "Rate Limited"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorThrottled"
+
+    # delete:
+    #   operationId: CancelRequest
+    #   summary: Cancel an in-progress verify request
+    #   description: >-
+    #     <p style="font-weight:bold; color: red;">To be implemented.</p>
+    #     Stops any events yet to occur in a verify request workflow, and ends the request.
+    #   responses:
+    #     "204":
+    #       description: No content
+    #     "404":
+    #       description: "No such request"
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: "#/components/schemas/ErrorInvalidRequest"
+    #     "409":
+    #       description: "Expired request"
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: "#/components/schemas/ErrorExpiredRequest"
+    #     "429":
+    #       description: "Rate Limited"
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: "#/components/schemas/ErrorThrottled"
+
+x-webhooks:
+  request-status-update:
+    '{$request.body#/callback}':
+      post:
+        summary: Request status update
+        operationId: request-status-update
+        x-example-path: '/webhooks/request-status-update'
+        description: An inbound status update for a particular request.
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyResource'
+  events:
+    '{$request.body#/callback}':
+      post:
+        summary: Events Callback
+        operationId: event-callback
+        x-example-path: '/webhooks/events-callback'
+        description: An inbound events webhook.
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyResourceWhatsappInteractive'
+
+components:
+  requestBodies:
+    CheckCodeRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - code
+            properties:
+              code:
+                $ref: '#/components/schemas/code'
+
+    NewVerificationRequest:
+      required: true
+      content: 
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NewCodeRequest'
+            # oneOf:
+            #   - title: Code Verification
+            #     x-tab-id: CodeVerificiation
+            #     allOf:
+            #       - $ref: '#/components/schemas/NewCodeRequest'
+            #   - title: PSD2 Verification
+            #     x-tab-id: PSD2Verification
+            #     allOf:
+            #       - $ref: '#/components/schemas/NewPSD2Request'
+  parameters:
+    request_id:
+      name: request_id
+      in: path
+      required: true
+      description: ID of the verify request
+      schema:
+        type: string
+    network_code:
+      name: network_code
+      in: path
+      required: true
+      description: Network code to unblock
+      schema:
+        type: string
+
+  schemas:
+
+    NewRequestBase:
+      type: object
+      properties:
+        # to:
+        #   type: array
+        #   items:
+        #     $ref: '#/components/schemas/To'
+        # sender:
+        #   $ref: '#/components/schemas/Sender'
+        # country:
+        #   $ref: '#/components/schemas/Country'
+        brand:
+          $ref: '#/components/schemas/Brand'
+        locale:
+          $ref: '#/components/schemas/Language'
+        channel_timeout:
+          $ref: '#/components/schemas/ChannelTimeout'
+        client_ref:
+          $ref: '#/components/schemas/ClientRef'
+        code_length:
+          $ref: '#/components/schemas/CodeLength'
+        # code_expiry:
+        #   $ref: '#/components/schemas/CodeExpiry'
+
+    NewCodeRequest:
+      oneOf:
+        - $ref: '#/components/schemas/NewCodeRequestWorkflowSMS'
+        - $ref: '#/components/schemas/NewCodeRequestWorkflowWhatsApp'
+        - $ref: '#/components/schemas/NewCodeRequestWorkflowWhatsAppInteractive'
+        - $ref: '#/components/schemas/NewCodeRequestWorkflowVoice'
+
+    NewCodeRequestWorkflowSMS:
+      title: SMS
+      x-tab-id: WorkflowSMS
+      allOf:
+        - $ref: '#/components/schemas/NewRequestBase'
+        - type: object
+          required:
+            - workflow
+            - brand
+          description: Request a code be sent to a user
+          properties:
+            app_hash:
+              type: string
+              description: Optional Android Application Hash Key for automatic code detection on a user's device. 
+              minimum: 11
+              maximum: 11
+            workflow:
+              type: array
+              items:
+                type: object
+                required:
+                  - channel
+                  - to
+                properties:
+                  channel:
+                    type: string
+                    description: "The channel"
+                    enum: 
+                      - sms
+                    example: "sms"
+                  to:
+                    $ref: '#/components/schemas/To'
+              example: [
+                {
+                  "channel": "sms",
+                  "to": "447700900000"
+                }
+              ]
+    
+    NewCodeRequestWorkflowVoice:
+      title: Voice
+      x-tab-id: WorkflowVoice
+      allOf:
+        - $ref: '#/components/schemas/NewRequestBase'
+        - type: object
+          required:
+            - workflow
+            - brand
+          description: Request a code be sent to a user
+          properties:
+            workflow:
+              type: array
+              items:
+                type: object
+                required:
+                  - channel
+                  - to
+                properties:
+                  channel:
+                    type: string
+                    description: "The channel"
+                    enum: 
+                      - voice
+                    example: "voice"
+                  to:
+                    $ref: '#/components/schemas/To'
+              example: [
+                {
+                  "channel": "voice",
+                  "to": "447700900000"
+                }
+              ]
+    
+    NewCodeRequestWorkflowWhatsApp:
+      title: WhatsApp
+      x-tab-id: WorkflowWhatsApp
+      allOf:
+        - $ref: '#/components/schemas/NewRequestBase'
+        - type: object
+          description: Request a code be sent to a user
+          properties:
+            workflow:
+              type: array
+              items:
+                type: object
+                properties:
+                  channel:
+                    type: string
+                    description: "The channel"
+                    enum: 
+                      - whatsapp
+                    example: whatsapp
+                  to:
+                    $ref: '#/components/schemas/To'
+                  template:
+                    type: string
+                    example: abc:123:verify
+                required:
+                  - channel
+                  - to
+              example: [
+                  {
+                    "channel": "whatsapp",
+                    "to": "447700900000"
+                  }
+                ]
+          required:
+            - workflow
+            - brand
+
+    NewCodeRequestWorkflowWhatsAppInteractive:
+      title: WhatsApp-Interactive
+      x-tab-id: WorkflowWhatsAppInteractive
+      allOf:
+        - $ref: '#/components/schemas/NewRequestBase'
+        - type: object
+          description: Request a code be sent to a user
+          properties:
+            workflow:
+              type: array
+              items:
+                type: object
+                properties:
+                  channel:
+                    type: string
+                    description: "The channel"
+                    enum: 
+                      - whatsapp_interactive
+                    example: whatsapp_interactive
+                  to:
+                    $ref: '#/components/schemas/To'
+                  template:
+                    type: string
+                    example: abc:123:verify
+                required:
+                  - channel
+                  - to
+              example: [
+                  {
+                    "channel": "whatsapp_interactive",
+                    "to": "447700900000"
+                  }
+                ]
+          required:
+            - workflow
+            - brand
+
+    NewPSD2Request:
+      allOf:
+        - $ref: '#/components/schemas/NewRequestBase'
+        - type: object
+          description: Request a code be sent to a user
+          properties:
+            amount:
+              type: string
+              description: "Amount to be verified"
+              example: "2.50"
+            currency:
+              type: string
+              description: ISO 4217 currency code to represent the amount in
+              pattern: '^[A-Z]{3}$'
+              example: EUR
+
+          required:
+            - to
+            - sender
+            - amount
+
+    ChannelTimeout:
+      type: integer
+      description: Specifies the wait time in seconds between attempts to delivery the verification code
+      minimum: 60
+      maximum: 900
+      default: 300
+      example: 300
+
+    Language:
+      type: string
+      description: Languages that are available to use
+      example: es-es
+      default: en-us
+      enum:
+        - en-us
+        - en-gb
+        - es-es
+        - es-mx
+        - es-us
+        - it-it
+        - fr-fr
+        - de-de
+        - ru-ru
+        - hi-in
+        - pt-br
+        - pt-pt
+        - id-id
+
+    To:
+      type: string
+      minLength: 1
+      maxLength: 50
+      example: '447700900000'
+      description: The phone number to contact, in the [E.164](https://en.wikipedia.org/wiki/E.164) format. Don't use a leading + or 00 when entering a phone number, start with the country code, for example, 447700900000.
+
+    CodeLength:
+      type: integer
+      description: Length of the code to send to the user
+      default: 4
+      example: 4
+      enum:
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+
+    ClientRef:
+      type: string
+      description: If the `client_ref` is set when the request is sent, it will be included in the callbacks
+      example: my-personal-reference
+
+    Brand:
+      type: string
+      description: The brand that is sending the verification request.
+      example: "ACME, Inc"
+    
+    RequestId:
+      type: string
+      description: 'The ID of the request'
+      example: 'c11236f4-00bf-4b89-84ba-88b25df97315'
+
+    VerifyResource:
+      required:
+        - request_id
+        - submitted_at
+        - status
+        - type
+        - finalized_at
+        - channel_timeout
+        - workflow
+      properties:
+        request_id:
+          $ref: '#/components/schemas/RequestId'
+        submitted_at:
+          type: string
+          description: >-
+            The date and time the verification request was submitted, in ISO 8601 format.
+          example: "2020-01-01T14:00:00.000Z"
+        status:
+          type: string
+          description: Current status of this request
+          example: completed
+          enum:
+            - completed
+            - failed
+            - expired
+        type:
+          type: string
+          description: Type of response
+          example: "summary"
+        channel_timeout:
+          type: integer
+          description: The number of seconds before the current step in the verification request times out.
+          example: 300
+        workflow:
+          type: array
+          items:
+            type: object
+            properties:
+              channel:
+                type: string
+                description: "The channel"
+                enum: 
+                  - sms
+                  - whatsapp
+                  - whatsapp_interactive
+                  - voice
+              initiated_at:
+                type: string
+                description: >-
+                  The date and time the current step in the verification request was initiated, in ISO 8601 format.
+              status:
+                type: string
+                description: Current status of this request
+                example: completed
+                enum:
+                  - unused
+                  - completed
+                  - failed
+                  - expired
+                  - user_rejected
+          example: [
+            {
+              "channel": "sms",
+              "initiated_at": "2020-01-01T14:00:00.000Z",
+              "status": "expired"
+            },
+            {
+              "channel": "whatsapp",
+              "initiated_at": "2020-01-01T14:02:00.000Z",
+              "status": "completed"
+            },
+            {
+              "channel": "voice",
+              "initiated_at": "2020-01-01T15:05:00.000Z",
+              "status": "unused"
+            }
+          ]
+        # account_key:
+        #   type: string
+        #   description: The API key that made this Verify Request (may include subaccounts)
+        #   example: "acbd1234"
+        price:
+          type: number
+          description: The total cost for this request so far, in EUR. This number may update as the request progresses.
+        finalized_at:
+          type: string
+          description: >-
+            The date and time the verification request was completed. This
+            response parameter is in ISO 8601 format.
+          example: "2020-01-01T14:00:00.000Z"
+        client_ref:
+          type: string
+          description: >-
+            Contains the client reference given in the original Verify request.
+          example: "my-personal-ref"
+        # events:
+        #   type: array
+        #   description: The events that have already taken place
+        #   items:
+        #     type: object
+        #     required:
+        #       - type
+        #       - created_at
+        #     properties:
+        #       type:
+        #         type: string
+        #         description: The communication type
+        #         example: "sms"
+        #         enum:
+        #           - sms
+        #           - voice
+        #           - whatsapp
+        #           - viber_service_msg
+        #           - messenger
+        #       created_at:
+        #         type: string
+        #         description: The date and time that the event was started, in ISO 8601 format.
+        #         example: "2020-01-01T14:00:00.000Z"
+
+    VerifyResourceWhatsappInteractive:
+      required:
+        - request_id
+        - triggered_at 
+        - type
+        - channel
+        - status
+        - finalized_at
+        - channel_timeout
+      properties:
+        request_id:
+          $ref: '#/components/schemas/RequestId'
+        triggered_at:
+          type: string
+          description: >-
+            The date and time the verification request was triggered, in ISO 8601 format.
+          example: "2020-01-01T14:00:00.000Z"
+        type:
+          type: string
+          description: Type of response
+          example: "event"
+        channel: 
+          type: string
+          description: The channel
+          example: "whatsapp_interactive"
+        status:
+          type: string
+          description: Current status of this request
+          example: completed
+          enum:
+            - completed
+            - failed
+            - user_rejected
+            - rejected
+        finalized_at:
+          type: string
+          description: >-
+            The date and time the verification request was completed. This
+            response parameter is in ISO 8601 format.
+          example: "2020-01-01T14:00:00.000Z"
+        client_ref:
+          type: string
+          description: >-
+            Contains the client reference given in the original Verify request.
+          example: "my-personal-ref"
+
+    code:
+      type: string
+      description: The code the user supplied
+      example: 1234
+      minLength: 4
+      maxLength: 10
+
+    Error:
+      description: 'Information about what went wrong, with a description of the problem and a link to more information'
+      required:
+        - type
+        - title
+        - instance
+      type: object
+      properties:
+        title:
+          type: string
+          description: Information about the error
+          example: 'Missing `to` parameter'
+        detail:
+          type: string
+          description: Further information, if available
+          example: 'The `to` parameter is required and must be an array'
+        instance:
+          type: string
+          description: An internal identifier, we may request this to assist with debugging
+          example: abcd
+      example:
+        invalid-parameters:
+          title: 'Missing `workflow` parameter'
+          detail: 'The `workflow` parameter is required and must be an array'
+          instance: abcd
+
+    ErrorInvalidCodeRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Invalid Code"
+          description: Error description
+        detail:
+          type: string
+          example: "The code you provided does not match the expected value."
+          description: Detailed error description
+        instance:
+          type: string
+          example: "xxx"
+          description: The instance ID
+
+    ErrorInvalidRequest:
+      type: object
+      properties:
+        type:
+          type: string
+          example: "https://developer.vonage.com/api-errors#not-found"
+          description: URL link to the error code reference
+        title:
+          type: string
+          example: "Not Found"
+          description: Error description
+        detail:
+          type: string
+          example: "Request <id> was not found or it has been verified already."
+          description: Detailed error description
+        instance:
+          type: string
+          example: "xxx"
+          description: The instance ID
+
+    ErrorConflictRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Conflict"
+          description: Error description
+        detail:
+          type: string
+          example: "The current Verify workflow step does not support a code."
+          description: Detailed error description
+        instance:
+          type: string
+          example: "xxx"
+          description: The instance ID
+
+    ErrorExpiredRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Invalid Code"
+          description: Error description
+        detail:
+          type: string
+          example: "An incorrect code has been provided too many times. Workflow terminated."
+          description: Detailed error description
+        instance:
+          type: string
+          example: "xxx"
+          description: The instance ID
+    
+    ErrorInvalidParams:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Error title
+          example: Invalid params
+        detail:
+          type: string
+          description: More detailed error descriptions
+          example: The value of one or more parameters is invalid
+        instance:
+          type: string
+          description: GUID reference for the instance
+          example: 06032957-99ce-41ee-978b-9a390cd5a89b
+        invalid_parameters:
+          type: array
+          description: Detailed array of errors``
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              reason:
+                type: string
+          example:
+            name: brand
+            reason: Brand is required
+
+    ErrorThrottled:
+      type: object
+      required:
+        - type
+        - title
+        - detail
+        - instance
+      properties:
+        title:
+          type: string
+          description: Generic error message
+          example: Rate Limit Hit
+        detail:
+          type: string
+          description: Additional information about the error
+          example: Please wait, then retry your request
+        instance:
+          type: string
+          description: Internal Trace ID
+          example: bf0ca0bf927b3b52e3cb03217e1a1ddf
+
+
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: HTTP auth can be used for syncronous calls, for asyncronous calls and call backs use JWT authentication
+
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

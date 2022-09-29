@@ -1,6 +1,6 @@
-openapi: "3.0.0"
+openapi: "3.0.1"
 info:
-  version: 1.1.1
+  version: 1.2.3
   title: Messages API
   description: 'The Messages API consolidates and normalises exchanges across all messaging channels. It allows you to use a single API to interact with our various channels such as SMS, MMS, WhatsApp, Viber and Facebook Messenger'
   contact:
@@ -222,7 +222,6 @@ paths:
                           whatsapp:
                             type: object
                             required:
-                              - policy
                               - locale
                             properties:
                               policy:
@@ -230,11 +229,11 @@ paths:
                                 example: deterministic
                                 enum:
                                   - deterministic
-                                description: 'Policy for resolving what language template to use. Please note that WhatsApp deprecated the `fallback` policy in January of 2020, all requests carrying a `fallback` policy will be rejected with a 400 error. As of right now the only valid choice is `deterministic`'
+                                description: 'Policy for resolving what language template to use. As of right now the only valid choice is `deterministic`.'
                               locale:
                                 type: string
-                                example: en-US
-                                description: 'The [BCP 47](https://en.wikipedia.org/wiki/IETF_language_tag) language of the template. Vonage will translate the BCP 47 format to the [WhatsApp equivalent](https://developers.facebook.com/docs/whatsapp/message-templates/creation#translations). For examples `en-GB` will be auto-translate to en_GB.'
+                                example: en_US
+                                description: 'The [BCP 47](https://en.wikipedia.org/wiki/IETF_language_tag) language of the template. See [the WhatsApp documentation](https://developers.facebook.com/docs/whatsapp/api/messages/message-templates#supported-languages-) for supported languages.'
                     - allOf:
                       - required:
                         - message_type
@@ -565,13 +564,14 @@ components:
 
   schemas:
     TemplateParameters:
-      description: List of parameters to populate the template
-      type: object
-      properties:
-        key:
-          type: string
-          description: key/value pair.You can find the full list of supported parameters on WhatsApp's [messages parameters documentation] (https://developers.facebook.com/docs/whatsapp/on-premises/reference/messages#message-templates).
-          example: value
+      type: array
+      description: The parameters are an array of strings, with the first string being used for {{1}} in the template, with the second being {{2}} etc. Only required if the template specified by `name` contains parameters.
+      example:
+        - Verification
+        - '2526'
+        - '5'
+      items:
+        type: string
     Image:
       allOf:
         - $ref: "#/components/schemas/baseMessageType"
@@ -735,13 +735,10 @@ components:
               properties:
                 name:
                   type: string
-                  example: verify
+                  example: 9b6b4fcb_da19_4a26_8fe8_78074a91b584:verify
                   description: 'The name of the template. For WhatsApp use your WhatsApp namespace (available via Facebook Business Manager), followed by a colon : and the name of the template to use.'
                 parameters:
-                  type: array
-                  description: The parameters are an array of objects, with the first object being used for {{1}} in the template, with the second being {{2}} etc.
-                  items:
-                    $ref: "#/components/schemas/TemplateParameters"
+                  $ref: "#/components/schemas/TemplateParameters"
     Custom:
       allOf:
         - $ref: "#/components/schemas/baseMessageType"
@@ -1291,7 +1288,7 @@ components:
           properties:
             category:
               type: string
-              description: The use of different category tags enables the business to send messages for different use cases. For Viber Service Messages the first message sent from a business to a user must be personal, informative & a targeted message - not promotional. By default Vonage sends the `transaction` category to Viber Service Messages.
+              description: The use of different category tags enables the business to send messages for different use cases. For Viber Business Messages the first message sent from a business to a user must be personal, informative & a targeted message - not promotional. By default Vonage sends the `transaction` category to Viber Business Messages.
               enum:
                 - transaction
                 - promotion
@@ -1430,6 +1427,39 @@ components:
                 - rejected
                 - undeliverable
                 - read
+            usage:
+              type: object
+              properties:
+                currency:
+                  type: string
+                  example: EUR
+                  description: The charge currency in ISO 4217 format.
+                  enum:
+                    - EUR
+                price:
+                  type: string
+                  example: '0.0333'
+                  description: The charge amount as a stringified number. For WhatsApp this is the default Vonage charge per conversation.
+            whatsapp:
+              type: object
+              description: An object contining meta-data related to the WhatsApp message that triggered this callback. Only present for callbacks with a `status` of `delivered`.
+              properties:
+                conversation:
+                  type: object
+                  description: An object contining data for the conversation to which the message relates.
+                  properties:
+                    id:
+                      type: string
+                      example: '1234567890'
+                      description: The id of the conversation.
+                    origin:
+                      type: object
+                      description: An object contining data related to the origin of the conversation.
+                      properties:
+                        type:
+                          type: string
+                          example: 'user_initiated'
+                          description: The conversation type.
     messageStatusMessenger:
       allOf:
         - $ref: "#/components/schemas/messageStatusBase"
@@ -1573,6 +1603,7 @@ components:
           example: Jane Smith
     Context:
       type: object
+      description: This is only present for the Inbound Message where the user is quoting another message. It provides information about the quoted message. 
       required:
         - message_uuid
         - message_from
@@ -1726,7 +1757,7 @@ x-errors:
   "1250":
     description: Unroutable  -  The chosen route to send your message is not available. This is because the phone number is either currently on an unsupported network or on a pre-paid or reseller account that could not receive a message sent by from. To resolve this issue either email us at support@nexmo.com or create a helpdesk ticket at https://help.nexmo.com.
   "1260":
-    description: Destination unreachable  -  The message could not be delivered to the phone number. If using Viber Service Messages your account might not be enabled for this country.
+    description: Destination unreachable  -  The message could not be delivered to the phone number. If using Viber Business Messages your account might not be enabled for this country.
   "1270":
     description: Subscriber Age Restriction  -  The carrier blocked this message because the content is not suitable for to based on age restrictions.
   "1280":

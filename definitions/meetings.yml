@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Vonage Meetings Public API
-  version: 0.1.0
+  version: 0.1.2
   x-label: Beta
 servers:
   - url: https://api-eu.vonage.com/beta/meetings
@@ -118,6 +118,10 @@ paths:
                     expire_after_use:
                       type: boolean
                       description: 'Close the room after a session ends. Only relevant for long_term rooms.'
+                    theme_id:
+                      type: string
+                      format: uuid
+                      description: 'The theme id for the room'
        responses:
         '200':
           description: OK
@@ -187,6 +191,242 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/DialInNumber'
+  /themes:
+    get:
+      summary: Get application themes
+      operationId: getThemes
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Theme'
+    post:
+      summary: Create a theme
+      operationId: createTheme
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateThemeDetails'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Theme'
+        '409':
+          description: short_company_url already exist or theme_name already exist in application
+        '403':
+          description: exceeded maximum theme limit
+  /themes/:theme_id:
+    get:
+      summary: Get theme by theme id
+      operationId: getThemeById
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Theme'
+        '404':
+          description: Theme not found
+    delete:
+      summary: Delete a theme
+      operationId: deleteTheme
+      parameters:
+        - name: force
+          in: query
+          description: force delete - delete theme even if theme is used by rooms or as application default theme
+          schema:
+            type: boolean
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Theme is used by rooms or application
+          content:
+            application/json:
+              schema:
+                properties:
+                  status:
+                    type: integer
+                    enum: [400]
+                  name:
+                    type: string
+                    enum: [BadRequestError]
+                  message:
+                    type: string
+                    enum: ['could not delete theme']
+                  errors:
+                    type: array
+                    items:
+                      type: string
+        '404':
+          description: Theme not found
+    patch:
+      summary: Update theme by id
+      operationId: updateTheme
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                update_details:
+                  $ref: '#/components/schemas/UpdateThemeDetails'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Theme'
+        '400':
+          description: Invalid main_color or Invalid short_company_url or update_details must have at least 1 key
+        '404':
+          description: Theme not found
+        '409':
+          description: short_company_url already exist or theme_name already exist in application
+  /themes/:theme_id/finalizeLogos:
+    put:
+      summary: Change given logo to be permanent
+      operationId: finalizeLogosForTheme
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FinalizeThemeLogosRequestBody'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Logos has invalid property or Keys not found in bucket
+          content:
+            application/json:
+              schema:
+                properties:
+                  status:
+                    type: integer
+                    enum: [400]
+                  name:
+                    type: string
+                    enum: [BadRequestError]
+                  message:
+                    type: string
+                    enum: ['could not finalize logos']
+                  errors:
+                    type: array
+                    description: each error has logoKey, code and invalidProperty if it is invalid logo property error
+                    items:
+                      type: object
+                      properties:
+                        logoKey:
+                          type: string
+                        code:
+                          type: string
+                          enum: [invalid_logo_properties, key_not_found]
+                        invalidProperty:
+                          type: string
+                          enum: [exceeds_size, type, dimensions, transparent_bg]
+        '404':
+          description: Theme not found
+  /themes/logos-upload-urls:
+    get:
+      summary: Get URLs that can be used to upload logos for a theme via a POST
+      operationId: getUploadUrlsForTheme
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: list of S3 presigned URLs
+                items:
+                  $ref: '#/components/schemas/UploadUrlForTheme'
+  /themes/:themeId/rooms:
+    get:
+      summary: Get rooms that associate with the theme id
+      operationId: getRoomsByThemeId
+      parameters:
+        - $ref: '#/components/parameters/start_id_parameter'
+        - $ref: '#/components/parameters/end_id_parameter'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  page_size:
+                    type: integer
+                    example: 10
+                    description: The number of results returned on this page
+                  _embedded:
+                    type: object
+                    properties:
+                      rooms:
+                        type: array
+                        description: List of all accessible rooms
+                        items:
+                          $ref: '#/components/schemas/Room'
+                  _links:
+                    type: object
+                    properties:
+                      first:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: 'https://api.nexmo.com/v0.1/meetings/rooms?page_size=10'
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: 'https://api.nexmo.com/v0.1/meetings/rooms?page_size=10&start_id=20'
+                      next:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: 'https://api.nexmo.com/v0.1/meetings/rooms?page_size=10&start_id=30'
+                      prev:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                            example: 'https://api.nexmo.com/v0.1/meetings/rooms?page_size=10&end_id=20'
+        '404':
+          description: Theme not found
+  /applications:
+    patch:
+      summary: Update an existing application
+      operationId: updateApplication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateApplicationDetails'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        '400':
+          description: Bad request
 x-webhooks:
   meeting-events:
     room-expired:
@@ -484,6 +724,10 @@ components:
         is_available:
           type: boolean
           description: 'Once a room becomes unavailable, no new sessions can be created under it'
+        theme_id:
+          type: string
+          format: uuid
+          description: 'The theme id for the room'
         created_at:
           type: string
           format: date
@@ -535,12 +779,19 @@ components:
         expire_after_use:
           type: boolean
           description: 'Close the room after a session ends. Only relevant for long_term rooms.'
+        theme_id:
+          type: string
+          format: uuid
+          description: 'The theme id for the room'
     RecordingOptions:
       type: object
       properties:
         auto_record:
           type: boolean
           description: Automatically record all sessions in this room. Recording cannot be stopped when this is set to `true`.
+        record_only_owner:
+          type: boolean
+          description: Record only the owner screen or any share screen of the video.
     Recording:
       type: object
       properties:
@@ -584,4 +835,162 @@ components:
         display_name:
           type: string
           example: United States
+    Theme:
+      type: object
+      properties:
+        theme_id:
+          type: string
+          format: uuid
+        theme_name:
+          type: string
+          example: 'Theme1'
+        domain:
+          type: string
+          enum: [VCP, VBC]
+        account_id:
+          type: string
+        application_id:
+          type: string
+          format: uuid
+        main_color:
+          type: string
+          example: '#12f64e'
+        short_company_url:
+          type: string
+          example: 'short-url'
+        brand_text:
+          type: string
+          example: 'Brand'
+        brand_image_colored:
+          type: string
+          description: Colored logo's key in storage system
+        brand_image_white:
+          type: string
+          description: White logo's key in storage system
+        branded_favicon:
+          type: string
+          description: Favicon's key in storage system
+        brand_image_colored_url:
+          type: string
+          description: Colored logo's link
+        brand_image_white_url:
+          type: string
+          description: White logo's link
+        branded_favicon_url:
+          type: string
+          description: Favicon's link
+    CreateThemeDetails:
+      type: object
+      required:
+        - main_color
+        - brand_text
+      properties:
+        theme_name:
+          type: string
+          maxLength: 200
+          example: 'Theme1'
+        main_color:
+          maxLength: 7
+          type: string
+          pattern: '#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$'
+          example: '#12f64e'
+        brand_text:
+          type: string
+          maxLength: 200
+          example: 'Brand'
+        short_company_url:
+          type: string
+          maxLength: 128
+          pattern: '^(?=.*[a-zA-Z_~-])([a-zA-Z0-9_~-]+)$'
+          example: 'short-url'
+    UpdateThemeDetails:
+      type: object
+      properties:
+        theme_name:
+          type: string
+          maxLength: 200
+          example: 'Theme1'
+        main_color:
+          maxLength: 7
+          type: string
+          pattern: '#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$'
+          example: '#12f64e'
+        brand_text:
+          type: string
+          maxLength: 200
+          example: 'Brand'
+        short_company_url:
+          type: string
+          maxLength: 128
+          pattern: '^(?=.*[a-zA-Z_~-])([a-zA-Z0-9_~-]+)$'
+          example: 'short-url'
+    FinalizeThemeLogosRequestBody:
+      type: object
+      properties:
+        keys:
+          type: array
+          description: List of temporary theme's logos to make permanent
+          example: ['logo-key1', 'logo-key2']
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+    UploadUrlForTheme:
+      type: object
+      properties:
+        url:
+          type: string
+          description: Storage system URL
+          example: 'https://storage-url.com'
+        fields:
+          type: object
+          description: Fields property has to be part of the POST request's body
+          properties:
+            Content-Type:
+              type: string
+              example: 'image/png'
+            key:
+              type: string
+              example: 'auto-expiring-temp/logos/white/ca63a155-d5f0-4131-9903-c59907e53df0'
+              description: Logo's key in storage system
+            logoType:
+              type: string
+              enum: [white, colored, favicon]
+            bucket:
+              type: string
+              description: Bucket name to upload to
+            X-Amz-Algorithm:
+              type: string
+            X-Amz-Credential:
+              type: string
+            X-Amz-Date:
+              type: string
+            X-Amz-Security-Token:
+              type: string
+            Policy:
+              type: string
+            X-Amz-Signature:
+              type: string
+    Application:
+      type: object
+      properties:
+        application_id:
+          type: string
+          format: uuid
+          description: The application id
+        account_id:
+          type: string
+          description: The applications account id
+        default_theme_id:
+          type: string
+          format: uuid
+          description: The application default theme id
+    UpdateApplicationDetails:
+      type: object
+      properties:
+        default_theme_id:
+          type: string
+          format: uuid
+          description: The theme id to set as application default theme
 tags: []
