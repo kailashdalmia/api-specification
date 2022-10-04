@@ -1,7 +1,7 @@
 openapi: "3.0.2"
 info:
   title: "Account API"
-  version: "1.0.3"
+  version: "1.0.4"
   description: >-
     Enables users to manage their Vonage API Account by programmable means. More information is available here: <https://developer.nexmo.com/account/overview>.
   contact:
@@ -651,7 +651,7 @@ components:
               type:
                 type: string
                 description: URL for further information
-                example: https://developer.nexmo.com/
+                example: https://developer.nexmo.com/api-errors#unauthorized
               title:
                 type: string
                 description: Description of the error
@@ -659,7 +659,7 @@ components:
               detail:
                 type: string
                 description: More detail regarding this error, including the expected value
-                example: 'Invalid credentials format. Expected: "Authorization: (Base64(UTF-8(apiKey:secret)))"'
+                example: 'You did not provide correct credentials.'
               instance:
                 type: string
                 description: Internal Trace ID

@@ -1,7 +1,7 @@
 openapi: 3.0.2
 info:
   title: Vonage Verify API (v2)
-  version: 0.0.13
+  version: 0.0.14
   description: Verify API provides a choice of routes for sending a code to a user. You can use this to confirm a user's contact information, as a second factor when authenticating users, or for step-up authentication.
   contact:
     name: Vonage DevRel
@@ -262,6 +262,11 @@ components:
             - brand
           description: Request a code be sent to a user
           properties:
+            app_hash:
+              type: string
+              description: Optional Android Application Hash Key for automatic code detection on a user's device. 
+              minimum: 11
+              maximum: 11
             workflow:
               type: array
               items:
@@ -568,6 +573,11 @@ components:
             The date and time the verification request was completed. This
             response parameter is in ISO 8601 format.
           example: "2020-01-01T14:00:00.000Z"
+        client_ref:
+          type: string
+          description: >-
+            Contains the client reference given in the original Verify request.
+          example: "my-personal-ref"
         # events:
         #   type: array
         #   description: The events that have already taken place
@@ -632,6 +642,11 @@ components:
             The date and time the verification request was completed. This
             response parameter is in ISO 8601 format.
           example: "2020-01-01T14:00:00.000Z"
+        client_ref:
+          type: string
+          description: >-
+            Contains the client reference given in the original Verify request.
+          example: "my-personal-ref"
 
     code:
       type: string

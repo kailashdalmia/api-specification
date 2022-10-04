@@ -1,7 +1,7 @@
 openapi: 3.0.0
 
 info:
-  version: 2.0.3
+  version: 2.0.4
   title: Number Pools
   contact:
     name: Nexmo
@@ -113,6 +113,19 @@ paths:
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
         '409':
           $ref: '#/components/responses/ErrorAccountIdMismatchResponse'
+    delete:
+      tags:
+        - Pools
+      operationId: deletePool
+      description: Delete a specific pool
+      summary: Delete a specific pool
+      responses:
+        '200':
+          $ref: '#/components/responses/GetPoolResponse'
+        '401':
+          $ref: 'common/common_errors.yml#/components/responses/BadCredentialsError'
+        '404':
+          $ref: 'common/common_errors.yml#/components/responses/NotFoundError'
 
   /v2/numberpools/accounts/{account_id}/pools/{pool_id}/numbers:
     parameters:

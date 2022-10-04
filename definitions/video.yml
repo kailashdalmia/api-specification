@@ -3,7 +3,7 @@ x-stoplight:
   id: dka9bkyfsi8b4
 info:
   title: Vonage Video
-  version: "0.2.0"
+  version: "0.2.1"
   contact:
     name: Vonage DevRel
     url: "https://developer.vonage.com"
@@ -27,7 +27,7 @@ paths:
       requestBody:
         $ref: "#/components/requestBodies/Create-Session"
 
-  /v2/project/{application_id}/{session_id}/signal:
+  /v2/project/{application_id}/session/{session_id}/signal:
     post:
       tags:
         - Signaling
@@ -96,7 +96,7 @@ paths:
                       message:
                         example: The type string exceeds the maximum length (128 bytes), or the data string exceeds the maximum size (8 kB).
 
-  /v2/projects/{application_id}/session/{session_id}/connection/{connection_id}/signal:
+  /v2/project/{application_id}/session/{session_id}/connection/{connection_id}/signal:
     parameters:
       - $ref: "#/components/parameters/application_id"
       - $ref: "#/components/parameters/session_id"
@@ -170,7 +170,7 @@ paths:
                       message:
                         example: The type string exceeds the maximum length (128 bytes), or the data string exceeds the maximum size (8 kB).
 
-  /v2/projects/{application_id}/session/{session_id}/connection/{connection_id}:
+  /v2/project/{application_id}/session/{session_id}/connection/{connection_id}:
     parameters:
       - $ref: "#/components/parameters/application_id"
       - $ref: "#/components/parameters/session_id"

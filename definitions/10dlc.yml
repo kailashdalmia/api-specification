@@ -1,7 +1,7 @@
 openapi: 3.0.3
 
 info:
-  version: 1.0.5
+  version: 1.0.7
   title: 10DLC Brand and Campaign Provisioning
   contact:
     name: Vonage
@@ -21,6 +21,7 @@ paths:
       parameters:
         - $ref: "common/hal_structures.yml#/components/parameters/Page"
         - $ref: "common/hal_structures.yml#/components/parameters/PageSize"
+        - $ref: '#/components/parameters/filter'
       tags:
         - Brands
       description: List brands
@@ -285,6 +286,7 @@ paths:
       parameters:
         - $ref: "common/hal_structures.yml#/components/parameters/Page"
         - $ref: "common/hal_structures.yml#/components/parameters/PageSize"
+        - $ref: '#/components/parameters/filter'
       tags:
         - Campaigns
       description: List campaigns
@@ -385,6 +387,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/BrandId"
       - $ref: "#/components/parameters/CampaignId"
+      - $ref: '#/components/parameters/filter'
     get:
       parameters:
         - $ref: "common/hal_structures.yml#/components/parameters/Page"
@@ -612,7 +615,7 @@ components:
         message_flow: "string"
         help_message: "string"
         mno_metadata:
-          status: "APPROVED"
+          status: "REGISTERED"
           network_id: "10017"
           min_msg_samples: 1
           msg_class: A
@@ -2245,7 +2248,7 @@ components:
     CampaignStatus:
       description: Statuses that a campaign can be in
       type: string
-      example: APPROVED
+      example: ACTIVE
       enum:
         - ACTIVE
         - EXPIRED
@@ -2390,12 +2393,11 @@ components:
     MNOCampaignStatus:
       description: Statuses that a campaign has in relation to a specific MNO
       type: string
-      example: APPROVED
+      example: REGISTERED
       enum:
         - UNKNOWN
         - REVIEW
         - REJECTED
-        - APPROVED
         - SUSPENDED
         - REGISTERED
 
@@ -2601,7 +2603,7 @@ components:
           type: string
           enum:
             $ref: "#/components/schemas/MNOCampaignStatus/enum"
-          example: "APPROVED"
+          example: "REGISTERED"
         tmo_tpd:
           type: integer
           example: 0
@@ -2670,6 +2672,87 @@ components:
       type: string
       pattern: ^[0-9A-F]{7}$
 
+    Filter:
+          type: array
+          title: Filter
+          description: >
+            This is a double array representing filters combined with AND and OR
+            operators.
+
+            The first level is combined with an AND operator and the second one with
+            an OR.
+
+
+            **Note**: the total number of rules should not exceed 3.
+
+
+            Example:
+
+              The filter
+
+              [[{"field":"name","type":"==","value":"doe"},{"field":"age","type":"<=","value":42}],[{"field":"address.country","type":"regexp","value":"^EN$|^FR$"}]]
+
+              is URL-encoded as a query parameter:
+
+              filter=%5B%5B%7B%22field%22%3A%22name%22%2C%22type%22%3A%22%3D%3D%22%2C%22value%22%3A%22doe%22%7D%2C%7B%22field%22%3A%22age%22%2C%22type%22%3A%22%3C%3D%22%2C%22value%22%3A42%7D%5D%2C%5B%7B%22field%22%3A%22address.country%22%2C%22type%22%3A%22regexp%22%2C%22value%22%3A%22%5EEN%24%7C%5EFR%24%22%7D%5D%5D
+
+              the equivalent logic is:
+
+              ((name==doe OR age<=42) AND (address.country match "EN" or "FR"))
+          minItems: 1
+          maxItems: 3
+          items:
+            type: array
+            minItems: 1
+            maxItems: 3
+            items:
+              type: object
+              title: Rule
+              description: Represents a single rule that can be combined into a filter.
+              required:
+                - field
+                - type
+                - value
+              properties:
+                field:
+                  type: string
+                  title: Field selector
+                  description: >
+                    The path used to to get the field of an input item to evaluate
+                    against.
+
+                    It can target a nested field, in which case it's dot-separated.
+                  example: address.country
+                type:
+                  type: string
+                  title: Type
+                  description: The type of the rule
+                  example: ==
+                  enum:
+                    - regexp
+                    - '!='
+                    - '!=$'
+                    - '!=='
+                    - '!^='
+                    - '!~='
+                    - <
+                    - <=
+                    - '='
+                    - '=$'
+                    - '=='
+                    - '>'
+                    - '>='
+                    - ^=
+                    - ~=
+                value:
+                  title: The value to evaluate against
+                  example: NGO
+                  oneOf:
+                    - type: string
+                    - type: number
+                    - type: boolean
+                    - type: integer
+
   securitySchemes:
     basicAuth:
       type: http
@@ -2735,6 +2818,38 @@ components:
       required: true
       schema:
         $ref: "#/components/schemas/VettingRequestId"
+
+    filter:
+      description: >
+        Narrow down results based on matching conditions.
+
+        Follow the [comprehensive guide](https://developer.vonage.com/messages/10-dlc/filter) to learn how to craft filter queries.
+      in: query
+      name: filter
+      required: false
+      schema:
+        $ref: '#/components/schemas/Filter'
+      examples:
+        simple:
+          description: Simple "age == 42" rule
+          value:
+            - - field: age
+                type: '=='
+                value: 42
+        combination:
+          description: |
+            Combination of AND or OR rules.
+            ((name==doe OR age<=42) AND (address.country match "EN" or "FR"))
+          value:
+            - - field: name
+                type: '=='
+                value: doe
+              - field: age
+                type: <=
+                value: 42
+            - - field: address.country
+                type: regexp
+                value: ^EN$|^FR$
 tags:
   - name: Brands
     description: APIs relating to working with Brands
