@@ -110,5 +110,8 @@ PLATFORMS
 DEPENDENCIES
   nexmo-oas-renderer (~> 2.7)
 
+RUBY VERSION
+   ruby 2.7.4p191
+
 BUNDLED WITH
-   2.1.4
+   2.2.28

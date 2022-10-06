@@ -1,0 +1,348 @@
+---
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Programmable SIP API
+  description:
+    The Programmable SIP API lets you create and configure Programmable SIP Domains in Vonage's platform.
+  contact:
+    name: Vonage DevRel
+    email: devrel@vonage.com
+    url: "https://developer.nexmo.com/"
+servers:
+  - url: https://api.nexmo.com/v1/psip
+paths:
+  "/":
+    post:
+      tags:
+        - Domains
+      security:
+        - basicAuth: []
+      summary: Create a PSIP domain
+      description: Create a new PSIP domain
+      operationId: createDomain
+      requestBody:
+        description: Create a new PSIP domain
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - "$ref": "#/components/schemas/DomainObject"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/DomainObject"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorInvalidJson"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorUnauthorized"
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorVerificationFailed"
+        "500":
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorInternal"
+  "/{domain}":
+    get:
+      tags:
+        - Domains
+      security:
+        - basicAuth: []
+      summary: Get details of your PSIP domain
+      description: Get details of your PSIP domain
+      operationId: getDomain
+      parameters:
+        - name: domain
+          required: true
+          in: path
+          description: Filter by domain name
+          schema:
+            type: string
+            example: mydomain
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/DomainObject"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorUnauthorized"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorNotFound"
+        "500":
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorInternal"
+    put:
+      tags:
+        - Domains
+      security:
+        - basicAuth: []
+      summary: Update a PSIP domain
+      description: Update a PSIP domain
+      operationId: createUpdateDomain
+      parameters:
+        - name: domain
+          required: true
+          in: path
+          description: Filter by domain name
+          schema:
+            type: string
+            example: mydomain
+      requestBody:
+        description: Create or update a PSIP domain
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - "$ref": "#/components/schemas/DomainObject"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/DomainObject"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorInvalidJson"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorUnauthorized"
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorVerificationFailed"
+        "500":
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorInternal"
+    delete:
+      tags:
+        - Domains
+      security:
+        - basicAuth: []
+      summary: Delete PSIP domain
+      description: Delete a PSIP domain
+      operationId: deleteDomain
+      parameters:
+        - name: domain
+          required: true
+          in: path
+          description: Filter by domain name
+          schema:
+            type: string
+            example: mydomain
+      responses:
+        "200":
+          description: Deleted
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorUnauthorized"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorNotFound"
+        "500":
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorInternal"
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+
+  schemas:
+    name:
+      title: Domain name
+      type: string
+      example: mydomain
+      minLength: 5
+      maxLength: 32
+      description: "The customised SIP domain that will used in Programmable SIP: mydomain.sip-eu.nexmo.com"
+
+    application_id:
+      title: Application ID
+      type: string
+      example: c49f3586-9b3b-458b-89fc-3c8beb58865c
+      description: Vonage Application ID to associate with the domain
+
+    tls:
+      title: TLS
+      type: string
+      enum: [always, never, optional]
+      description: Require TLS use in SIP connection.
+        Default is optional, which allows customer to use TLS or not.
+        Always will require it to alway be used.
+        Never will require it to never be used.
+    srtp:
+      title: SRTP
+      type: string
+      enum: [always, never, optional]
+      description: Require SRTP use in SIP connection.
+        Default is optional, which allows customer to use SRTP or not.
+
+    acl:
+      title: Access Control List
+      type: array
+      minItems: 1
+      maxItems: 16
+      description: Access Control List of IPs that can make calls to domain. Can use CIDR notation to facilitate inclusion of IP ranges.
+      example: ["50.127.127.0/29", "192.168.0.1"]
+      items:
+        type: string
+
+    DomainObject:
+      title: Domain
+      type: object
+      required:
+        - name
+        - application_id
+        - acl
+      properties:
+        name:
+          $ref: "#/components/schemas/name"
+        application_id:
+          $ref: "#/components/schemas/application_id"
+        tls:
+          "$ref": "#/components/schemas/tls"
+        srtp:
+          "$ref": "#/components/schemas/srtp"
+        acl:
+          "$ref": "#/components/schemas/acl"
+
+    ErrorNotFound:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: 
+            - "https://www.nexmo.com/messages/Errors#NotFound"
+          example: "https://www.nexmo.com/messages/Errors#NotFound"
+        title:
+          type: string
+          enum: 
+            - "Invalid domain selected"
+          example: "Invalid domain selected"
+        detail:
+          type: string
+          enum: 
+            - "The domain you're trying to interact with is invalid"
+          example: "The domain you're trying to interact with is invalid"
+
+    ErrorUnauthorized:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: 
+            - "https://www.nexmo.com/messages/Errors#Unauthorized"
+          example: "https://www.nexmo.com/messages/Errors#Unauthorized"
+        title:
+          type: string
+          enum:
+           - "Invalid credentials supplied"
+          example: "Invalid credentials supplied"
+        detail:
+          type: string
+          enum: 
+            - "You did not provide credentials."
+          example: "You did not provide credentials."
+
+    ErrorVerificationFailed:
+      type: object
+      properties:
+        title:
+          type: string
+          enum:
+            - "Unprocessable Entity-Invalid request parameters"
+          example: "Unprocessable Entity-Invalid request parameters"
+        detail:
+          type: string
+          enum: 
+            - "Request lacks domain's name, acl or application id"
+          example: "Request lacks domain's name, acl or application id"
+
+    ErrorInternal:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: 
+            - "https://www.nexmo.com/messages/Errors#InternalError"
+          example: "https://www.nexmo.com/messages/Errors#InternalError"
+        title:
+          type: string
+          enum: 
+            - "Service internal #InternalError"
+          example: "Service internal #InternalError"
+        detail:
+          type: string
+          enum:
+            - "An unknown error encountered"
+          example: "An unknown error encountered"
+
+    ErrorInvalidJson:
+      description: Invalid JSON
+      type: object
+      properties:
+        type:
+          type: string
+          enum: 
+            - "https://www.nexmo.com/messages/Errors#InvalidParams"
+          example: "https://www.nexmo.com/messages/Errors#InvalidParams"
+        title:
+          type: string
+          enum:
+            - "The request body did not contain valid JSON"
+          example: "The request body did not contain valid JSON"
+        detail:
+          type: string
+          example: 'Unexpected character (''"'' (code 34)): was expecting comma to separate Object entries'

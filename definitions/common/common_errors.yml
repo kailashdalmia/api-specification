@@ -14,7 +14,7 @@ components:
             properties:
               type:
                 type: string
-                example: "https://developer.nexmo.com/api-errors#TO_BE_UPDATED"
+                example: "https://developer.vonage.com/api-errors#TO_BE_UPDATED"
               title:
                 type: string
                 example: THIS ERROR NEEDS REPLACING
@@ -31,7 +31,7 @@ components:
             properties:
               type:
                 type: string
-                example: "https://developer.nexmo.com/api-errors#unauthorized"
+                example: "https://developer.vonage.com/api-errors#unauthorized"
               title:
                 type: string
                 example: Invalid credentials supplied
@@ -48,7 +48,7 @@ components:
             properties:
               type:
                 type: string
-                example: "https://developer.nexmo.com/api-errors#not-found"
+                example: "https://developer.vonage.com/api-errors#not-found"
               title:
                 type: string
                 example: Not Found
@@ -65,7 +65,7 @@ components:
             properties:
               type:
                 type: string
-                example: "https://developer.nexmo.com/api-errors#wrong-verb"
+                example: "https://developer.vonage.com/api-errors#wrong-verb"
               title:
                 type: string
                 example: Request method not allowed
@@ -82,7 +82,7 @@ components:
             properties:
               type:
                 type: string
-                example: "https://developer.nexmo.com/api-errors#accept-header"
+                example: "https://developer.vonage.com/api-errors#accept-header"
               title:
                 type: string
                 example: Invalid Accept header
@@ -99,7 +99,7 @@ components:
             properties:
               type:
                 type: string
-                example: "https://developer.nexmo.com/api-errors#content-type-header"
+                example: "https://developer.vonage.com/api-errors#content-type-header"
               title:
                 type: string
                 example: Unsupported Content-Type header
@@ -116,7 +116,7 @@ components:
             properties:
               type:
                 type: string
-                example: "https://developer.nexmo.com/api-errors#throttled"
+                example: "https://developer.vonage.com/api-errors#throttled"
               title:
                 type: string
                 example: Too many requests

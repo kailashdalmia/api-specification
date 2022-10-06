@@ -1,7 +1,7 @@
 openapi: 3.0.2
 info:
   title: Vonage Verify API (v2)
-  version: 0.0.11
+  version: 0.0.14
   description: Verify API provides a choice of routes for sending a code to a user. You can use this to confirm a user's contact information, as a second factor when authenticating users, or for step-up authentication.
   contact:
     name: Vonage DevRel
@@ -249,6 +249,7 @@ components:
         - $ref: '#/components/schemas/NewCodeRequestWorkflowSMS'
         - $ref: '#/components/schemas/NewCodeRequestWorkflowWhatsApp'
         - $ref: '#/components/schemas/NewCodeRequestWorkflowWhatsAppInteractive'
+        - $ref: '#/components/schemas/NewCodeRequestWorkflowVoice'
 
     NewCodeRequestWorkflowSMS:
       title: SMS
@@ -261,6 +262,11 @@ components:
             - brand
           description: Request a code be sent to a user
           properties:
+            app_hash:
+              type: string
+              description: Optional Android Application Hash Key for automatic code detection on a user's device.
+              minimum: 11
+              maximum: 11
             workflow:
               type: array
               items:
@@ -280,6 +286,40 @@ components:
               example: [
                 {
                   "channel": "sms",
+                  "to": "447700900000"
+                }
+              ]
+
+    NewCodeRequestWorkflowVoice:
+      title: Voice
+      x-tab-id: WorkflowVoice
+      allOf:
+        - $ref: '#/components/schemas/NewRequestBase'
+        - type: object
+          required:
+            - workflow
+            - brand
+          description: Request a code be sent to a user
+          properties:
+            workflow:
+              type: array
+              items:
+                type: object
+                required:
+                  - channel
+                  - to
+                properties:
+                  channel:
+                    type: string
+                    description: "The channel"
+                    enum:
+                      - voice
+                    example: "voice"
+                  to:
+                    $ref: '#/components/schemas/To'
+              example: [
+                {
+                  "channel": "voice",
                   "to": "447700900000"
                 }
               ]
@@ -448,6 +488,7 @@ components:
         - request_id
         - submitted_at
         - status
+        - type
         - finalized_at
         - channel_timeout
         - workflow
@@ -532,6 +573,11 @@ components:
             The date and time the verification request was completed. This
             response parameter is in ISO 8601 format.
           example: "2020-01-01T14:00:00.000Z"
+        client_ref:
+          type: string
+          description: >-
+            Contains the client reference given in the original Verify request.
+          example: "my-personal-ref"
         # events:
         #   type: array
         #   description: The events that have already taken place
@@ -596,6 +642,11 @@ components:
             The date and time the verification request was completed. This
             response parameter is in ISO 8601 format.
           example: "2020-01-01T14:00:00.000Z"
+        client_ref:
+          type: string
+          description: >-
+            Contains the client reference given in the original Verify request.
+          example: "my-personal-ref"
 
     code:
       type: string
@@ -612,10 +663,6 @@ components:
         - instance
       type: object
       properties:
-        type:
-          type: string
-          description: URL to more information about this type of error
-          example: 'https://www.nexmo.com/messages/Errors#InvalidParams'
         title:
           type: string
           description: Information about the error
@@ -630,7 +677,6 @@ components:
           example: abcd
       example:
         invalid-parameters:
-          type: 'https://www.nexmo.com/messages/Errors#InvalidParams'
           title: 'Missing `workflow` parameter'
           detail: 'The `workflow` parameter is required and must be an array'
           instance: abcd
@@ -638,10 +684,6 @@ components:
     ErrorInvalidCodeRequest:
       type: object
       properties:
-        type:
-          type: string
-          example: "https://developer.nexmo.com/api-errors#bad-request"
-          description: URL link to the error code reference
         title:
           type: string
           example: "Invalid Code"
@@ -660,7 +702,7 @@ components:
       properties:
         type:
           type: string
-          example: "https://developer.nexmo.com/api-errors#not-found"
+          example: "https://developer.vonage.com/api-errors#not-found"
           description: URL link to the error code reference
         title:
           type: string
@@ -678,10 +720,6 @@ components:
     ErrorConflictRequest:
       type: object
       properties:
-        type:
-          type: string
-          example: "https://developer.nexmo.com/api-errors#conflict"
-          description: URL link to the error code reference
         title:
           type: string
           example: "Conflict"
@@ -698,10 +736,6 @@ components:
     ErrorExpiredRequest:
       type: object
       properties:
-        type:
-          type: string
-          example: "https://developer.nexmo.com/api-errors#conflict"
-          description: URL link to the error code reference
         title:
           type: string
           example: "Invalid Code"
@@ -730,13 +764,16 @@ components:
           type: string
           description: GUID reference for the instance
           example: 06032957-99ce-41ee-978b-9a390cd5a89b
-        type:
-          type: string
-          description: Link to error / remediation options
-          example: https://www.nexmo.com/messages/Errors#InvalidParams
         invalid_parameters:
           type: array
           description: Detailed array of errors``
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              reason:
+                type: string
           example:
             name: brand
             reason: Brand is required
@@ -749,10 +786,6 @@ components:
         - detail
         - instance
       properties:
-        type:
-          type: string
-          description: Link to error / remediation options
-          example: https://developer.vonage.com/api-errors/verify#rate-limit
         title:
           type: string
           description: Generic error message

@@ -1,7 +1,7 @@
 openapi: 3.0.3
 
 info:
-  version: 1.0.0
+  version: 1.0.7
   title: 10DLC Brand and Campaign Provisioning
   contact:
     name: Vonage
@@ -21,6 +21,7 @@ paths:
       parameters:
         - $ref: "common/hal_structures.yml#/components/parameters/Page"
         - $ref: "common/hal_structures.yml#/components/parameters/PageSize"
+        - $ref: '#/components/parameters/filter'
       tags:
         - Brands
       description: List brands
@@ -29,16 +30,20 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/MultiBrandsResponse"
+        "400":
+          $ref: "#/components/responses/ErrorGeneric"
         "401":
           $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
+        "422":
+          $ref: "#/components/responses/ErrorBrandParameters"
 
     post:
       tags:
         - Brands
       description: |
-        Create a new brand for your account. Most accounts will be created 
+        Create a new brand for your account. Register the brand under your CSP account. Mandatory fields vary depending on the type of entity being registered, so be sure to select the type that best represents the brand you wish to create at the top of the Request body table below. Most accounts will be created 
         immediately, and you can move on to qualifying a new campaign for
         the brand. Some brands may require additional vetting. In such cases,
         please move on to the vetting API endpoints before attempting to 
@@ -76,15 +81,19 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/SingleBrand"
+        "400":
+          $ref: "#/components/responses/ErrorGeneric"
         "401":
           $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
+        "422":
+          $ref: "#/components/responses/ErrorBrandParameters"
     patch:
       tags:
         - Brands
       summary: Partially update a specific brand
-      description: Partial update of a brand
+      description: This operation applies a partial update of a brand enabling the CSP to keep brand details updated in the registry. Please note that if vetting is successfully completed, the `ein` `ein_issuing_country` and `entity_type` fields will be locked and the associated values cannot be changed.
       operationId: patchBrand
       requestBody:
         required: true
@@ -97,6 +106,8 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/SingleBrand"
+        "400":
+          $ref: "#/components/responses/ErrorGeneric"
         "401":
           $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
         "404":
@@ -108,15 +119,21 @@ paths:
       tags:
         - Brands
       summary: Remove a specific brand from your account
-      description: Delete a brand
+      description: This operation deletes a brand. A brand can be deleted if it does not have active campaigns. Once a brand is deleted, it will be in a `DELETED` state and it cannot be restored to an `ACTIVE` state. Deleted brands will remain in the system for a period of time and can be searched using the GET/brand endpoint with the query filter `status` = ACTIVE. While deleted brands are searchable, all other API endpoints involving a deleted brand will result in a `502 - Brand not found` error.
       operationId: deleteBrand
       responses:
         "204":
           description: No content
+        "400":
+          $ref: "#/components/responses/ErrorGeneric"
         "401":
           $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
+        "409":
+          $ref: "#/components/responses/ErrorBrandConflict"
+        "422":
+          $ref: "#/components/responses/ErrorBrandParameters"
 
   /v1/10dlc/brands/{brand_id}/feedback:
     get:
@@ -136,8 +153,8 @@ paths:
           $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
-        "429":
-          $ref: "common/common_errors.yml#/components/responses/ThrottledError"
+        "422":
+          $ref: "#/components/responses/ErrorBrandParameters"
 
   /v1/10dlc/brands/{brand_id}/usecases/{usecase}:
     parameters:
@@ -163,12 +180,10 @@ paths:
           $ref: "#/components/responses/ErrorQualifyBrand"
         "401":
           $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
-        "403":
-          $ref: "#/components/responses/ErrorUseCaseDenied"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
-        "429":
-          $ref: "common/common_errors.yml#/components/responses/ThrottledError"
+        "422":
+          $ref: "#/components/responses/ErrorBrandParameters"
 
   /v1/10dlc/brands/{brand_id}/vetting/requests:
     parameters:
@@ -188,14 +203,23 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/VettingRequest"
+        "400":
+          $ref: "#/components/responses/ErrorGeneric"
+        "401":
+          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "404":
+          $ref: "common/common_errors.yml#/components/responses/NotFoundError"
+        "422":
+          $ref: "#/components/responses/ErrorVettingParameters"
+
     post:
       tags:
         - Brands
       summary: Request vetting for a brand
       description: |
-        This performs a request to a specific vetting partner to perform
-        vetting for a brand. This authorizes Vonage to allow the vetting
-        partner access to the particular brand information. This request
+        This operation requests the specific vetting provider to perform
+        vetting on a brand. This authorizes Vonage to allow the vetting
+        partner access to the particular brand information stored in The Campaign Registry (TCR). This request
         can take anywhere from a few minutes to 48 hours.
       operationId: requestVetting
       requestBody:
@@ -203,26 +227,23 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/VettingRequest"
-        "409":
-          $ref: "#/components/responses/ErrorVettingConflict"
         "422":
           $ref: "#/components/responses/ErrorVettingParameters"
         "429":
           $ref: "common/common_errors.yml#/components/responses/ThrottledError"
 
-  /v1/10dlc/brands/{brand_id}/vetting/requests/{vetting_request_id}:
+  /v1/10dlc/brands/{brand_id}/vetting/requests/:
     parameters:
       - $ref: "#/components/parameters/BrandId"
-      - $ref: "#/components/parameters/VettingRequestId"
     put:
       tags:
         - Brands
       summary: Import an existing vetting request to Vonage
       description: |
         Vetting requests can either be automated or manual. In the case that a
-        vetting request has been manually performed, or was requested outside of
+        vetting request has been manually performed or was requested outside of
         Vonage, you can request that the request be imported. The vetting
-        request will be validated and, if successful, added to the brand. This
+        request will be validated and, if successful, saved with the brand in TCR and the vetting record will be considered for future campaign qualification. This
         validation process is not immediate.
       operationId: importVettingRequest
       requestBody:
@@ -230,6 +251,8 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/VettingRequest"
+        "409":
+          $ref: "#/components/responses/ErrorVettingConflict"
         "422":
           $ref: "#/components/responses/ErrorVettingParameters"
         "429":
@@ -243,8 +266,8 @@ paths:
         - Brands
       summary: Request a brand revetting
       description: |
-        This operation allows you to revet the brand. However, revetting is
-        allowed once after the successful brand registration.
+        This operation allows you to revet the brand; however, revetting is
+        allowed once after the successful brand registration. Search for campaigns you registered by any combination of `brand_id`, `reseller_id`, `status`, `usecase`, and `vertical`. This operation supports pagination with a maximum of 500 records per fetch. Values for `brand_id`, `reseller_id`, `status`, `usecase`, and `vertical` must be exact matches if supplied.
       operationId: brandRevet
       responses:
         "200":
@@ -255,8 +278,6 @@ paths:
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
         "422":
           $ref: "#/components/responses/ErrorUnableToParseRequestResponse"
-        "429":
-          $ref: "common/common_errors.yml#/components/responses/ThrottledError"
 
   /v1/10dlc/brands/{brand_id}/campaigns:
     parameters:
@@ -265,6 +286,7 @@ paths:
       parameters:
         - $ref: "common/hal_structures.yml#/components/parameters/Page"
         - $ref: "common/hal_structures.yml#/components/parameters/PageSize"
+        - $ref: '#/components/parameters/filter'
       tags:
         - Campaigns
       description: List campaigns
@@ -273,10 +295,14 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/MultiCampaignsResponse"
+        "400":
+          $ref: "#/components/responses/ErrorGeneric"
         "401":
           $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
+        "422":
+          $ref: "#/components/responses/ErrorUnableToParseRequestResponse"
     post:
       tags:
         - Campaigns
@@ -288,6 +314,8 @@ paths:
       responses:
         "201":
           $ref: "#/components/responses/SingleCampaignResponse"
+        "400":
+          $ref: "#/components/responses/ErrorGeneric"
         "401":
           $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
         "404":
@@ -310,10 +338,14 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/SingleCampaignResponse"
+        "400":
+          $ref: "#/components/responses/ErrorGeneric"
         "401":
           $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
+        "422":
+          $ref: "#/components/responses/ErrorCampaignParameters"
     patch:
       tags:
         - Campaigns
@@ -329,8 +361,8 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/SingleCampaignResponse"
-        "401":
-          $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
+        "400":
+          $ref: "#/components/responses/ErrorGeneric"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
         "422":
@@ -344,6 +376,8 @@ paths:
       responses:
         "204":
           description: No content
+        "400":
+          $ref: "#/components/responses/ErrorGeneric"
         "401":
           $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
         "404":
@@ -353,6 +387,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/BrandId"
       - $ref: "#/components/parameters/CampaignId"
+      - $ref: '#/components/parameters/filter'
     get:
       parameters:
         - $ref: "common/hal_structures.yml#/components/parameters/Page"
@@ -369,6 +404,8 @@ paths:
           $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
+        "422":
+          $ref: "#/components/responses/ErrorNumbersParameters"
     post:
       tags:
         - Numbers
@@ -412,6 +449,8 @@ paths:
           $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
+        "422":
+          $ref: "#/components/responses/ErrorNumbersParameters"
     delete:
       tags:
         - Numbers
@@ -425,7 +464,41 @@ paths:
           $ref: "common/common_errors.yml#/components/responses/BadCredentialsError"
         "404":
           $ref: "common/common_errors.yml#/components/responses/NotFoundError"
-
+        "422":
+          $ref: "#/components/responses/ErrorNumbersParameters"
+  /v1/10dlc/partnercampaigns/import:
+    post:
+      summary: Import a partner campaign to Vonage
+      description: >
+        Import a partner campaign by sharing it with Vonage. Your account needs
+        a special capability to be able to carry on with this operation.
+      tags:
+        - Campaigns
+      operationId: importPartnerCampaign
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                account_id:
+                  $ref: '#/components/schemas/AccountID'
+                campaign_id:
+                  $ref: '#/components/schemas/CampaignId'
+                label:
+                  $ref: '#/components/schemas/CampaignLabel'
+              required:
+                - account_id
+                - campaign_id
+      responses:
+        '201':
+          $ref: '#/components/responses/ImportPartnerCampaignResponse'
+        '400':
+          $ref: '#/components/responses/ErrorGeneric'
+        '401':
+          $ref: 'common/common_errors.yml#/components/responses/BadCredentialsError'
+        '404':
+          $ref: 'common/common_errors.yml#/components/responses/NotFoundError'
   /v1/10dlc/enum/vetting/classes:
     get:
       tags:
@@ -486,6 +559,8 @@ components:
       value:
         brand_id: "BLQKOPK"
         entity_type: "PUBLIC_PROFIT"
+        first_name: "John"
+        last_name: "Smith"
         display_name: "Vonage"
         company_name: "Vonage"
         ein: "20-1111111"
@@ -540,33 +615,21 @@ components:
         message_flow: "string"
         help_message: "string"
         mno_metadata:
-          - network_id: "10017"
-            min_msg_samples: 1,
-            msg_class: A
-            req_subscriber_opt_out: false
-            mno_review: false,
-            no_embedded_phone: true,
-            mno: "AT&T"
-            tpm: 3000
-            req_subscriber_help: false
-            req_subscriber_opt_in: true
-            mno_support: true
-            no_embedded_link: true
-            qualify: true
-            status: "APPROVED"
-          - network_id: "10035"
-            min_msg_samples: 1,
-            req_subscriber_help: false
-            req_subscriber_opt_out: false
-            req_subscriber_opt_in: true
-            mno_review: false
-            mno_support: true
-            no_embedded_phone: true,
-            no_embedded_link: true
-            qualify: true
-            brand_tier: "LOW"
-            mno: "TMO"
-            status: "APPROVED"
+          status: "REGISTERED"
+          network_id: "10017"
+          min_msg_samples: 1
+          msg_class: A
+          req_subscriber_opt_out: false
+          mno_review: false,
+          no_embedded_phone: true
+          mno: "AT&T"
+          tpm: 3000
+          req_subscriber_help: false
+          req_subscriber_opt_in: true
+          mno_support: true
+          no_embedded_link: true
+          qualify: true
+          brand_tier: "LOW"
         auto_renewal: true
         status: "ACTIVE"
         _links:
@@ -634,6 +697,23 @@ components:
             att_msg_class: null
 
   responses:
+    ImportPartnerCampaignResponse:
+      description: Imported partner campaign summary
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              brand_id:
+                $ref: '#/components/schemas/BrandId'
+              campaign_id:
+                $ref: '#/components/schemas/CampaignId'
+              sharing_status:
+                $ref: '#/components/schemas/SharingStatus'
+              downstream_cnp_id:
+                $ref: '#/components/schemas/CnpID'
+              upstream_cnp_id:
+                $ref: '#/components/schemas/CnpID'
     ErrorCouldNotRemoveNumberResponse:
       description: Error response for number deletion errors
       content:
@@ -657,7 +737,7 @@ components:
                     example: There were some issues with your submission
                   type:
                     description: Link to error / remediation options
-                    example: "https://developer.nexmo.com/api-errors/10dlc#error-type"
+                    example: "https://developer.vonage.com/api-errors/10dlc#error-type"
                   detail:
                     description: Additional information about the error
                     example: There were some errors submitting your brand, and a more detailed message would appear here
@@ -677,7 +757,7 @@ components:
                     example: An error occurred with this brand while communicating with a third party
                   type:
                     description: Link to error / remediation options
-                    example: "https://developer.nexmo.com/api-errors/10dlc#error-brand-conflict"
+                    example: "https://developer.vonage.com/api-errors/10dlc#brand-conflict"
                   detail:
                     description: Additional information about the error
                     example: An unknown error occurred while processing this brand with the carrier system. Please contact support or try again later.
@@ -697,7 +777,7 @@ components:
                     example: This brand has not been qualified for the given use case
                   type:
                     description: Link to error / remediation options
-                    example: "https://developer.nexmo.com/api-errors/10dlc#error-brand-not-qualified"
+                    example: "https://developer.vonage.com/api-errors/10dlc#brand-not-qualified"
                   detail:
                     description: Additional information about the error
                     example: A campaign use case must be checked before a campaign can be created. Please verify the brand use case before submitting this campaign.
@@ -717,7 +797,7 @@ components:
                     example: There were some issues with the submitted data
                   type:
                     description: Link to error / remediation options
-                    example: "https://developer.nexmo.com/api-errors/10dlc#invalid-brand-data"
+                    example: "https://developer.vonage.com/api-errors/10dlc#invalid-brand-data"
                   detail:
                     description: Additional information about the error
                     example: There were some errors submitting your brand, please correct the requested fields
@@ -755,7 +835,7 @@ components:
                     example: There were some issues with the submitted data
                   type:
                     description: Link to error / remediation options
-                    example: "https://developer.nexmo.com/api-errors/10dlc#invalid-campaign-data"
+                    example: "https://developer.vonage.com/api-errors/10dlc#invalid-campaign-data"
                   detail:
                     description: Additional information about the error
                     example: There were some errors submitting your campaign, please correct the requested fields
@@ -793,7 +873,7 @@ components:
                     example: Number Already Linked
                   type:
                     description: Link to error / remediation options
-                    example: "https://developer.nexmo.com/api-errors/10dlc#number-already-linked"
+                    example: "https://developer.vonage.com/api-errors/10dlc#number-already-linked"
                   detail:
                     description: Additional information about the error
                     example: The number requested has already been linked to another campaign
@@ -813,7 +893,7 @@ components:
                     example: There were some issues with the submitted data
                   type:
                     description: Link to error / remediation options
-                    example: "https://developer.nexmo.com/api-errors/10dlc#invalid-number-data"
+                    example: "https://developer.vonage.com/api-errors/10dlc#invalid-number-data"
                   detail:
                     description: Additional information about the error
                     example: There were some errors submitting your campaign, please correct the requested fields
@@ -847,7 +927,7 @@ components:
                     example: There were some issues with the submitted data
                   type:
                     description: Link to error / remediation options
-                    example: "https://developer.nexmo.com/api-errors/10dlc#invalid-usecase-data"
+                    example: "https://developer.vonage.com/api-errors/10dlc#invalid-usecase-data"
                   detail:
                     description: Additional information about the error
                     example: There were some errors qualifying the use case for your brand, please correct the requested fields
@@ -885,13 +965,13 @@ components:
                     example: Unable to parse incoming request
                   type:
                     description: Link to error / remediation options
-                    example: "https://developer.nexmo.com/api-errors/10dlc#invalid-json"
+                    example: "https://developer.vonage.com/api-errors/#invalid-json"
                   detail:
                     description: Additional information about the error
                     example: invalid character 'f' after object key:value pair
 
     ErrorUseCaseDenied:
-      description: Error for when we cannot parse the client-supplied request
+      description: Error for when the use case requested for this brand is denied
       content:
         application/json:
           schema:
@@ -905,7 +985,7 @@ components:
                     example: The requested use case is denied for this brand
                   type:
                     description: Link to error / remediation options
-                    example: "https://developer.nexmo.com/api-errors/10dlc#use-case-denied"
+                    example: "https://developer.vonage.com/api-errors/10dlc#use-case-denied"
                   detail:
                     description: Additional information about the error
                     example: The requested use case has been denied for this brand. Your brand may require additional third party vetting.
@@ -925,7 +1005,7 @@ components:
                     example: An error occurred while requesting third party vetting
                   type:
                     description: Link to error / remediation options
-                    example: "https://developer.nexmo.com/api-errors/10dlc#error-vetting-conflict"
+                    example: "https://developer.vonage.com/api-errors/10dlc#vetting-conflict"
                   detail:
                     description: Additional information about the error
                     example: An unknown error occurred while requesting vetting with the carrier system. Please contact support or try again later.
@@ -945,7 +1025,7 @@ components:
                     example: There were some issues with the submitted data
                   type:
                     description: Link to error / remediation options
-                    example: "https://developer.nexmo.com/api-errors/10dlc#invalid-vetting-data"
+                    example: "https://developer.vonage.com/api-errors/10dlc#invalid-vetting-data"
                   detail:
                     description: Additional information about the error
                     example: There were some errors submitting your vetting request, please correct the requested fields
@@ -1213,29 +1293,7 @@ components:
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: "#/components/schemas/CampaignResponse"
-              - type: object
-                properties:
-                  _links:
-                    type: object
-                    properties:
-                      self:
-                        type: object
-                        properties:
-                          href:
-                            type: string
-                            example: "https://api.nexmo.com/v1/10dlc/brands/BLQKOPK/campaigns/57b3a89e-c9fa-4860-aec2-ad7f51539dab"
-                      brand:
-                        type: object
-                        properties:
-                          href:
-                            type: string
-                            example: "https://api.nexmo.com/v1/10dlc/brands/BLQKOPK"
-          examples:
-            simple:
-              value:
-                $ref: "#/components/examples/Campaign/value"
+            $ref: "#/components/schemas/CampaignResponse"
 
     SingleNumberResponse:
       description: Return a single number in a campaign
@@ -1374,6 +1432,10 @@ components:
                 x-tab-id: PublicCompany
                 allOf:
                   - $ref: "#/components/schemas/CreatePublicCompanyBrand"
+              - title: Sole Proprietor
+                x-tab-id: SoleProprietor
+                allOf:
+                  - $ref: "#/components/schemas/CreateSoleProprietorBrand"
 
     CreateCampaign:
       required: true
@@ -1401,19 +1463,25 @@ components:
             type: object
             properties:
               evp_id:
+                description: The identity of the vetting partner. This value must be the ID associated with one of the supported vetting providers.
                 type: string
-                example: "abcd123"
-              vetting_class:
-                description: Type of vetting to perform.
-                type: string
+                enum:
+                  - Aegis
+                  - CV
+                  - WMC
                 example: "abcd123"
               vetting_token:
-                description: Type of vetting to perform. Not required for all vetting providers.
+                description: Token verifying the vetting ID (only applicable to Aegis vetting).
+                type: string
+                example: "abcd123"
+              vetting_id:
+                description: Unique ID that identifies a vetting transaction performed by a vetting provider. This ID is provided by the vetting provider at time of vetting.
                 type: string
                 example: "abcd123"
             required:
               - evp_id
               - vetting_class
+              - vetting_id
 
     UpdateBrand:
       required: true
@@ -1433,6 +1501,10 @@ components:
                 x-tab-id: PublicCompany
                 allOf:
                   - $ref: "#/components/schemas/UpdatePublicCompanyBrand"
+              - title: Sole Proprietor
+                x-tab-id: SoleProprietor
+                allOf:
+                  - $ref: "#/components/schemas/UpdateSoleProprietorBrand"
 
     VettingRequest:
       required: true
@@ -1443,7 +1515,12 @@ components:
             type: object
             properties:
               evp_id:
+                description: This value must be the ID associated with one of the supported vetting providers.
                 type: string
+                enum:
+                  - Aegis
+                  - CV
+                  - WMC
                 example: "abcd123"
               vetting_class:
                 description: Type of vetting to perform.
@@ -1454,6 +1531,27 @@ components:
               - vetting_class
 
   schemas:
+    CampaignLabel:
+      description: Friendly name associated with this campaign.
+      type: string
+      maxLength: 50
+    SharingStatus:
+      description: >-
+        Sharing Status. Please refer to the /enum endpoint for an update list of
+        valid values.
+      type: string
+      maxLength: 50
+      enum:
+        - PENDING
+        - ACCEPTED
+        - DECLINED
+    CnpID:
+      description: >-
+        CNP ID. Please refer to the /enum endpoint for an update list of valid
+        values.
+      type: string
+      maxLength: 50
+
     AccountID:
       description: The Vonage Account ID
       type: string
@@ -1476,17 +1574,30 @@ components:
             - PRIVATE_PROFIT
             - PUBLIC_PROFIT
             - NON_PROFIT
+            - SOLE_PROPRIETOR
           example:
             $ref: "#/components/examples/BrandVonage/value/entity_type"
-        display_name:
+        first_name:
           type: string
           maxLength: 100
+          description: First name of business contact.
+          example:
+            $ref: "#/components/examples/BrandVonage/value/first_name"
+        last_name:
+          type: string
+          maxLength: 100
+          description: last name of business contact.
+          example:
+            $ref: "#/components/examples/BrandVonage/value/last_name"
+        display_name:
+          type: string
+          maxLength: 255
           description: Display or marketing name of the brand.
           example:
             $ref: "#/components/examples/BrandVonage/value/display_name"
         company_name:
           type: string
-          maxLength: 100
+          maxLength: 255
           description: Legal company name.
           example:
             $ref: "#/components/examples/BrandVonage/value/company_name"
@@ -1642,6 +1753,16 @@ components:
           description: Legal company name.
           example:
             $ref: "#/components/examples/BrandVonage/value/company_name"
+        first_name:
+          type: string
+          description: First name of business contact.
+          example:
+            $ref: "#/components/examples/BrandVonage/value/first_name"
+        last_name:
+          type: string
+          description: Last name of business contact.
+          example:
+            $ref: "#/components/examples/BrandVonage/value/last_name"
         display_name:
           type: string
           description: Display or marketing name of the brand.
@@ -2006,6 +2127,9 @@ components:
           maxLength: 2048
           example:
             $ref: "#/components/examples/Campaign/value/message_flow"
+        partner:
+          type: boolean
+          example: true
         help_message:
           type: string
           description: Help message of the campaign
@@ -2073,8 +2197,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/UseCaseMNOMetadata"
-          example:
-            $ref: "#/components/examples/Campaign/value/mno_metadata"
         status:
           type: string
           example:
@@ -2126,7 +2248,7 @@ components:
     CampaignStatus:
       description: Statuses that a campaign can be in
       type: string
-      example: APPROVED
+      example: ACTIVE
       enum:
         - ACTIVE
         - EXPIRED
@@ -2150,10 +2272,10 @@ components:
             - entity_type
             - display_name
             - company_name
+            - vertical
             - ein
             - phone
             - email
-            - website
             - street
             - city
             - state
@@ -2173,6 +2295,7 @@ components:
             - entity_type
             - display_name
             - company_name
+            - vertical
             - ein
             - phone
             - email
@@ -2181,7 +2304,6 @@ components:
             - state
             - postal_code
             - country
-            - website
 
     CreatePublicCompanyBrand:
       allOf:
@@ -2196,12 +2318,36 @@ components:
             - entity_type
             - display_name
             - company_name
+            - vertical
             - ein
             - phone
             - email
             - stock_symbol
             - stock_exchange
-            - website
+            - street
+            - city
+            - state
+            - postal_code
+            - country
+
+    CreateSoleProprietorBrand:
+      allOf:
+        - $ref: "#/components/schemas/BrandBase"
+        - $ref: "#/components/schemas/BrandEditableFields"
+        - type: object
+          properties:
+            account_id:
+              $ref: "#/components/schemas/AccountID"
+          required:
+            - account_id
+            - entity_type
+            - first_name
+            - last_name
+            - display_name
+            - company_name
+            - ein
+            - phone
+            - email
             - street
             - city
             - state
@@ -2247,13 +2393,13 @@ components:
     MNOCampaignStatus:
       description: Statuses that a campaign has in relation to a specific MNO
       type: string
-      example: APPROVED
+      example: REGISTERED
       enum:
         - UNKNOWN
         - REVIEW
         - REJECTED
-        - APPROVED
         - SUSPENDED
+        - REGISTERED
 
     Number:
       description: Telephone Number
@@ -2328,7 +2474,6 @@ components:
         - phone
         - country
         - email
-        - website
 
     UpdatePrivateCompanyBrand:
       type: object
@@ -2356,7 +2501,20 @@ components:
         - email
         - stock_symbol
         - stock_exchange
-        - website
+
+    UpdateSoleProprietorBrand:
+      type: object
+      properties:
+        allOf:
+          $ref: "#/components/schemas/BrandEditableFields"
+      required:
+        - entity_type
+        - first_name
+        - last_name
+        - display_name
+        - phone
+        - country
+        - email
 
     IdentityStatus:
       description: >-
@@ -2441,6 +2599,32 @@ components:
           type: integer
         tmo_brand_tier:
           type: string
+        status:
+          type: string
+          enum:
+            $ref: "#/components/schemas/MNOCampaignStatus/enum"
+          example: "REGISTERED"
+        tmo_tpd:
+          type: integer
+          example: 0
+        att_number_based:
+          type: integer
+          example: 3000
+        complaints:
+          type: array
+          items:
+            type: object
+            properties:
+              description:
+                type: string
+              dca:
+                type: string
+                example: SINCH
+              created_at:
+                type: string
+                example: '2022-08-01T14:26:25.862Z'  
+
+          
 
     VettingRequest:
       type: object
@@ -2487,6 +2671,87 @@ components:
       description: ID associated with a vetting request
       type: string
       pattern: ^[0-9A-F]{7}$
+
+    Filter:
+          type: array
+          title: Filter
+          description: >
+            This is a double array representing filters combined with AND and OR
+            operators.
+
+            The first level is combined with an AND operator and the second one with
+            an OR.
+
+
+            **Note**: the total number of rules should not exceed 3.
+
+
+            Example:
+
+              The filter
+
+              [[{"field":"name","type":"==","value":"doe"},{"field":"age","type":"<=","value":42}],[{"field":"address.country","type":"regexp","value":"^EN$|^FR$"}]]
+
+              is URL-encoded as a query parameter:
+
+              filter=%5B%5B%7B%22field%22%3A%22name%22%2C%22type%22%3A%22%3D%3D%22%2C%22value%22%3A%22doe%22%7D%2C%7B%22field%22%3A%22age%22%2C%22type%22%3A%22%3C%3D%22%2C%22value%22%3A42%7D%5D%2C%5B%7B%22field%22%3A%22address.country%22%2C%22type%22%3A%22regexp%22%2C%22value%22%3A%22%5EEN%24%7C%5EFR%24%22%7D%5D%5D
+
+              the equivalent logic is:
+
+              ((name==doe OR age<=42) AND (address.country match "EN" or "FR"))
+          minItems: 1
+          maxItems: 3
+          items:
+            type: array
+            minItems: 1
+            maxItems: 3
+            items:
+              type: object
+              title: Rule
+              description: Represents a single rule that can be combined into a filter.
+              required:
+                - field
+                - type
+                - value
+              properties:
+                field:
+                  type: string
+                  title: Field selector
+                  description: >
+                    The path used to to get the field of an input item to evaluate
+                    against.
+
+                    It can target a nested field, in which case it's dot-separated.
+                  example: address.country
+                type:
+                  type: string
+                  title: Type
+                  description: The type of the rule
+                  example: ==
+                  enum:
+                    - regexp
+                    - '!='
+                    - '!=$'
+                    - '!=='
+                    - '!^='
+                    - '!~='
+                    - <
+                    - <=
+                    - '='
+                    - '=$'
+                    - '=='
+                    - '>'
+                    - '>='
+                    - ^=
+                    - ~=
+                value:
+                  title: The value to evaluate against
+                  example: NGO
+                  oneOf:
+                    - type: string
+                    - type: number
+                    - type: boolean
+                    - type: integer
 
   securitySchemes:
     basicAuth:
@@ -2554,6 +2819,37 @@ components:
       schema:
         $ref: "#/components/schemas/VettingRequestId"
 
+    filter:
+      description: >
+        Narrow down results based on matching conditions.
+
+        Follow the [comprehensive guide](https://developer.vonage.com/messages/10-dlc/filter) to learn how to craft filter queries.
+      in: query
+      name: filter
+      required: false
+      schema:
+        $ref: '#/components/schemas/Filter'
+      examples:
+        simple:
+          description: Simple "age == 42" rule
+          value:
+            - - field: age
+                type: '=='
+                value: 42
+        combination:
+          description: |
+            Combination of AND or OR rules.
+            ((name==doe OR age<=42) AND (address.country match "EN" or "FR"))
+          value:
+            - - field: name
+                type: '=='
+                value: doe
+              - field: age
+                type: <=
+                value: 42
+            - - field: address.country
+                type: regexp
+                value: ^EN$|^FR$
 tags:
   - name: Brands
     description: APIs relating to working with Brands
@@ -2561,3 +2857,48 @@ tags:
     description: APIs relating to working with Campaigns
   - name: Numbers
     description: APIs relating to working with Numbers in Campaigns
+
+x-errors:
+  brand-conflict:
+    description: A conflict when a brand is being created or edited and there is an issue with a 3rd party vendor.
+    resolution: Ensure all required fields have values and there are no errors in those values. If the error persists, contact [support@vonage.com](support@vonage.com).
+
+  brand-parameters:
+    description: There are errors in the brand data submitted.
+    resolution: Ensure all required fields have values included and correct any errors to values in the specified fields.
+
+  invalid-usecase-data:
+    description: There are errors in the data submitted for use case qualification.
+    resolution: Ensure all required fields have values included and correct any errors to values in the specified fields.
+
+  use-case-denied:
+    description: The use case requested has been denied for this brand.
+    resolution: Ensure your use case does not require additional brand vetting or pre/post Mobile Network Operator approval.
+
+  vetting-conflict:
+    description: A conflict during the brand vetting request has occurred.
+    resolution: If the error persists, contact [support@vonage.com](mailto:support@vonage.com).
+
+  invalid-vetting-data:
+    description: There are errors in the vetting request data submitted.
+    resolution: Ensure all required fields have values and correct any errors to values in the specified fields.
+
+  invalid-json:
+    description: Your request cannot be parsed.
+    resolution: Ensure there are no invalid characters or values in your request.
+
+  brand-not-qualified:
+    description: A conflict when a campaign is being created under a brand that hasn't qualified for the specified use case.
+    resolution: Verify the brand use case qualifies before submitting the campaign.
+
+  invalid-campaign-data:
+    description: There are errors in the campaign data submitted.
+    resolution: Ensure all required fields have values and correct any errors to values in the specified fields.
+
+  numbers-already-linked:
+    description: The number you are attempting to link is already linked to another campaign.
+    resolution: You must link a unique number to a campaign. Link a different number to this campaign.
+
+  invalid-number-data:
+    description: There are errors in the number data submitted.
+    resolution: Ensure all required fields have values and correct any errors to values in the specified fields.
