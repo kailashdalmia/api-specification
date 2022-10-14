@@ -58,18 +58,80 @@ paths:
       parameters:
         - $ref: "#/components/parameters/message-id"
         - $ref: "#/components/parameters/delivered"
-        - $ref: "#/components/parameters/timestamp"
+
       responses:
         "200":
           description: OK
+
+          content:
+              text/plain:
+                schema:
+                  type: string
+                example: OK
+
         "401":
-          description: Wrong credentials
+          description: >-
+            Account permission is not setup to access API.
+
+          content:
+           text/plain:
+            schema:
+              type: string
+            example:
+                "401 Permission denied"
+
         "402":
-          description: Conversion has not been enabled for your account
-        "420":
-          description: Invalid parameters
-        "423":
-          description: Invalid parameters
+          description:  >-
+            - Wrong or expired JWT Tokens
+
+            - Request from an account is blocked
+
+            - Wrong credentials(api_key or api_secret)
+
+            - Conversions API call not enabled on account.
+
+          content:
+            text/plain:
+              schema:
+                type: string
+              example:
+                  402 Bad account credentials
+
+        "421":
+          description:  >-
+            Mandatory field "message-id" is unavailable in request body
+
+          content:
+            text/plain:
+              schema:
+                type: string
+              example:
+                  421 Missing message-id param
+
+        "422":
+          description:  >-
+            - Mandatory field 'delivered' is unavailable in request body"
+
+            - Field 'delivered' is other than 0|1|true|false
+          content:
+            text/plain:
+              schema:
+                type: string
+              example:
+                  "422 Missing or Invalid 'delivered' param"
+
+        "426":
+          description:  >-
+            - Mandatory field 'messageId' length is lesser than 16 or greater than 50
+          content:
+            text/plain:
+              schema:
+                type: string
+              example:
+                  "426 Invalid 'messageId' param"
+
+      requestBody:
+          $ref: "#/components/requestBodies/Ok"
   /voice:
     post:
       operationId: voiceConversion
@@ -84,18 +146,81 @@ paths:
       parameters:
         - $ref: "#/components/parameters/message-id"
         - $ref: "#/components/parameters/delivered"
-        - $ref: "#/components/parameters/timestamp"
+
       responses:
+
         "200":
           description: OK
+
+          content:
+              text/plain:
+                schema:
+                  type: string
+                example: OK
+
         "401":
-          description: Wrong credentials
+          description: >-
+            Account permission is not setup to access API.
+
+          content:
+           text/plain:
+            schema:
+              type: string
+            example:
+                "401 Permission denied"
+
         "402":
-          description: Conversion has not been enabled for your account
-        "420":
-          description: Invalid parameters
-        "423":
-          description: Invalid parameters
+          description:  >-
+            - Wrong or expired JWT Tokens
+
+            - Request from an account is blocked
+
+            - Wrong credentials(api_key or api_secret)
+
+            - Conversions API call not enabled on account.
+
+          content:
+            text/plain:
+              schema:
+                type: string
+              example:
+                  402 Bad account credentials
+
+        "421":
+          description:  >-
+            Mandatory field "message-id" is unavailable in request body
+
+          content:
+            text/plain:
+              schema:
+                type: string
+              example:
+                  421 Missing message-id param
+
+        "422":
+          description:  >-
+            - Mandatory field 'delivered' is unavailable in request body"
+
+            - Field 'delivered' is other than 0|1|true|false
+          content:
+            text/plain:
+              schema:
+                type: string
+              example:
+                  "422 Missing or Invalid 'delivered' param"
+
+        "426":
+          description:  >-
+            - Mandatory field 'messageId' length is lesser than 16 or greater than 50
+          content:
+            text/plain:
+              schema:
+                type: string
+              example:
+                  "426 Invalid 'messageId' param"
+
+      requestBody:
+          $ref: "#/components/requestBodies/Ok"
 components:
   parameters:
     message-id:
@@ -126,21 +251,6 @@ components:
           - 0
           - 1
       example: true
-    timestamp:
-      name: timestamp
-      required: true
-      in: query
-      description: >-
-        When the user completed your call-to-action (e.g. visited your website,
-        installed your app) in
-        [UTC±00:00](https://en.wikipedia.org/wiki/UTC%C2%B100:00) format:
-        _yyyy-MM-dd HH:mm:ss_.
-
-        If you do not set this parameter, Nexmo uses the time it receives this
-        request.
-      schema:
-        type: string
-      example: "2020-01-01 12:00:00"
   securitySchemes:
     apiKey:
       type: apiKey
@@ -163,3 +273,20 @@ components:
       description: >-
         The hash of the request parameters in alphabetical order, a timestamp
         and the signature secret. For example: `sig=SIGNATURE`
+
+  requestBodies:
+      Ok:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                api_key:
+                  $ref: "#/components/securitySchemes/apiKey"
+                api_secret:
+                  $ref: "#/components/securitySchemes/apiSecret"
+                message-id:
+                  $ref: "#/components/parameters/message-id"
+                delivered:
+                  $ref: "#/components/parameters/delivered"
