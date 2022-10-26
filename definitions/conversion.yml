@@ -56,8 +56,8 @@ paths:
       tags:
         - SMS Conversion
       parameters:
-        - $ref: "#/components/parameters/message-id"
-        - $ref: "#/components/parameters/delivered"
+        - $ref: "#/components/schemas/message-id"
+        - $ref: "#/components/schemas/delivered"
 
       responses:
         "200":
@@ -247,17 +247,20 @@ components:
         - 1
   securitySchemes:
     api_key:
-      type: apiKey
+      type: http
+      example: conv0001
       description: >-
         You can find your API key in your [account
         overview](https://dashboard.nexmo.com/account-overview)
     api_secret:
-      type: apiKey
+      type: http
+      example: conv0001
       description: >-
         You can find your API secret in your [account
         overview](https://dashboard.nexmo.com/account-overview)
     sig:
-      type: apiKey
+      type: http
+      example: conv0001
       description: >-
         The hash of the request parameters in alphabetical order, a timestamp
         and the signature secret. For example: `sig=SIGNATURE`
@@ -271,9 +274,9 @@ components:
               type: object
               properties:
                 api_key:
-                  $ref: "#/components/securitySchemes/apiKey"
+                  $ref: "#/components/securitySchemes/api_key"
                 api_secret:
-                  $ref: "#/components/securitySchemes/apiSecret"
+                  $ref: "#/components/securitySchemes/api_secret"
                 message-id:
                   $ref: "#/components/schemas/message-id"
                 delivered:
