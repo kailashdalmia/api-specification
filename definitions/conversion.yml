@@ -246,31 +246,25 @@ components:
         - 0
         - 1
   securitySchemes:
-    apiKey:
+    api_key:
       type: apiKey
-      name: api_key
-      in: query
       description: >-
         You can find your API key in your [account
         overview](https://dashboard.nexmo.com/account-overview)
-    apiSecret:
+    api_secret:
       type: apiKey
-      name: api_secret
-      in: query
       description: >-
         You can find your API secret in your [account
         overview](https://dashboard.nexmo.com/account-overview)
-    apiSig:
+    sig:
       type: apiKey
-      name: sig
-      in: query
       description: >-
         The hash of the request parameters in alphabetical order, a timestamp
         and the signature secret. For example: `sig=SIGNATURE`
 
   requestBodies:
       Ok:
-        required: true
+        description: Conversion Request Payload Object
         content:
           application/json:
             schema:
@@ -281,6 +275,11 @@ components:
                 api_secret:
                   $ref: "#/components/securitySchemes/apiSecret"
                 message-id:
-                  $ref: "#/components/parameters/message-id"
+                  $ref: "#/components/schemas/message-id"
                 delivered:
-                  $ref: "#/components/parameters/delivered"
+                  $ref: "#/components/schemas/delivered"
+              required:
+                - api_key
+                - api_secret
+                - message-id
+                - delivered
