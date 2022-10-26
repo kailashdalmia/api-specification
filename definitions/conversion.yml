@@ -222,35 +222,29 @@ paths:
       requestBody:
           $ref: "#/components/requestBodies/Ok"
 components:
-  parameters:
+  schemas:
     message-id:
-      name: message-id
-      required: true
-      in: query
+      type: string
+      example: 0A000000010CA46C
       description: >-
         The ID you receive in the response to a request. * From the Verify API -
         use the `event_id` in the response to Verify Check. * From the SMS API -
         use the `message-id` * From the Text-To-Speech API - use the `call-id` *
         From the Text-To-Speech-Prompt API - use the `call-id`
-      schema:
-        type: string
-      example: 00A0B0C0
+
     delivered:
-      name: delivered
-      required: true
-      in: query
+      type: string
+      example: true
       description: >-
         Set to _true_ if your user replied to the message you sent. Otherwise,
         set to _false_.
 
         **Note**: for curl, use 0 and 1.
-      schema:
-        enum:
-          - true
-          - false
-          - 0
-          - 1
-      example: true
+      enum:
+        - true
+        - false
+        - 0
+        - 1
   securitySchemes:
     apiKey:
       type: apiKey
